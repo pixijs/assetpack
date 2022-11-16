@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "lib": ["ESNext"],
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "noEmit": true,
+      "noEmitOnError": false,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "pretty": true,
+      "sourceMap": true,
+      "strict": true,
+      "target": "ESNext",
+      "baseUrl": "./",
+        "paths": {
+            "@assetpack/*": [
+                "packages/*/src",
+            ]
+        },
+    },
+    "exclude": ["dist", "node_modules"],
+    "ts-node": {
+        "files": true,
+        "compilerOptions": {
+            "esModuleInterop": true
+        }
+    }
+  }
