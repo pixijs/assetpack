@@ -10,25 +10,44 @@
   },
   "license": "MIT",
   "author": "Sean Burns",
-  "exports": {
-    "import": "./dist/es/index.js",
-    "types": "./types/index.d.ts",
-    "default": "./dist/cjs/index.js"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "assetpack": "./bin/run"
   },
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/es/index.js",
   "files": [
-    "dist",
-    "*.d.ts"
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "rollup -c"
+    "build": "tsc -b ./tsconfig.json",
+    "test": "npx jest --config ./jest.config.js",
+    "version": "oclif readme && git add README.md"
   },
   "dependencies": {
-    "@assetpack/core": "^0.0.0"
+    "@oclif/core": "^1.19.1",
+    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-plugins": "^2.1.6"
+  },
+  "devDependencies": {
+    "@oclif/test": "^2.2.10",
+    "@types/node": "^16.18.3",
+    "oclif": "^3"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
+  },
+  "oclif": {
+    "bin": "assetpack",
+    "dirname": "assetpack",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ],
+    "topicSeparator": " "
   }
 }

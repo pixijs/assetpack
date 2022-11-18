@@ -20,5 +20,18 @@
     "build": {
       "dependsOn": ["^build"]
     }
+  },
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "{projectRoot}/dist"
+    ]
+  },
+  "targets": {
+    "build": {
+      "inputs": [
+        "default"
+      ]
+    }
   }
 }

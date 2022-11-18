@@ -5,8 +5,6 @@
       "lib": ["ESNext"],
       "module": "commonjs",
       "moduleResolution": "node",
-      "noEmit": true,
-      "noEmitOnError": false,
       "noUnusedLocals": true,
       "noUnusedParameters": true,
       "pretty": true,

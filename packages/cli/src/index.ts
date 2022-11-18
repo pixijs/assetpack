@@ -1,3 +1,1 @@
-import { hello } from '@assetpack/core';
-
-hello();
+export { run } from '@oclif/core';
