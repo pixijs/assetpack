@@ -1,4 +1,5 @@
 import { copyFileSync, ensureDirSync, ensureFileSync } from 'fs-extra';
+import type { Plugin } from 'packages/core/src/Plugin';
 import path from 'path';
 import { getRoot } from './find';
 
@@ -48,4 +49,19 @@ export function createFolder(pkg: string, folder: Folder, base?: string)
 export function assetPath(pkg: string, pth: string): string
 {
     return path.join(path.join(getRoot(), `packages/${pkg}`), 'test/resources', pth);
+}
+
+export function createPlugin(
+    data: Record<keyof Plugin, boolean>,
+): Plugin
+{
+    return {
+        folder: data.folder || false,
+        test: data.test ? jest.fn() : undefined,
+        transform: data.transform ? jest.fn() : undefined,
+        start: data.start ? jest.fn() : undefined,
+        finish: data.finish ? jest.fn() : undefined,
+        post: data.post ? jest.fn() : undefined,
+        delete: data.delete ? jest.fn() : undefined,
+    } as Plugin;
 }
