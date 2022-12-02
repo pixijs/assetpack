@@ -11,7 +11,7 @@
     "lint": "eslint --cache packages scripts shared --ext .js,.ts,.mjs --max-warnings 0",
     "plugin:release": "ts-node ./scripts/release.ts",
     "build": "nx run-many --target=build --all --parallel",
-    "pretest": "nx run-many --target=test --all --parallel",
+    "pretest": "npm run clean",
     "test": "nx run-many --target=test --all --parallel",
     "prepare": "husky install"
   },

@@ -1,5 +1,14 @@
-export const hello = () =>
+export default function json()
 {
-    // eslint-disable-next-line no-console
-    console.log('hello');
-};
+    return {
+        folder: false,
+        test()
+        {
+            //
+        },
+        post()
+        {
+            //
+        }
+    };
+}

@@ -9,7 +9,7 @@
     "directory": "packages/assetpack-cli"
   },
   "license": "MIT",
-  "author": "Sean Burns",
+  "author": "Zyie",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {

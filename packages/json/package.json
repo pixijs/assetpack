@@ -9,7 +9,7 @@
     "directory": "packages/json"
   },
   "license": "MIT",
-  "author": "Sean Burns",
+  "author": "Zyie",
   "exports": {
     "import": "./dist/es/index.js",
     "types": "./types/index.d.ts",
@@ -26,7 +26,13 @@
     "build": "rollup -c",
     "test": "npx jest --config ./jest.config.js"
   },
+  "peerDependencies": {
+    "@assetpack/core": "^0.0.0"
+  },
+  "devDependencies": {
+    "@assetpack/core": "^0.0.0"
+  },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   }
 }
