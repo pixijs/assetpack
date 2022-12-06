@@ -1,4 +1,4 @@
-import type { AssetpackConfig } from '../rc';
+import type { AssetpackConfig } from '../config';
 import { LogLevels } from './logLevel';
 import type { ReporterEvent } from './Reporter';
 import { Reporter } from './Reporter';

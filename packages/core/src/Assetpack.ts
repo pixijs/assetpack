@@ -6,7 +6,7 @@ import hash from 'object-hash';
 import { join, normalize, normalizeSafe } from 'upath';
 import { Logger } from './logger/Logger';
 import { Processor } from './Processor';
-import type { ReqAssetpackConfig } from './rc';
+import type { ReqAssetpackConfig } from './config';
 
 export interface Tags
 {
@@ -72,7 +72,7 @@ export class Assetpack
 
         this.processor = new Processor(this.config);
 
-        // create .bulldog folder if it doesn't exist
+        // create .assetpack folder if it doesn't exist
         ensureDirSync('.assetpack/');
 
         // creates a file name that is valid for windows and mac

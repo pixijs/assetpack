@@ -5,7 +5,7 @@ import minimatch from 'minimatch';
 import type { RootTree, Tags, TransformedTree } from './Assetpack';
 import { Logger } from './logger/Logger';
 import type { Plugin } from './Plugin';
-import type { ReqAssetpackConfig } from './rc';
+import type { ReqAssetpackConfig } from './config';
 import { hasTag, replaceExt } from './utils';
 
 export class Processor
