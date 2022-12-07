@@ -21,7 +21,7 @@ export type ReporterEvent = LogEvent | BuildEvent;
 
 export class Reporter
 {
-    public level: LogLevels = LogLevels.info;
+    public level: keyof typeof LogLevels = 'info';
     private _buildTime = 0;
 
     // Exported only for test

@@ -6,7 +6,9 @@ import hash from 'object-hash';
 import { join, normalize, normalizeSafe } from 'upath';
 import { Logger } from './logger/Logger';
 import { Processor } from './Processor';
-import type { ReqAssetpackConfig } from './config';
+import type { AssetpackConfig, ReqAssetpackConfig } from './config';
+import { defaultConfig } from './config';
+import merge from 'merge';
 
 export interface Tags
 {
@@ -48,29 +50,30 @@ interface CachedTree
 export class Assetpack
 {
     public readonly config: ReqAssetpackConfig;
-    /** A hash of child trees */
-    private hash: Record<string, ChildTree> = {};
+    /** A hash of all tree nodes */
+    private _treeHash: Record<string, ChildTree> = {};
     /** A hash of file locations to be ignored */
-    private ignoreHash: {[x: string]: boolean} = {};
+    private _ignoreHash: {[x: string]: boolean} = {};
     /** The current tree */
-    private tree: RootTree = {} as RootTree;
+    private _tree: RootTree = {} as RootTree;
     /** The cached tree */
-    private cachedTree: RootTree = {} as RootTree;
+    private _cachedTree: RootTree = {} as RootTree;
     /** Path to store the cached tree */
-    private readonly cacheTreePath: string;
+    private readonly _cacheTreePath: string;
     /**  Manages processes and changes in assets */
-    private readonly processor: Processor;
+    private readonly _processor: Processor;
     /** A signature to identify the cache */
-    private signature: string;
+    private _signature: string;
 
-    constructor(config: ReqAssetpackConfig)
+    constructor(config: AssetpackConfig)
     {
         // TODO validate config
-        this.config = config;
+        this.config = merge.recursive(true, defaultConfig, config) as ReqAssetpackConfig;
         this.config.entry = normalizeSafe(this.config.entry);
         this.config.output = normalizeSafe(this.config.output);
 
-        this.processor = new Processor(this.config);
+        this._processor = new Processor(this.config);
+        Logger.init(this.config);
 
         // create .assetpack folder if it doesn't exist
         ensureDirSync('.assetpack/');
@@ -78,12 +81,12 @@ export class Assetpack
         // creates a file name that is valid for windows and mac
         const folderTag = (`${this.config.entry}-${this.config.output}`).split('/').join('-');
 
-        this.cacheTreePath = `.assetpack/${folderTag}-${nodeMachineId.machineIdSync(true)}`;
+        this._cacheTreePath = `.assetpack/${folderTag}-${nodeMachineId.machineIdSync(true)}`;
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { plugins, ...configWithoutPlugins } = this.config;
 
-        this.signature = hash(configWithoutPlugins);
+        this._signature = hash(configWithoutPlugins);
 
         this._addPlugins();
     }
@@ -96,8 +99,8 @@ export class Assetpack
         {
             Object.keys(plugins).forEach((name) =>
             {
-                this.signature += name;
-                this.processor.addPlugin(plugins[name], name);
+                this._signature += name;
+                this._processor.addPlugin(plugins[name], name);
             });
         }
     }
@@ -105,25 +108,25 @@ export class Assetpack
     public async run()
     {
         this._loadTree();
-        this._walk(this.config.entry, this.tree);
-        this._compareChanges(this.cachedTree, this.tree);
+        this._walk(this.config.entry, this._tree);
+        this._compareChanges(this._cachedTree, this._tree);
 
-        await this.processor.run(this.tree);
+        await this._processor.run(this._tree);
 
-        this._removeDeletesFromTree(this.tree);
+        this._removeDeletesFromTree(this._tree);
 
         if (this.config.cache)
         {
             const cacheData: CachedTree = {
-                signature: this.signature,
+                signature: this._signature,
                 time: new Date().getTime() + 5000,
-                tree: this.tree
+                tree: this._tree
             };
 
-            outputFileSync(this.cacheTreePath, JSON.stringify(cacheData, null, 4));
+            outputFileSync(this._cacheTreePath, JSON.stringify(cacheData, null, 4));
         }
 
-        this.cachedTree = this.tree;
+        this._cachedTree = this._tree;
     }
 
     private _walk(dir: string, branch: RootTree)
@@ -157,7 +160,7 @@ export class Assetpack
                 transformed: []
             };
 
-            this.hash[child.path] = child;
+            this._treeHash[child.path] = child;
 
             if (!branch.files)
             {
@@ -224,21 +227,21 @@ export class Assetpack
 
     private _loadTree()
     {
-        if (!this.cachedTree && this.config.cache)
+        if (Object.keys(this._cachedTree).length === 0 && this.config.cache)
         {
             try
             {
                 ensureDirSync(this.config.output);
 
-                const json = readFileSync(this.cacheTreePath, 'utf8');
+                const json = readFileSync(this._cacheTreePath, 'utf8');
 
                 const parsedJson = JSON.parse(json) as CachedTree;
 
-                if (parsedJson.signature === this.signature)
+                if (parsedJson.signature === this._signature)
                 {
                     Logger.info('Cache found.');
 
-                    this.cachedTree = parsedJson.tree;
+                    this._cachedTree = parsedJson.tree;
                 }
                 else
                 {
@@ -251,15 +254,15 @@ export class Assetpack
             }
         }
 
-        if (!this.cachedTree)
+        if (!this._cachedTree)
         {
             removeSync(this.config.output);
             ensureDirSync(this.config.output);
         }
 
-        removeSync(this.cacheTreePath);
+        removeSync(this._cacheTreePath);
 
-        this.tree = {
+        this._tree = {
             fileTags: {},
             files: {},
             isFolder: true,
@@ -280,13 +283,13 @@ export class Assetpack
     {
         if (this.config.ignore.length > 0)
         {
-            if (this.ignoreHash[relativePath] === undefined)
+            if (this._ignoreHash[relativePath] === undefined)
             {
-                this.ignoreHash[relativePath] = this.config.ignore.reduce((current: boolean, pattern: string) =>
+                this._ignoreHash[relativePath] = this.config.ignore.reduce((current: boolean, pattern: string) =>
                     current || minimatch(relativePath, pattern), false);
             }
 
-            if (this.ignoreHash[relativePath]) return true;
+            if (this._ignoreHash[relativePath]) return true;
         }
 
         return false;
@@ -354,7 +357,7 @@ export class Assetpack
     {
         if (!tree.parent) return;
 
-        const parent = this.hash[tree.parent];
+        const parent = this._treeHash[tree.parent];
 
         if (parent && parent.state === 'normal')
         {

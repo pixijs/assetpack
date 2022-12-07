@@ -52,12 +52,12 @@ export function assetPath(pkg: string, pth: string): string
 }
 
 export function createPlugin(
-    data: Record<keyof Plugin, boolean>,
+    data: Partial<Record<keyof Plugin, boolean>>,
 ): Plugin
 {
     return {
         folder: data.folder || false,
-        test: data.test ? jest.fn() : undefined,
+        test: data.test ? jest.fn(() => true) : undefined,
         transform: data.transform ? jest.fn() : undefined,
         start: data.start ? jest.fn() : undefined,
         finish: data.finish ? jest.fn() : undefined,
@@ -65,3 +65,5 @@ export function createPlugin(
         delete: data.delete ? jest.fn() : undefined,
     } as Plugin;
 }
+
+export type MockPlugin = Omit<Record<keyof Plugin, jest.Mock>, 'folder'> & { folder: boolean };

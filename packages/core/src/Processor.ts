@@ -8,21 +8,37 @@ import type { Plugin } from './Plugin';
 import type { ReqAssetpackConfig } from './config';
 import { hasTag, replaceExt } from './utils';
 
+interface SaveOptions<T extends RootTree | TransformedTree>
+{
+    tree: T
+    outputOptions?: {
+        outputExtension?: string;
+        outputPathOverride?: string;
+        outputData?: any;
+    },
+    transformOptions?: {
+        isFolder?: boolean,
+        fileTags?: Tags,
+        transformId?: string
+        transformData?: Record<string, string>
+    },
+}
+
 export class Processor
 {
     private readonly _config: ReqAssetpackConfig;
     private _pluginMap: Map<Plugin, string> = new Map();
-    /** Array of processes to be called */
-    private readonly processes: Plugin[] = [];
-    /**  A runner that calls the start function of a process */
-    private readonly onStart: Runner = new Runner('start');
-    /** A runner that calls the finish function of a process */
-    private readonly onFinish: Runner = new Runner('finish');
+    /** Array of plugins to be called */
+    private readonly _plugins: Plugin[] = [];
+    /**  A runner that calls the start function of a plugin */
+    private readonly _onStart: Runner = new Runner('start');
+    /** A runner that calls the finish function of a plugin */
+    private readonly _onFinish: Runner = new Runner('finish');
     /** Time a tree was modified */
-    private modifiedTime = 0;
+    private _modifiedTime = 0;
 
-    private transformHash: Record<string, TransformedTree[] | null> = {};
-    private hash: Record<string, RootTree> = {};
+    private _transformHash: Record<string, TransformedTree[] | null> = {};
+    private _hash: Record<string, RootTree> = {};
 
     constructor(config: ReqAssetpackConfig)
     {
@@ -32,25 +48,45 @@ export class Processor
     public addPlugin(plugin: Plugin, key: string): void
     {
         this._pluginMap.set(plugin, key);
-        this.processes.push(plugin);
-        this.onStart.add(plugin);
-        this.onFinish.add(plugin);
+        this._plugins.push(plugin);
+        this._onStart.add(plugin);
+        this._onFinish.add(plugin);
     }
 
     public async run(tree: RootTree): Promise<void>
     {
-        this.modifiedTime = Date.now();
+        this._modifiedTime = Date.now();
 
         tree.state = 'modified';
 
-        // step 1: first let all processes know that we have begun..
-        // this gets called ONCE for each process
-        this.onStart.emit(tree, this);
+        Logger.report({
+            type: 'buildStart',
+            message: this._config.entry,
+        });
 
-        // step 2: run all processes
+        Logger.report({
+            type: 'buildProgress',
+            phase: 'start',
+        });
+
+        // step 1: first let all plugins know that we have begun..
+        // this gets called ONCE for each plugin
+        this._onStart.emit(tree, this);
+
+        Logger.report({
+            type: 'buildProgress',
+            phase: 'delete',
+        });
+
+        // step 2: run all plugins
         // this loops through and deletes any output files
         // that have been deleted from input folder
         await Promise.allSettled(this._cleanTree(tree));
+
+        Logger.report({
+            type: 'buildProgress',
+            phase: 'transform',
+        });
 
         // step 3: next we transform our files
         // this is where one file can become another (or multiple!)
@@ -60,6 +96,27 @@ export class Processor
         // if there is no transform for a particular item then the
         // file is simply copied and stored in the transformed
         await Promise.allSettled(this._transformTree(tree));
+
+        Logger.report({
+            type: 'buildProgress',
+            phase: 'post',
+        });
+
+        // step 4: this will do a pass on all transformed files
+        // An opportunity to compress files or build manifests
+        await Promise.allSettled(this._postTree(tree));
+
+        Logger.report({
+            type: 'buildProgress',
+            phase: 'finish',
+        });
+
+        // now everything is done, we let all processes know that is the case.
+        this._onFinish.emit(tree, this);
+
+        Logger.report({
+            type: 'buildSuccess',
+        });
     }
 
     public inputToOutput(inputPath: string, extension?: string): string
@@ -76,23 +133,10 @@ export class Processor
         return output;
     }
 
-    public addToTreeAndSave(data: {
-        tree: RootTree;
-        outputOptions?: {
-            outputExtension?: string;
-            outputPathOverride?: string;
-            outputData?: any;
-        },
-        transformOptions?: {
-            isFolder?: boolean,
-            fileTags?: Tags,
-            transformId?: string
-            transformData?: Record<string, string>
-        },
-    })
+    public addToTreeAndSave(data: SaveOptions<RootTree>)
     {
         const outputName = data.outputOptions?.outputPathOverride
-        ?? this.inputToOutput(data.tree.path, data.outputOptions?.outputExtension);
+            ?? this.inputToOutput(data.tree.path, data.outputOptions?.outputExtension);
 
         this.addToTree({
             tree: data.tree,
@@ -111,14 +155,7 @@ export class Processor
         });
     }
 
-    public saveToOutput(data: {
-        tree: RootTree;
-        outputOptions?: {
-            outputExtension?: string;
-            outputPathOverride?: string;
-            outputData?: any;
-        },
-    })
+    public saveToOutput(data: Omit<SaveOptions<RootTree | TransformedTree>, 'transformOptions'>)
     {
         const outputName = data.outputOptions?.outputPathOverride
             ?? this.inputToOutput(data.tree.path, data.outputOptions?.outputExtension);
@@ -147,17 +184,7 @@ export class Processor
      * @param data.transformId - Unique id for the transformed file.
      * @param data.transformData - any optional data you want to pass in with the transform.
      */
-    public addToTree(data: {
-        tree: RootTree,
-        outputOptions?: {
-            outputExtension?: string;
-            outputPathOverride?: string;
-        },
-        isFolder?: boolean,
-        fileTags?: Tags,
-        transformId?: string
-        transformData?: Record<string, string>
-    }): void
+    public addToTree(data: Omit<SaveOptions<RootTree>, 'transformOptions'> & SaveOptions<RootTree>['transformOptions']): void
     {
         // eslint-disable-next-line prefer-const
         let { tree, isFolder, fileTags, transformId, transformData } = data;
@@ -177,7 +204,7 @@ export class Processor
             path: outputName,
             isFolder,
             creator: tree.path,
-            time: this.modifiedTime,
+            time: this._modifiedTime,
             fileTags,
             pathTags: tree.pathTags,
             transformId: transformId ?? null,
@@ -187,7 +214,7 @@ export class Processor
 
     /**
      * Recursively checks for the deleted state of the files in a tree.
-     * If found then its removed from the tree and process.delete() is called.
+     * If found then its removed from the tree and plugin.delete() is called.
      * @param tree - Tree to be processed.
      * @param promises - Array of plugin.delete promises to be returned.
      */
@@ -200,17 +227,17 @@ export class Processor
 
         if (tree.state === 'deleted')
         {
-            for (let j = 0; j < this.processes.length; j++)
+            for (let j = 0; j < this._plugins.length; j++)
             {
-                const process = this.processes[j];
+                const plugin = this._plugins[j];
 
                 if (
-                    process.delete
+                    plugin.delete
                     && !hasTag(tree, 'path', 'ignore')
-                    && process.test(tree, this, this.getOptions(tree.path))
+                    && plugin.test(tree, this, this.getOptions(tree.path, plugin))
                 )
                 {
-                    promises.push(process.delete(tree, this, this.getOptions(tree.path)));
+                    promises.push(plugin.delete(tree, this, this.getOptions(tree.path, plugin)));
                 }
             }
 
@@ -223,7 +250,7 @@ export class Processor
                     removeSync(out.path);
                 });
 
-                this.transformHash[tree.path] = null;
+                this._transformHash[tree.path] = null;
             }
         }
 
@@ -231,7 +258,7 @@ export class Processor
     }
 
     /**
-     * Recursively loops through a tree and called the transform function on a process if the tree was added or modified
+     * Recursively loops through a tree and called the transform function on a plugin if the tree was added or modified
      * @param tree - Tree to be processed
      * @param promises - Array of plugin.transform promises to be returned.
      */
@@ -252,21 +279,21 @@ export class Processor
                 return promises;
             }
 
-            for (let j = 0; j < this.processes.length; j++)
+            for (let j = 0; j < this._plugins.length; j++)
             {
-                const process = this.processes[j];
+                const plugin = this._plugins[j];
 
                 if (
-                    process.transform
+                    plugin.transform
                     && !hasTag(tree, 'path', 'ignore')
-                    && process.test(tree, this, this.getOptions(tree.path))
+                    && plugin.test(tree, this, this.getOptions(tree.path, plugin))
                 )
                 {
                     transformed = true;
 
-                    promises.push(process.transform(tree, this, this.getOptions(tree.path)));
+                    promises.push(plugin.transform(tree, this, this.getOptions(tree.path, plugin)));
 
-                    if (process.folder)
+                    if (plugin.folder)
                     {
                         stopProcessing = true;
                     }
@@ -287,15 +314,15 @@ export class Processor
             }
         }
 
-        this.hash[tree.path] = tree;
+        this._hash[tree.path] = tree;
 
         if (tree.transformed.length > 0)
         {
-            this.transformHash[tree.path] = tree.transformed;
+            this._transformHash[tree.path] = tree.transformed;
         }
         else
         {
-            tree.transformed = this.transformHash[tree.path] || [];
+            tree.transformed = this._transformHash[tree.path] || [];
         }
 
         if (stopProcessing) return promises;
@@ -308,9 +335,72 @@ export class Processor
         return promises;
     }
 
-    private getOptions(file: string)
+    /**
+     * Recursively loops through a tree and called the test and post function on a process if the tree was added or modified
+     * @param tree - Tree to be processed.
+     * @param promises - Array of plugin.post promises to be returned.
+     */
+    private _postTree(tree: RootTree, promises: Promise<void>[] = []): Promise<void>[]
     {
-        let options = {};
+        let stopProcessing = false;
+
+        // first apply transforms / copy to other place..
+        if (tree.state === 'modified' || tree.state === 'added')
+        {
+            if (tree.transformed)
+            {
+                for (let i = 0; i < tree.transformed.length; i++)
+                {
+                    const processList: Plugin[] = [];
+                    const outfile = tree.transformed[i];
+
+                    for (let j = 0; j < this._plugins.length; j++)
+                    {
+                        const plugin = this._plugins[j];
+
+                        if (
+                            plugin.post
+                            && !hasTag(tree, 'path', 'ignore')
+                            && plugin.test(tree, this, this.getOptions(tree.path, plugin))
+                        )
+                        {
+                            processList.push(plugin);
+
+                            if (plugin.folder)
+                            {
+                                stopProcessing = true;
+                            }
+                        }
+                    }
+
+                    promises.push(new Promise(async (resolve) =>
+                    {
+                        for (let j = 0; j < processList.length; j++)
+                        {
+                            const plugin = processList[j];
+
+                            await plugin.post?.(outfile, this, this.getOptions(tree.path, plugin));
+                        }
+
+                        resolve();
+                    }));
+                }
+            }
+        }
+
+        if (stopProcessing) return promises;
+
+        for (const i in tree.files)
+        {
+            this._postTree(tree.files[i], promises);
+        }
+
+        return promises;
+    }
+
+    private getOptions(file: string, plugin: Plugin)
+    {
+        let options: Record<string, any> = {};
 
         // walk through the config.files and see if we have a match..
         for (const i in this._config.files)
@@ -326,6 +416,10 @@ export class Processor
             }
         }
 
-        return options;
+        const name = this._pluginMap.get(plugin);
+
+        if (!name) throw new Error(`[processor] Plugin not found in map.`);
+
+        return options[name] || {};
     }
 }

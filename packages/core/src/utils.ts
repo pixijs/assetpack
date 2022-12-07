@@ -1,4 +1,4 @@
-import { basename, extname, join, dirname } from 'upath';
+import upath from 'upath';
 import type { RootTree } from './Assetpack';
 
 /**
@@ -30,8 +30,8 @@ export function replaceExt(path: string, ext: string)
         return path;
     }
 
-    const nFileName = basename(path, extname(path)) + ext;
-    const nFilepath = join(dirname(path), nFileName);
+    const nFileName = upath.basename(path, upath.extname(path)) + ext;
+    const nFilepath = upath.join(upath.dirname(path), nFileName);
 
     // Because `path.join` removes the head './' from the given path.
     // This removal can cause a problem when passing the result to `require` or
@@ -50,3 +50,5 @@ function startsWithSingleDot(path: string)
 
     return first2chars === './';
 }
+
+export const path = upath;

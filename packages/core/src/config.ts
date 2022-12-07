@@ -1,4 +1,4 @@
-import { LogLevels } from './logger/logLevel';
+import type { LogLevels } from './logger/logLevel';
 import type { Plugin } from './Plugin';
 
 export interface AssetpackConfig
@@ -17,7 +17,7 @@ export interface AssetpackConfig
       * @defaultValue true
       */
     cache?: boolean;
-    logLevel?: LogLevels;
+    logLevel?: keyof typeof LogLevels;
     plugins?: Record<string, Plugin>
     files?: Array<{
         files: string[],
@@ -33,7 +33,7 @@ export const defaultConfig: AssetpackConfig = {
     output: './dist',
     ignore: [],
     cache: true,
-    logLevel: LogLevels.info,
+    logLevel: 'info',
     plugins: {},
     files: []
 };
