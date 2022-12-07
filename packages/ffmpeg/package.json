@@ -1,12 +1,12 @@
 {
-  "name": "@assetpack/plugin-json",
+  "name": "@assetpack/plugin-ffmpeg",
   "version": "0.0.0",
   "description": "",
-  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/json/#readme",
+  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/ffmpeg/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
   "repository": {
     "url": "pixijs/assetpack",
-    "directory": "packages/json"
+    "directory": "packages/ffmpeg"
   },
   "license": "MIT",
   "author": "Zyie",
@@ -27,13 +27,15 @@
     "test": "npx jest --config ./jest.config.js"
   },
   "dependencies": {
-    "fs-extra": "^11.1.0"
+    "fs-extra": "^11.1.0",
+    "fluent-ffmpeg": "^2.1.2"
   },
   "peerDependencies": {
     "@assetpack/core": "^0.0.0"
   },
   "devDependencies": {
-    "@assetpack/core": "^0.0.0"
+    "@assetpack/core": "^0.0.0",
+    "@types/fluent-ffmpeg": "^2.1.20"
   },
   "engines": {
     "node": ">=16.0.0"
