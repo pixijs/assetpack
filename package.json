@@ -13,6 +13,7 @@
     "build": "nx run-many --target=build --all --parallel",
     "pretest": "npm run clean",
     "test": "nx run-many --target=test --all --parallel",
+    "test:force": "nx run-many --target=test --all --parallel --skip-nx-cache",
     "prepare": "husky install"
   },
   "husky": {

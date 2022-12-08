@@ -33,7 +33,6 @@ describe('Json', () =>
             plugins: {
                 json: json()
             }
-
         });
 
         await assetpack.run();
@@ -74,11 +73,58 @@ describe('Json', () =>
             }
         });
 
+        const post = jest.spyOn(assetpack.config.plugins.json, 'post');
+
         await assetpack.run();
 
         const data = readFileSync(`${outputDir}/json/json.json`, 'utf8');
         const res = data.split('\n').length;
 
-        expect(res).toEqual(4);
+        expect(res).toEqual(5);
+        expect(post).toHaveBeenCalledTimes(0);
+    });
+
+    it('should minify the json', async () =>
+    {
+        const testName = 'json-minify';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'json',
+                        files: [
+                            {
+                                name: 'json.json',
+                                content: assetPath(pkg, 'json-valid.json'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                ],
+            });
+
+        const assetpack = new Assetpack({
+            entry: inputDir,
+            output: outputDir,
+            plugins: {
+                json: json()
+            }
+        });
+
+        const post = jest.spyOn(assetpack.config.plugins.json, 'post');
+
+        await assetpack.run();
+
+        const data = readFileSync(`${outputDir}/json/json.json`, 'utf8');
+        const res = data.split('\n').length;
+
+        expect(res).toEqual(1);
+        expect(post).toHaveBeenCalledTimes(1);
     });
 });
