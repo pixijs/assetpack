@@ -17,5 +17,6 @@ jobs:
 
       - run: npx nx workspace-lint
       - run: npm run lint
+      - run: npx nx affected --target=test:types --parallel=3 --ci
       - run: npx nx affected --target=test --parallel=3 --ci
       - run: npx nx affected --target=build --parallel=3

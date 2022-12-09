@@ -24,18 +24,19 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "test": "npx jest --config ./jest.config.js"
+    "test": "npx jest --config ./jest.config.js",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "fs-extra": "^11.1.0",
-    "fluent-ffmpeg": "^2.1.2"
-  },
-  "peerDependencies": {
-    "@assetpack/core": "^0.0.0"
+    "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^11.1.0"
   },
   "devDependencies": {
     "@assetpack/core": "^0.0.0",
     "@types/fluent-ffmpeg": "^2.1.20"
+  },
+  "peerDependencies": {
+    "@assetpack/core": "^0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

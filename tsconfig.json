@@ -18,6 +18,7 @@
             ]
         },
     },
+    "files": ["node_modules/jest-extended/types/index.d.ts"],
     "exclude": ["dist", "node_modules"],
     "ts-node": {
         "files": true,

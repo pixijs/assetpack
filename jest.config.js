@@ -6,4 +6,5 @@ module.exports = {
     moduleNameMapper: {
         '^@assetpack/(.*)$': '<rootDir>/packages/$1/src',
     },
+    setupFilesAfterEnv: ['jest-extended/all']
 };

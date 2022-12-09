@@ -25,6 +25,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc -b ./tsconfig.json",
     "test": "npx jest --config ./jest.config.js",
+    "test:types": "tsc --noEmit",
     "version": "oclif readme && git add README.md"
   },
   "dependencies": {

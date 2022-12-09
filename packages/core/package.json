@@ -24,7 +24,8 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "test": "npx jest --config ./jest.config.js"
+    "test": "npx jest --config ./jest.config.js",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@pixi/runner": "^7.0.0",

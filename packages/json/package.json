@@ -24,15 +24,16 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "test": "npx jest --config ./jest.config.js"
+    "test": "npx jest --config ./jest.config.js",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "fs-extra": "^11.1.0"
   },
-  "peerDependencies": {
+  "devDependencies": {
     "@assetpack/core": "^0.0.0"
   },
-  "devDependencies": {
+  "peerDependencies": {
     "@assetpack/core": "^0.0.0"
   },
   "engines": {
