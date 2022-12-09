@@ -1,4 +1,5 @@
 import upath from 'upath';
+import internalMerge from 'merge';
 import type { RootTree } from './Assetpack';
 
 /**
@@ -52,3 +53,4 @@ function startsWithSingleDot(path: string)
 }
 
 export const path = upath;
+export const merge = internalMerge;
