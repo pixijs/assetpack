@@ -1,14 +1,14 @@
 import type { Plugin } from '@assetpack/core';
-import { Logger, path } from '@assetpack/core';
+import { checkExt, Logger } from '@assetpack/core';
 import { readFileSync } from 'fs-extra';
 
-export default function json(): Plugin
+export function json(): Plugin
 {
     return {
         folder: false,
         test(tree)
         {
-            return path.extname(tree.path) === '.json';
+            return checkExt(tree.path, '.json');
         },
         async post(tree, processor)
         {

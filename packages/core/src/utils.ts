@@ -1,6 +1,6 @@
 import upath from 'upath';
 import internalMerge from 'merge';
-import type { RootTree } from './Assetpack';
+import type { RootTree, TransformedTree } from './Assetpack';
 
 /**
  * A function that checks if the tree has the tags.
@@ -9,7 +9,7 @@ import type { RootTree } from './Assetpack';
  * @param tags - The tags to be checked.
  * @returns If the tree has the tags.
  */
-export function hasTag(tree: RootTree, type: 'file' | 'path', ...tags: string[]): boolean
+export function hasTag(tree: RootTree | TransformedTree, type: 'file' | 'path', ...tags: string[]): boolean
 {
     if (type === 'file')
     {
@@ -43,6 +43,28 @@ export function replaceExt(path: string, ext: string)
     }
 
     return nFilepath;
+}
+
+export function checkExt(path: string, ...ext: string[])
+{
+    if (typeof path !== 'string')
+    {
+        return false;
+    }
+
+    if (path.length === 0)
+    {
+        return false;
+    }
+
+    if (ext.length === 0)
+    {
+        return true;
+    }
+
+    const extname = upath.extname(path).toLowerCase();
+
+    return ext.some((e) => e.toLowerCase() === extname);
 }
 
 function startsWithSingleDot(path: string)

@@ -1,5 +1,5 @@
 import type { Plugin, Processor, RootTree } from '@assetpack/core';
-import { merge, path } from '@assetpack/core';
+import { checkExt, merge, path } from '@assetpack/core';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import { copySync } from 'fs-extra';
 
@@ -134,7 +134,7 @@ export function ffmpeg(options?: AudioOptions): Plugin<AudioOptions>
                 throw new Error('[ffmpeg] No inputs defined');
             }
 
-            return opts.inputs.includes(path.extname(tree.path));
+            return checkExt(tree.path, ...opts.inputs);
         },
         async transform(tree, processor, optionOverrides)
         {

@@ -1,6 +1,10 @@
 import type { RootTree, TransformedTree } from './Assetpack';
 import type { Processor } from './Processor';
 
+export interface PluginOptions<T extends string>
+{
+    tags: Partial<Record<T, string>>;
+}
 export interface Plugin<T = Record<string, any>>
 {
     /** Whether the process runs on a folder */

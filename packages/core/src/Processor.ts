@@ -81,7 +81,10 @@ export class Processor
         // step 2: run all plugins
         // this loops through and deletes any output files
         // that have been deleted from input folder
-        await Promise.allSettled(this._cleanTree(tree));
+        await Promise.all(this._cleanTree(tree).map((p) => p.catch((e) =>
+        {
+            Logger.error(`[processor] Clean failed: ${e.message}`);
+        })));
 
         Logger.report({
             type: 'buildProgress',
@@ -95,7 +98,10 @@ export class Processor
         // call 'transformed'
         // if there is no transform for a particular item then the
         // file is simply copied and stored in the transformed
-        await Promise.allSettled(this._transformTree(tree));
+        await Promise.all(this._transformTree(tree).map((p) => p.catch((e) =>
+        {
+            Logger.error(`[processor] Transform failed: ${e.message}`);
+        })));
 
         Logger.report({
             type: 'buildProgress',
@@ -104,7 +110,10 @@ export class Processor
 
         // step 4: this will do a pass on all transformed files
         // An opportunity to compress files or build manifests
-        await Promise.allSettled(this._postTree(tree));
+        await Promise.all(this._postTree(tree).map((p) => p.catch((e) =>
+        {
+            Logger.error(`[processor] Post Transform failed: ${e.message}`);
+        })));
 
         Logger.report({
             type: 'buildProgress',
