@@ -1,5 +1,5 @@
 import { Assetpack } from '@assetpack/core';
-import json from '../src';
+import { json } from '../src';
 import { existsSync, readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 

@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "clean": "rimraf packages/*/{dist,.testInput,.testOutput}",
+    "clean": "rimraf packages/*/{dist,.testInput,.testOutput,.assetpack}",
     "lint": "eslint --cache packages scripts shared --ext .js,.ts,.mjs --max-warnings 0",
     "plugin:release": "ts-node ./scripts/release.ts",
     "build": "nx run-many --target=build --all --parallel",

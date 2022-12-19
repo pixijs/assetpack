@@ -58,11 +58,11 @@ export function createPlugin(
     return {
         folder: data.folder || false,
         test: data.test ? jest.fn(() => true) : undefined,
-        transform: data.transform ? jest.fn() : undefined,
-        start: data.start ? jest.fn() : undefined,
-        finish: data.finish ? jest.fn() : undefined,
-        post: data.post ? jest.fn() : undefined,
-        delete: data.delete ? jest.fn() : undefined,
+        transform: data.transform ? jest.fn(async () => { /**/ }) : undefined,
+        start: data.start ? jest.fn(async () => { /**/ }) : undefined,
+        finish: data.finish ? jest.fn(async () => { /**/ }) : undefined,
+        post: data.post ? jest.fn(async () => { /**/ }) : undefined,
+        delete: data.delete ? jest.fn(async () => { /**/ }) : undefined,
     } as Plugin;
 }
 
