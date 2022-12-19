@@ -3,12 +3,12 @@ import type { Plugin } from './Plugin';
 
 export interface AssetpackConfig
 {
-    /** the entry point of bulldog, the folder that will be converted */
+    /** the entry point of assetpack, the folder that will be converted */
     entry?: string;
     /** the output, the converted transformed folder will be here */
     output?: string;
     /**
-      * an optional array of ignore patterns. Any file path matching the patterns will not be processed by bulldog
+      * an optional array of ignore patterns. Any file path matching the patterns will not be processed by assetpack
       * they can be globs to.
       */
     ignore?: string[];
