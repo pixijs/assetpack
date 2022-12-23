@@ -1,12 +1,12 @@
 import { createPlugin } from '../../../shared/test';
-import type { AssetpackConfig } from '../src';
-import { Assetpack } from '../src';
+import type { AssetPackConfig } from '../src';
+import { AssetPack } from '../src';
 
-describe('Assetpack Config', () =>
+describe('AssetPack Config', () =>
 {
     it('should apply default config', async () =>
     {
-        const assetpack = new Assetpack({});
+        const assetpack = new AssetPack({});
 
         expect(assetpack.config).toEqual({
             entry: './static',
@@ -22,7 +22,7 @@ describe('Assetpack Config', () =>
     it('should merge configs correctly', async () =>
     {
         const plugin = createPlugin({ test: true });
-        const baseConfig: AssetpackConfig = {
+        const baseConfig: AssetPackConfig = {
             entry: 'src/old',
             output: 'dist/old',
             ignore: ['scripts/**/*'],
@@ -31,7 +31,7 @@ describe('Assetpack Config', () =>
             }
         };
 
-        const assetpack = new Assetpack(baseConfig);
+        const assetpack = new AssetPack(baseConfig);
 
         expect(assetpack.config).toEqual({
             entry: 'src/old',

@@ -1,4 +1,4 @@
-import { Assetpack } from '@assetpack/core';
+import { AssetPack } from '@assetpack/core';
 import { audio } from '@assetpack/ffmpeg';
 import { existsSync } from 'fs-extra';
 import type { MockPlugin } from '../../../shared/test';
@@ -31,7 +31,7 @@ describe('Audio', () =>
                 folders: [],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -84,7 +84,7 @@ describe('Audio', () =>
             }]
         });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -128,7 +128,7 @@ describe('Audio', () =>
             post: true
         }) as MockPlugin;
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {

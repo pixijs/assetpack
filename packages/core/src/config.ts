@@ -1,7 +1,7 @@
 import type { LogLevels } from './logger/logLevel';
 import type { Plugin } from './Plugin';
 
-export interface AssetpackConfig
+export interface AssetPackConfig
 {
     /** the entry point of assetpack, the folder that will be converted */
     entry?: string;
@@ -26,9 +26,9 @@ export interface AssetpackConfig
     }>
 }
 
-export type ReqAssetpackConfig = Required<AssetpackConfig>;
+export type ReqAssetPackConfig = Required<AssetPackConfig>;
 
-export const defaultConfig: AssetpackConfig = {
+export const defaultConfig: AssetPackConfig = {
     entry: './static',
     output: './dist',
     ignore: [],

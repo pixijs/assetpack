@@ -1,4 +1,4 @@
-import { Assetpack } from '@assetpack/core';
+import { AssetPack } from '@assetpack/core';
 import { texturePacker } from '@assetpack/texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test/index';
@@ -42,7 +42,7 @@ describe('Texture Packer', () =>
 
         genFolder(testName);
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -79,7 +79,7 @@ describe('Texture Packer', () =>
         genFolder(testName);
 
         const size = 512;
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -112,7 +112,7 @@ describe('Texture Packer', () =>
 
         genFolder(testName);
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -166,7 +166,7 @@ describe('Texture Packer', () =>
                 ],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -205,7 +205,7 @@ describe('Texture Packer', () =>
 
         genFolder(testName);
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -268,7 +268,7 @@ describe('Texture Packer', () =>
                 ],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -317,7 +317,7 @@ describe('Texture Packer', () =>
                 ],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {

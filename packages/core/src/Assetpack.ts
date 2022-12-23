@@ -6,7 +6,7 @@ import hash from 'object-hash';
 import { join, normalize, normalizeSafe } from 'upath';
 import { Logger } from './logger/Logger';
 import { Processor } from './Processor';
-import type { AssetpackConfig, ReqAssetpackConfig } from './config';
+import type { AssetPackConfig, ReqAssetPackConfig } from './config';
 import { defaultConfig } from './config';
 import merge from 'merge';
 
@@ -47,9 +47,9 @@ interface CachedTree
     tree: RootTree
 }
 
-export class Assetpack
+export class AssetPack
 {
-    public readonly config: ReqAssetpackConfig;
+    public readonly config: ReqAssetPackConfig;
     /** A hash of all tree nodes */
     private _treeHash: Record<string, ChildTree> = {};
     /** A hash of file locations to be ignored */
@@ -65,10 +65,10 @@ export class Assetpack
     /** A signature to identify the cache */
     private _signature: string;
 
-    constructor(config: AssetpackConfig)
+    constructor(config: AssetPackConfig)
     {
         // TODO validate config
-        this.config = merge.recursive(true, defaultConfig, config) as ReqAssetpackConfig;
+        this.config = merge.recursive(true, defaultConfig, config) as ReqAssetPackConfig;
         this.config.entry = normalizeSafe(this.config.entry);
         this.config.output = normalizeSafe(this.config.output);
 

@@ -1,6 +1,6 @@
 import type { MockPlugin } from '../../../shared/test/index';
 import { createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test/index';
-import { Assetpack } from '../src/Assetpack';
+import { AssetPack } from '../src/AssetPack';
 import type { Plugin } from '../src/Plugin';
 
 const pkg = 'core';
@@ -53,7 +53,7 @@ describe('Core', () =>
             post: true,
         }) as MockPlugin;
 
-        let assetpack = new Assetpack({
+        let assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -67,7 +67,7 @@ describe('Core', () =>
         expect(plugin.test.mock.invocationCallOrder[0]).toBeLessThan(plugin.transform.mock.invocationCallOrder[0]);
         expect(plugin.transform.mock.invocationCallOrder[0]).toBeLessThan(plugin.finish.mock.invocationCallOrder[0]);
 
-        assetpack = new Assetpack({
+        assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {

@@ -1,4 +1,4 @@
-import type { AssetpackConfig } from '../config';
+import type { AssetPackConfig } from '../config';
 import type { ReporterEvent } from './Reporter';
 import { Reporter } from './Reporter';
 
@@ -6,7 +6,7 @@ class LoggerClass
 {
     private _reporter: Reporter = new Reporter();
 
-    public init(config: AssetpackConfig)
+    public init(config: AssetPackConfig)
     {
         this._reporter.level = config.logLevel || 'info';
     }

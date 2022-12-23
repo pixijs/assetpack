@@ -1,4 +1,4 @@
-import { Assetpack } from '@assetpack/core';
+import { AssetPack } from '@assetpack/core';
 import { webfont } from '../src';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
@@ -27,7 +27,7 @@ describe('Webfont', () =>
             }
         );
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -61,7 +61,7 @@ describe('Webfont', () =>
             }
         );
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -95,7 +95,7 @@ describe('Webfont', () =>
             }
         );
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {

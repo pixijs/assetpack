@@ -1,4 +1,4 @@
-import { Assetpack } from '@assetpack/core';
+import { AssetPack } from '@assetpack/core';
 import { mipmap, spineAtlasMipmap } from '@assetpack/mipmap';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
@@ -50,7 +50,7 @@ describe('Mipmap', () =>
             },
         };
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -102,7 +102,7 @@ describe('Mipmap', () =>
             fixedResolution: 'low'
         };
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -148,7 +148,7 @@ describe('Mipmap', () =>
                 folders: [],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -196,7 +196,7 @@ describe('Mipmap', () =>
                 ],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -242,7 +242,7 @@ describe('Mipmap', () =>
                 ],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {

@@ -1,4 +1,4 @@
-import { Assetpack } from '@assetpack/core';
+import { AssetPack } from '@assetpack/core';
 import { json } from '../src';
 import { existsSync, readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
@@ -27,7 +27,7 @@ describe('Json', () =>
             }
         );
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -65,7 +65,7 @@ describe('Json', () =>
                     },
                 ],
             });
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {
@@ -109,7 +109,7 @@ describe('Json', () =>
                 ],
             });
 
-        const assetpack = new Assetpack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             plugins: {

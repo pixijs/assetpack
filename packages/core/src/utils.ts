@@ -1,6 +1,6 @@
 import upath from 'upath';
 import internalMerge from 'merge';
-import type { RootTree, TransformedTree } from './Assetpack';
+import type { RootTree, TransformedTree } from './AssetPack';
 
 /**
  * A function that checks if the tree has the tags.

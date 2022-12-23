@@ -2,10 +2,10 @@ import { Runner } from '@pixi/runner';
 import { copySync, existsSync, outputFileSync, removeSync } from 'fs-extra';
 import merge from 'merge';
 import minimatch from 'minimatch';
-import type { RootTree, Tags, TransformedTree } from './Assetpack';
+import type { RootTree, Tags, TransformedTree } from './AssetPack';
 import { Logger } from './logger/Logger';
 import type { Plugin } from './Plugin';
-import type { ReqAssetpackConfig } from './config';
+import type { ReqAssetPackConfig } from './config';
 import { hasTag, replaceExt } from './utils';
 
 interface SaveOptions<T extends RootTree | TransformedTree>
@@ -26,7 +26,7 @@ interface SaveOptions<T extends RootTree | TransformedTree>
 
 export class Processor
 {
-    private readonly _config: ReqAssetpackConfig;
+    private readonly _config: ReqAssetPackConfig;
     private _pluginMap: Map<Plugin, string> = new Map();
     /** Array of plugins to be called */
     private readonly _plugins: Plugin[] = [];
@@ -40,7 +40,7 @@ export class Processor
     private _transformHash: Record<string, TransformedTree[] | null> = {};
     private _hash: Record<string, RootTree> = {};
 
-    constructor(config: ReqAssetpackConfig)
+    constructor(config: ReqAssetPackConfig)
     {
         this._config = config;
     }
