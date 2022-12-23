@@ -234,7 +234,7 @@ describe('Texture Packer', () =>
 
     it('should not create mip spritesheets', async () =>
     {
-        const testName = 'tp-no-mip';
+        const testName = 'tp-fix';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
@@ -255,7 +255,7 @@ describe('Texture Packer', () =>
                 files: [],
                 folders: [
                     {
-                        name: 'sprites{no-mip}',
+                        name: 'sprites{fix}',
                         files: [],
                         folders: [
                             {

@@ -18,12 +18,12 @@ type DeepRequired<T> = {
     [P in keyof T]-?: T[P] extends (infer U)[] ? DeepRequired<U>[] : DeepRequired<T[P]>;
 };
 
-export interface TexturePackerOptions extends PluginOptions<'tps' | 'no-mip' | 'jpg'>
+export interface TexturePackerOptions extends PluginOptions<'tps' | 'fix' | 'jpg'>
 {
     texturePacker: TPOptions;
     resolutionOptions: {
-        /** A prefix template for denoting the resolution of the images. */
-        prefixTemplate?: string;
+        /** A template for denoting the resolution of the images. */
+        template?: string;
         /** An object containing the resolutions that the images will be resized to. */
         resolutions?: {[x: string]: number};
         /** A resolution used if the fixed tag is applied. Resolution must match one found in resolutions. */
@@ -40,12 +40,12 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
     const defaultOptions: TexturePackerOptions = {
         tags: {
             tps: 'tps',
-            'no-mip': 'no-mip',
+            fix: 'fix',
             jpg: 'jpg',
             ...options?.tags,
         },
         resolutionOptions: {
-            prefixTemplate: '@%%x',
+            template: '@%%x',
             resolutions: { default: 1, low: 0.5 },
             fixedResolution: 'default',
             maximumTextureSize: 4096,
@@ -87,7 +87,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
             } as ReqTexturePackerOptions;
 
             const largestResolution = Math.max(...Object.values(transformOptions.resolutionOptions.resolutions));
-            const resolutionHash = hasTag(tree, 'path', transformOptions.tags['no-mip'])
+            const resolutionHash = hasTag(tree, 'path', transformOptions.tags.fix)
                 ? {
                     default: transformOptions.resolutionOptions.resolutions[
                         transformOptions.resolutionOptions.fixedResolution
@@ -110,13 +110,13 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
             {
                 const scale = resolution / largestResolution;
                 const origScale = largestResolution;
-                const prefix = transformOptions.resolutionOptions.prefixTemplate.replace('%%', resolution.toString());
+                const template = transformOptions.resolutionOptions.template.replace('%%', resolution.toString());
 
                 const res = await packAsync(imagesToPack, transformOptions.texturePacker);
                 const out = await processTPSFiles(res, {
                     inputDir: tree.path,
                     outputDir: processor.inputToOutput(tree.path),
-                    prefix,
+                    template,
                     scale,
                     originalScale: origScale,
                     processor,
@@ -150,7 +150,7 @@ interface ProcessOptions
 {
     inputDir: string;
     outputDir: string;
-    prefix: string;
+    template: string;
     scale: number;
     originalScale: number;
     processor: Processor;
@@ -161,15 +161,15 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
 
     for (const item of files)
     {
-        // create a name that injects a prefix eg _mip
-        const prefixName = item.name.replace(/(\.[\w\d_-]+)$/i, `${options.prefix}$1`);
+        // create a name that injects a template eg _mip
+        const templateName = item.name.replace(/(\.[\w\d_-]+)$/i, `${options.template}$1`);
         const outputDir = options.outputDir;
 
         // make sure the folder we save to exists
         ensureDirSync(outputDir);
 
         // this is where we save the files
-        const outputFile = path.join(outputDir, prefixName);
+        const outputFile = path.join(outputDir, templateName);
 
         // so one thing FREE texture packer does different is that it either puts the full paths in
         // or the image name.
@@ -231,7 +231,7 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
                 jsonSize.h = Math.ceil(jsonSize.h * scale);
             }
 
-            json.meta.image = json.meta.image.replace(/(\.[\w\d_-]+)$/i, `${options.prefix}$1`);
+            json.meta.image = json.meta.image.replace(/(\.[\w\d_-]+)$/i, `${options.template}$1`);
 
             json.meta.scale *= options.originalScale;
             options.processor.saveToOutput({
@@ -256,22 +256,31 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
             if (options.scale !== 1)
             {
                 // now mip the file..
-                const meta = await sharp(outputFile).metadata();
+                const meta = await sharp(outputFile).metadata().catch((e) =>
+                {
+                    throw new Error(`[texture-packer] Could not get metadata for ${outputFile}: ${e.message}`);
+                });
 
                 if (!meta.width || !meta.height)
                 {
                     throw new Error(`[texture-packer] Could not get metadata for ${outputFile}`);
                 }
 
-                const res = await sharp(outputFile)
-                    .resize({ width: meta.width * options.scale, height: meta.height * options.scale })
-                    .toBuffer()
-                    .catch((e) =>
-                    {
-                        throw new Error(`[texture-packer] Could not resize ${outputFile}: ${e.message}`);
-                    });
+                try
+                {
+                    const res = await sharp(outputFile)
+                        .resize({
+                            width: Math.ceil(meta.width * options.scale),
+                            height: Math.ceil(meta.height * options.scale)
+                        })
+                        .toBuffer();
 
-                writeFileSync(outputFile, res);
+                    writeFileSync(outputFile, res);
+                }
+                catch (error)
+                {
+                    throw new Error(`[texture-packer] Could not resize ${outputFile}: ${(error as Error).message}`);
+                }
             }
         }
 
