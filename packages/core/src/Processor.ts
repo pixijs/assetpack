@@ -382,13 +382,20 @@ export class Processor
                         }
                     }
 
-                    promises.push(new Promise(async (resolve) =>
+                    promises.push(new Promise(async (resolve, reject) =>
                     {
                         for (let j = 0; j < processList.length; j++)
                         {
                             const plugin = processList[j];
 
-                            await plugin.post?.(outfile, this, this.getOptions(tree.path, plugin));
+                            try
+                            {
+                                await plugin.post?.(outfile, this, this.getOptions(tree.path, plugin));
+                            }
+                            catch (error)
+                            {
+                                reject(error);
+                            }
                         }
 
                         resolve();
