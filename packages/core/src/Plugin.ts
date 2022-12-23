@@ -1,4 +1,4 @@
-import type { RootTree, TransformedTree } from './temp';
+import type { RootTree, TransformedTree } from './AssetPack';
 import type { Processor } from './Processor';
 
 export interface PluginOptions<T extends string>

@@ -1,6 +1,6 @@
 import type { MockPlugin } from '../../../shared/test/index';
 import { createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test/index';
-import { AssetPack } from '../src/temp';
+import { AssetPack } from '../src/AssetPack';
 import type { Plugin } from '../src/Plugin';
 
 const pkg = 'core';
