@@ -2,7 +2,7 @@ import { Runner } from '@pixi/runner';
 import { copySync, existsSync, outputFileSync, removeSync } from 'fs-extra';
 import merge from 'merge';
 import minimatch from 'minimatch';
-import type { RootTree, Tags, TransformedTree } from './AssetPack';
+import type { RootTree, Tags, TransformedTree } from './temp';
 import { Logger } from './logger/Logger';
 import type { Plugin } from './Plugin';
 import type { ReqAssetPackConfig } from './config';

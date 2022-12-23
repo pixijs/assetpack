@@ -1,4 +1,4 @@
-export * from './AssetPack';
+export * from './temp';
 export * from './config';
 export * from './logger/Logger';
 export * from './Plugin';
