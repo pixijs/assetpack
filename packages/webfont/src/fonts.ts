@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs-extra';
+import fs from 'fs-extra';
 import otf2svg from 'otf2svg';
 import svg2ttf from 'svg2ttf';
 import ttf2woff2 from 'ttf2woff2';
@@ -13,7 +13,7 @@ export const fonts = {
                     return ttf2woff2(inFile);
                 }
 
-                return ttf2woff2(readFileSync(inFile));
+                return ttf2woff2(fs.readFileSync(inFile));
             }
         },
     },
@@ -26,7 +26,7 @@ export const fonts = {
                     return Buffer.from(svg2ttf(inFile).buffer);
                 }
 
-                return Buffer.from(svg2ttf(readFileSync(inFile, 'utf8'), {}).buffer);
+                return Buffer.from(svg2ttf(fs.readFileSync(inFile, 'utf8'), {}).buffer);
             },
             woff2: (inFile: string) =>
             {

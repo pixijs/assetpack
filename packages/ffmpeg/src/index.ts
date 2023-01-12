@@ -1,7 +1,7 @@
 import type { Plugin, Processor, RootTree } from '@assetpack/core';
 import { checkExt, merge, path } from '@assetpack/core';
 import fluentFfmpeg from 'fluent-ffmpeg';
-import { copySync } from 'fs-extra';
+import fs from 'fs-extra';
 
 type DeepRequired<T> = {
     [K in keyof T]: Required<DeepRequired<T[K]>>
@@ -84,7 +84,7 @@ async function convert(output: AudioData, tree: RootTree, extname: string, proce
             }
             else
             {
-                copySync(tree.path, outPath);
+                fs.copySync(tree.path, outPath);
             }
         });
 
@@ -129,7 +129,7 @@ export function ffmpeg(options?: AudioOptions): Plugin<AudioOptions>
         {
             const opts = merge(true, defaultOptions, optionOverrides) as DeepRequired<AudioOptions>;
 
-            if (!opts.inputs)
+            if (!opts.inputs.length)
             {
                 throw new Error('[ffmpeg] No inputs defined');
             }

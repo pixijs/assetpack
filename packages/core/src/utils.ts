@@ -32,7 +32,7 @@ export function replaceExt(path: string, ext: string)
     }
 
     const nFileName = upath.basename(path, upath.extname(path)) + ext;
-    const nFilepath = upath.join(upath.dirname(path), nFileName);
+    const nFilepath = upath.joinSafe(upath.dirname(path), nFileName);
 
     // Because `path.join` removes the head './' from the given path.
     // This removal can cause a problem when passing the result to `require` or

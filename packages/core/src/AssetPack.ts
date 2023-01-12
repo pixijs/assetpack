@@ -1,9 +1,9 @@
 import clone from 'clone';
-import { ensureDirSync, outputFileSync, readdirSync, readFileSync, removeSync, statSync } from 'fs-extra';
+import fs from 'fs-extra';
 import minimatch from 'minimatch';
-import * as nodeMachineId from 'node-machine-id';
+import nodeMachineId from 'node-machine-id';
 import hash from 'object-hash';
-import { join, normalize, normalizeSafe } from 'upath';
+import path from 'upath';
 import { Logger } from './logger/Logger';
 import { Processor } from './Processor';
 import type { AssetPackConfig, ReqAssetPackConfig } from './config';
@@ -69,14 +69,14 @@ export class AssetPack
     {
         // TODO validate config
         this.config = merge.recursive(true, defaultConfig, config) as ReqAssetPackConfig;
-        this.config.entry = normalizeSafe(this.config.entry);
-        this.config.output = normalizeSafe(this.config.output);
+        this.config.entry = path.normalizeSafe(this.config.entry);
+        this.config.output = path.normalizeSafe(this.config.output);
 
         this._processor = new Processor(this.config);
         Logger.init(this.config);
 
         // create .assetpack folder if it doesn't exist
-        ensureDirSync('.assetpack/');
+        fs.ensureDirSync('.assetpack/');
 
         // creates a file name that is valid for windows and mac
         const folderTag = (`${this.config.entry}-${this.config.output}`).split('/').join('-');
@@ -123,7 +123,7 @@ export class AssetPack
                 tree: this._tree
             };
 
-            outputFileSync(this._cacheTreePath, JSON.stringify(cacheData, null, 4));
+            fs.outputFileSync(this._cacheTreePath, JSON.stringify(cacheData, null, 4));
         }
 
         this._cachedTree = this._tree;
@@ -131,23 +131,22 @@ export class AssetPack
 
     private _walk(dir: string, branch: RootTree)
     {
-        const files = readdirSync(dir);
+        const files = fs.readdirSync(dir);
 
         files.forEach((file) =>
         {
             if (file.indexOf('.DS_Store') !== -1) return;
 
-            const fullPath = join(dir, file);
-
-            const base = normalize(`${this.config.entry}/`);
+            const fullPath = path.joinSafe(dir, file);
+            const base = this.config.entry;
             const relativePath = fullPath.replace(base, '');
 
             // should we ignore the file based on the ignore rules provided (if any)
             if (this._shouldIgnore(relativePath)) return;
 
-            const fileTags = this._extractTags(normalizeSafe(file));
+            const fileTags = this._extractTags(path.normalizeSafe(file));
             const pathTags = this._extractTags(fullPath);
-            const stat = statSync(fullPath);
+            const stat = fs.statSync(fullPath);
             const child: ChildTree = {
                 isFolder: stat.isDirectory(),
                 parent: branch.path,
@@ -231,9 +230,9 @@ export class AssetPack
         {
             try
             {
-                ensureDirSync(this.config.output);
+                fs.ensureDirSync(this.config.output);
 
-                const json = readFileSync(this._cacheTreePath, 'utf8');
+                const json = fs.readFileSync(this._cacheTreePath, 'utf8');
 
                 const parsedJson = JSON.parse(json) as CachedTree;
 
@@ -256,11 +255,11 @@ export class AssetPack
 
         if (!this._cachedTree)
         {
-            removeSync(this.config.output);
-            ensureDirSync(this.config.output);
+            fs.removeSync(this.config.output);
+            fs.ensureDirSync(this.config.output);
         }
 
-        removeSync(this._cacheTreePath);
+        fs.removeSync(this._cacheTreePath);
 
         this._tree = {
             fileTags: {},

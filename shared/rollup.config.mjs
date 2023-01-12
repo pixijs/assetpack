@@ -35,7 +35,7 @@ export function createConfig({ pkg, external = [] })
                 sourcemap: true
             }
         ],
-        plugins: [typescript({ sourceMap: true })]
+        plugins: [typescript()]
     };
 }
 

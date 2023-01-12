@@ -1,6 +1,6 @@
 import type { Plugin } from '@assetpack/core';
 import { checkExt, hasTag } from '@assetpack/core';
-import { readFileSync } from 'fs-extra';
+import fs from 'fs-extra';
 import type { MipmapOptions } from './mipmap';
 
 export type SpineOptions = MipmapOptions<'spine'>;
@@ -43,7 +43,7 @@ export function spineAtlasMipmap(options?: Partial<SpineOptions>): Plugin<SpineO
                 }
                 : transformOptions.resolutions;
 
-            const rawAtlas = readFileSync(tree.path, 'utf8');
+            const rawAtlas = fs.readFileSync(tree.path, 'utf8');
 
             for (const resolution of Object.values(resolutionHash))
             {
