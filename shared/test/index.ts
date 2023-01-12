@@ -1,4 +1,4 @@
-import { copyFileSync, ensureDirSync, ensureFileSync } from 'fs-extra';
+import fs from 'fs-extra';
 import type { Plugin } from 'packages/core/src/Plugin';
 import path from 'path';
 import { getRoot } from './find';
@@ -31,14 +31,14 @@ export function createFolder(pkg: string, folder: Folder, base?: string)
     base = base || getInputDir(pkg, '');
     const baseFolder = path.join(base, folder.name);
 
-    ensureDirSync(baseFolder);
+    fs.ensureDirSync(baseFolder);
 
     folder.files.forEach((file) =>
     {
         const filePath = path.join(baseFolder, file.name);
 
-        ensureFileSync(filePath);
-        copyFileSync(file.content, filePath);
+        fs.ensureFileSync(filePath);
+        fs.copyFileSync(file.content, filePath);
     });
     folder.folders.forEach((folder) =>
     {

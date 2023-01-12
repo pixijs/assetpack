@@ -1,5 +1,5 @@
 import { Runner } from '@pixi/runner';
-import { copySync, existsSync, outputFileSync, removeSync } from 'fs-extra';
+import fs from 'fs-extra';
 import merge from 'merge';
 import minimatch from 'minimatch';
 import type { RootTree, Tags, TransformedTree } from './AssetPack';
@@ -171,13 +171,13 @@ export class Processor
 
         if (!data.outputOptions?.outputData)
         {
-            copySync(data.tree.path, outputName);
+            fs.copySync(data.tree.path, outputName);
             Logger.verbose(`[processor] File Copied: ${outputName}`);
 
             return outputName;
         }
 
-        outputFileSync(outputName, data.outputOptions.outputData);
+        fs.outputFileSync(outputName, data.outputOptions.outputData);
         Logger.verbose(`[processor] File Saved: ${outputName}`);
 
         return outputName;
@@ -256,7 +256,7 @@ export class Processor
             {
                 transformed.forEach((out: TransformedTree) =>
                 {
-                    removeSync(out.path);
+                    fs.removeSync(out.path);
                 });
 
                 this._transformHash[tree.path] = null;
@@ -279,7 +279,7 @@ export class Processor
         // first apply transforms / copy to other place..
         if (tree.state === 'modified' || tree.state === 'added')
         {
-            if (tree.path && !existsSync(tree.path))
+            if (tree.path && !fs.existsSync(tree.path))
             {
                 Logger.error(
                     `[processor] Asset ${tree.path} does not exist. Could have been deleted half way through processing.`

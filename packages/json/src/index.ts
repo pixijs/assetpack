@@ -1,6 +1,6 @@
 import type { Plugin } from '@assetpack/core';
 import { checkExt, Logger } from '@assetpack/core';
-import { readFileSync } from 'fs-extra';
+import fs from 'fs-extra';
 
 export function json(): Plugin
 {
@@ -12,7 +12,7 @@ export function json(): Plugin
         },
         async post(tree, processor)
         {
-            let json = readFileSync(tree.path, 'utf8');
+            let json = fs.readFileSync(tree.path, 'utf8');
 
             try
             {

@@ -9,7 +9,7 @@ import type {
 } from 'free-tex-packer-core';
 import { packAsync } from 'free-tex-packer-core';
 import { readFileSync } from 'fs';
-import { ensureDirSync, writeFileSync } from 'fs-extra';
+import fs from 'fs-extra';
 import glob from 'glob-promise';
 import sharp from 'sharp';
 
@@ -166,10 +166,10 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
         const outputDir = options.outputDir;
 
         // make sure the folder we save to exists
-        ensureDirSync(outputDir);
+        fs.ensureDirSync(outputDir);
 
         // this is where we save the files
-        const outputFile = path.join(outputDir, templateName);
+        const outputFile = path.joinSafe(outputDir, templateName);
 
         // so one thing FREE texture packer does different is that it either puts the full paths in
         // or the image name.
@@ -275,7 +275,7 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
                         })
                         .toBuffer();
 
-                    writeFileSync(outputFile, res);
+                    fs.writeFileSync(outputFile, res);
                 }
                 catch (error)
                 {
