@@ -200,7 +200,7 @@ describe('Mipmap', () =>
             entry: inputDir,
             output: outputDir,
             plugins: {
-                mipmap: mipmap({}),
+                mipmap: mipmap(),
                 spine: spineAtlasMipmap(),
             }
         });
