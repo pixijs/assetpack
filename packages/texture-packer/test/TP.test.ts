@@ -3,6 +3,7 @@ import { texturePacker } from '@assetpack/texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test/index';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
+import sharp from 'sharp';
 
 const pkg = 'texture-packer';
 
@@ -85,7 +86,7 @@ describe('Texture Packer', () =>
             plugins: {
                 tps: texturePacker({
                     resolutionOptions: {
-                        resolutions: { default: 1 },
+                        resolutions: { default: 1, low: 0.5 },
                         maximumTextureSize: size,
                     },
                 })
@@ -134,6 +135,63 @@ describe('Texture Packer', () =>
 
         expect(png).toBe(true);
         expect(json).toBe(true);
+    });
+
+    it('should override default texture packer options (resolutions)', async () =>
+    {
+        const testName = 'tp-custom-res';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        genFolder(testName);
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            plugins: {
+                tps: texturePacker({
+                    resolutionOptions: {
+                        resolutions: { low: 0.5, default: 1, high: 2 },
+                    },
+                })
+            }
+        });
+
+        await assetpack.run();
+
+        expect(existsSync(`${outputDir}/sprites/sprites@0.5x.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@1x.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@2x.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@0.5x.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@1x.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@2x.png`)).toBe(true);
+
+        const sheet1Data = readJSONSync(`${outputDir}/sprites/sprites@1x.json`);
+        const sheet2Data = readJSONSync(`${outputDir}/sprites/sprites@2x.json`);
+        const sheet3Data = readJSONSync(`${outputDir}/sprites/sprites@0.5x.json`);
+
+        expect(sheet2Data.frames['sprite0.png'].frame).toEqual({ x: 2, y: 2, w: 136, h: 196 });
+        expect(sheet2Data.meta.size).toEqual({ w: 560, h: 480 });
+        expect(sheet2Data.meta.scale).toEqual(2);
+        expect(sheet1Data.frames['sprite0.png'].frame).toEqual({ x: 2 / 2, y: 2 / 2, w: 136 / 2, h: 196 / 2 });
+        expect(sheet1Data.meta.size).toEqual({ w: 560 / 2, h: 480 / 2 });
+        expect(sheet1Data.meta.scale).toEqual(1);
+        expect(sheet3Data.frames['sprite0.png'].frame).toEqual({ x: 2 / 4, y: 2 / 4, w: 136 / 4, h: 196 / 4 });
+        expect(sheet3Data.meta.size).toEqual({ w: 560 / 4, h: 480 / 4 });
+        expect(sheet3Data.meta.scale).toEqual(0.5);
+
+        const meta = await sharp(`${outputDir}/sprites/sprites@2x.png`).metadata();
+        const meta2 = await sharp(`${outputDir}/sprites/sprites@1x.png`).metadata();
+        const meta3 = await sharp(`${outputDir}/sprites/sprites@0.5x.png`).metadata();
+
+        expect(meta.width).toEqual(560);
+        expect(meta.height).toEqual(480);
+
+        expect(meta2.width).toEqual(560 / 2);
+        expect(meta2.height).toEqual(480 / 2);
+
+        expect(meta3.width).toEqual(560 / 4);
+        expect(meta3.height).toEqual(480 / 4);
     });
 
     it('should allow tags to be overridden', async () =>

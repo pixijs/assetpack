@@ -1,14 +1,13 @@
 import clone from 'clone';
 import fs from 'fs-extra';
+import merge from 'merge';
 import minimatch from 'minimatch';
-import nodeMachineId from 'node-machine-id';
 import hash from 'object-hash';
 import path from 'upath';
-import { Logger } from './logger/Logger';
-import { Processor } from './Processor';
 import type { AssetPackConfig, ReqAssetPackConfig } from './config';
 import { defaultConfig } from './config';
-import merge from 'merge';
+import { Logger } from './logger/Logger';
+import { Processor } from './Processor';
 
 export interface Tags
 {
@@ -81,7 +80,7 @@ export class AssetPack
         // creates a file name that is valid for windows and mac
         const folderTag = (`${this.config.entry}-${this.config.output}`).split('/').join('-');
 
-        this._cacheTreePath = `.assetpack/${folderTag}-${nodeMachineId.machineIdSync(true)}`;
+        this._cacheTreePath = `.assetpack/${folderTag}}`;
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { plugins, ...configWithoutPlugins } = this.config;

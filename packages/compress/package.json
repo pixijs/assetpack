@@ -1,12 +1,12 @@
 {
-  "name": "@assetpack/core",
+  "name": "@assetpack/plugin-compress",
   "version": "0.0.0",
   "description": "",
-  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/core/#readme",
+  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/compress/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
   "repository": {
     "url": "pixijs/assetpack",
-    "directory": "packages/assetpack"
+    "directory": "packages/compress"
   },
   "license": "MIT",
   "author": "Zyie",
@@ -28,23 +28,15 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@pixi/runner": "^7.0.0",
-    "chalk": "^4.1.2",
-    "clone": "^2.1.2",
     "fs-extra": "^11.1.0",
-    "merge": "^2.1.1",
-    "minimatch": "5.1.1",
-    "object-hash": "3.0.0",
-    "ora": "^5.4.1",
-    "readline": "^1.3.0",
-    "string-width": "^4.2.3",
-    "strip-ansi": "^6.0.0",
-    "term-size": "^2.2.1",
-    "upath": "^2.0.0"
+    "sharp": "^0.31.2"
   },
   "devDependencies": {
-    "@types/clone": "^2.1.1",
-    "@types/object-hash": "^3.0.0"
+    "@assetpack/core": "^0.0.0",
+    "@types/sharp": "^0.31.0"
+  },
+  "peerDependencies": {
+    "@assetpack/core": "^0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
