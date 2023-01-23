@@ -5,13 +5,12 @@ import type {
     PackerExporterType,
     PackerType,
     TextureFormat,
-    TexturePackerOptions as TPOptions,
+    TexturePackerOptions as TPOptions
 } from 'free-tex-packer-core';
 import { packAsync } from 'free-tex-packer-core';
 import { readFileSync } from 'fs';
 import fs from 'fs-extra';
 import glob from 'glob-promise';
-import sharp from 'sharp';
 
 // deep required type
 type DeepRequired<T> = {
@@ -112,7 +111,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                 const origScale = largestResolution;
                 const template = transformOptions.resolutionOptions.template.replace('%%', resolution.toString());
 
-                const res = await packAsync(imagesToPack, transformOptions.texturePacker);
+                const res = await packAsync(imagesToPack, { ...transformOptions.texturePacker, scale });
                 const out = await processTPSFiles(res, {
                     inputDir: tree.path,
                     outputDir: processor.inputToOutput(tree.path),
@@ -191,49 +190,9 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
             }
 
             json.frames = newFrames;
-
-            if (options.scale !== 1)
-            {
-                // FREE texture packer does not actually scale images..
-                // so first we scale the data in the json...
-                const scale = options.scale;
-                // resize
-
-                for (const i in json.frames)
-                {
-                    const frameData = json.frames[i];
-
-                    delete frameData.pivot;
-
-                    const frame = frameData.frame;
-
-                    frame.x = Math.ceil(frame.x * scale);
-                    frame.y = Math.ceil(frame.y * scale);
-                    frame.w = Math.ceil(frame.w * scale);
-                    frame.h = Math.ceil(frame.h * scale);
-
-                    const spriteSourceSize = frameData.spriteSourceSize;
-
-                    spriteSourceSize.x = Math.ceil(spriteSourceSize.x * scale);
-                    spriteSourceSize.y = Math.ceil(spriteSourceSize.y * scale);
-                    spriteSourceSize.w = Math.ceil(spriteSourceSize.w * scale);
-                    spriteSourceSize.h = Math.ceil(spriteSourceSize.h * scale);
-
-                    const sourceSize = frameData.sourceSize;
-
-                    sourceSize.w = Math.ceil(sourceSize.w * scale);
-                    sourceSize.h = Math.ceil(sourceSize.h * scale);
-                }
-
-                const jsonSize = json.meta.size;
-
-                jsonSize.w = Math.ceil(jsonSize.w * scale);
-                jsonSize.h = Math.ceil(jsonSize.h * scale);
-            }
-
             json.meta.image = json.meta.image.replace(/(\.[\w\d_-]+)$/i, `${options.template}$1`);
-
             json.meta.scale *= options.originalScale;
+
             options.processor.saveToOutput({
                 tree: undefined as any,
                 outputOptions: {
@@ -251,37 +210,6 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
                     outputData: item.buffer,
                 }
             });
-
-            // and then we resize the image if we need to
-            if (options.scale !== 1)
-            {
-                // now mip the file..
-                const meta = await sharp(outputFile).metadata().catch((e) =>
-                {
-                    throw new Error(`[texture-packer] Could not get metadata for ${outputFile}: ${e.message}`);
-                });
-
-                if (!meta.width || !meta.height)
-                {
-                    throw new Error(`[texture-packer] Could not get metadata for ${outputFile}`);
-                }
-
-                try
-                {
-                    const res = await sharp(outputFile)
-                        .resize({
-                            width: Math.ceil(meta.width * options.scale),
-                            height: Math.ceil(meta.height * options.scale)
-                        })
-                        .toBuffer();
-
-                    fs.writeFileSync(outputFile, res);
-                }
-                catch (error)
-                {
-                    throw new Error(`[texture-packer] Could not resize ${outputFile}: ${(error as Error).message}`);
-                }
-            }
         }
 
         outputFilePaths.push(outputFile);
