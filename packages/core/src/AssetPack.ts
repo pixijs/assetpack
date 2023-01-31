@@ -22,7 +22,7 @@ export interface RootTree
     isFolder: boolean;
     parent: string | null;
     path: string;
-    state: string;
+    state: 'added' | 'deleted' | 'modified' | 'normal';
     transformed: TransformedTree[];
 }
 

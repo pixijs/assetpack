@@ -1,12 +1,12 @@
 {
-  "name": "@assetpack/plugin-texture-packer",
+  "name": "@assetpack/plugin-manifest",
   "version": "0.0.0",
   "description": "",
-  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/texture-packer/#readme",
+  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/manifest/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
   "repository": {
     "url": "pixijs/assetpack",
-    "directory": "packages/texture-packer"
+    "directory": "packages/manifest"
   },
   "license": "MIT",
   "author": "Zyie",
@@ -28,19 +28,13 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "free-tex-packer-core": "0.3.4",
-    "fs-extra": "^11.1.0",
-    "glob": "^8.0.3",
-    "glob-promise": "^5.0.0",
-    "sharp": "^0.31.2"
+    "fs-extra": "^11.1.0"
   },
   "devDependencies": {
-    "@assetpack/core": "*",
-    "@types/sharp": "^0.31.0",
-    "@assetpack/plugin-manifest": "*"
+    "@assetpack/core": "^0.0.0"
   },
   "peerDependencies": {
-    "@assetpack/core": "*"
+    "@assetpack/core": "^0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

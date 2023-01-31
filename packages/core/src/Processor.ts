@@ -3,9 +3,10 @@ import fs from 'fs-extra';
 import merge from 'merge';
 import minimatch from 'minimatch';
 import type { RootTree, Tags, TransformedTree } from './AssetPack';
+import { SavableAssetCache } from './Cache';
+import type { ReqAssetPackConfig } from './config';
 import { Logger } from './logger/Logger';
 import type { Plugin } from './Plugin';
-import type { ReqAssetPackConfig } from './config';
 import { hasTag, replaceExt } from './utils';
 
 interface SaveOptions<T extends RootTree | TransformedTree>
@@ -45,8 +46,17 @@ export class Processor
         this._config = config;
     }
 
+    public get config(): ReqAssetPackConfig
+    {
+        return this._config;
+    }
+
     public addPlugin(plugin: Plugin, key: string): void
     {
+        if (plugin.transform && !plugin.name)
+        {
+            throw new Error('Plugin must have a name if it has a transform function');
+        }
         this._pluginMap.set(plugin, key);
         this._plugins.push(plugin);
         this._onStart.add(plugin);
@@ -142,6 +152,18 @@ export class Processor
         return output;
     }
 
+    public trimOutputPath(outputPath: string): string
+    {
+        const res = outputPath.replace(this.config.output, '');
+
+        if (res.startsWith('/'))
+        {
+            return res.substring(1);
+        }
+
+        return res;
+    }
+
     public addToTreeAndSave(data: SaveOptions<RootTree>)
     {
         const outputName = data.outputOptions?.outputPathOverride
@@ -193,7 +215,9 @@ export class Processor
      * @param data.transformId - Unique id for the transformed file.
      * @param data.transformData - any optional data you want to pass in with the transform.
      */
-    public addToTree(data: Omit<SaveOptions<RootTree>, 'transformOptions'> & SaveOptions<RootTree>['transformOptions']): void
+    public addToTree(
+        data: Omit<SaveOptions<RootTree>, 'transformOptions'> & SaveOptions<RootTree>['transformOptions'],
+    ): void
     {
         // eslint-disable-next-line prefer-const
         let { tree, isFolder, fileTags, transformId, transformData } = data;
@@ -209,7 +233,7 @@ export class Processor
         isFolder = isFolder ?? tree.isFolder;
         fileTags = { ...tree.fileTags, ...fileTags };
 
-        tree.transformed.push({
+        const treeData: TransformedTree = {
             path: outputName,
             isFolder,
             creator: tree.path,
@@ -218,7 +242,9 @@ export class Processor
             pathTags: tree.pathTags,
             transformId: transformId ?? null,
             transformData: transformData || {},
-        });
+        };
+
+        tree.transformed.push(treeData);
     }
 
     /**
@@ -259,6 +285,7 @@ export class Processor
                     fs.removeSync(out.path);
                 });
 
+                SavableAssetCache.remove(tree.path);
                 this._transformHash[tree.path] = null;
             }
         }
@@ -299,7 +326,6 @@ export class Processor
                 )
                 {
                     transformed = true;
-
                     promises.push(plugin.transform(tree, this, this.getOptions(tree.path, plugin)));
 
                     if (plugin.folder)
@@ -315,10 +341,13 @@ export class Processor
                 if (!tree.isFolder)
                 {
                     this.addToTreeAndSave({ tree });
-                }
-                else
-                {
-                    this.addToTree({ tree });
+                    SavableAssetCache.set(tree.path, {
+                        tree,
+                        transformData: {
+                            type: 'copy',
+                            files: [{ path: this.inputToOutput(tree.path), transformedPaths: [] }],
+                        }
+                    });
                 }
             }
         }
