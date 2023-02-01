@@ -43,16 +43,8 @@ export function createConfig({ pkg, external = [] })
             input: `src/index.ts`,
             plugins: [dts()],
             output: {
-                file: `dist/es/index.d.ts`,
+                file: `dist/types/index.d.ts`,
                 format: 'es',
-            },
-        },
-        {
-            input: `src/index.ts`,
-            plugins: [dts()],
-            output: {
-                file: `dist/cjs/index.d.ts`,
-                format: 'cjs',
             },
         },
     ];
