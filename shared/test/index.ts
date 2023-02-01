@@ -53,6 +53,7 @@ export function assetPath(pkg: string, pth: string): string
 
 export function createPlugin(
     data: Partial<Record<keyof Plugin, boolean | ((...params: any[]) => Promise<void>)>>,
+    name?: string,
 ): Plugin
 {
     const convert = (key: keyof Plugin, isTest = false) =>
@@ -67,6 +68,7 @@ export function createPlugin(
 
     return {
         folder: data.folder || false,
+        name: name ?? 'test',
         cache: {},
         test: convert('test', true),
         transform: convert('transform'),
@@ -77,4 +79,4 @@ export function createPlugin(
     } as Plugin;
 }
 
-export type MockPlugin = Omit<Record<keyof Plugin, jest.Mock>, 'folder'> & { folder: boolean };
+export type MockPlugin = Omit<Record<keyof Plugin, jest.Mock>, 'folder' | 'name'> & { folder: boolean, name: string };

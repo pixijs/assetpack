@@ -1,5 +1,5 @@
 import { AssetPack } from '@assetpack/core';
-import { texturePacker } from '@assetpack/texture-packer';
+import { texturePacker } from '@assetpack/plugin-texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test/index';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';

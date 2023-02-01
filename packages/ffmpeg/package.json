@@ -33,10 +33,12 @@
   },
   "devDependencies": {
     "@assetpack/core": "^0.0.0",
+    "@assetpack/plugin-manifest": "^0.0.0",
     "@types/fluent-ffmpeg": "^2.1.20"
   },
   "peerDependencies": {
-    "@assetpack/core": "^0.0.0"
+    "@assetpack/core": "^0.0.0",
+    "@assetpack/plugin-manifest": "^0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

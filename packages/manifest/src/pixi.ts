@@ -1,5 +1,5 @@
-import type { ChildTree, Plugin, Processor, RootTree, Tags } from '@assetpack/core';
-import { Logger, path, SavableAssetCache } from '@assetpack/core';
+import type { ChildTree, Plugin, Processor, RootTree, Tags, TransformDataFile } from '@assetpack/core';
+import { path, SavableAssetCache } from '@assetpack/core';
 import type { BaseManifestOptions } from './manifest';
 import { baseManifest } from './manifest';
 import { getManifestName } from './utils';
@@ -29,7 +29,7 @@ export interface PixiManifestOptions extends BaseManifestOptions
 export function pixiManifest(options?: Partial<PixiManifestOptions>): Plugin<PixiManifestOptions>
 {
     const defaultOptions: PixiManifestOptions = {
-        defaultParser: { type: 'copy', parser: defaultParser },
+        defaultParser: { type: 'copy', parser: defaultPixiParser },
         ...options,
     };
     const plugin = baseManifest<PixiManifestOptions>(finish, defaultOptions);
@@ -84,30 +84,35 @@ function collect(
 
     if (tree.transformed.length > 0)
     {
+        let result: PixiManifestEntry[] = [];
+
         parsers!.forEach((parser) =>
         {
             if (parser.type !== SavableAssetCache.get(tree.path).transformData.type) return;
-            const parserResult = parser.parser(tree as ChildTree, processor);
+            result = parser.parser(tree as ChildTree, processor);
 
-            parserResult.forEach((entry) =>
-            {
-                if (!entry.data?.tags && (Object.keys(tree.fileTags).length > 0 || Object.keys(tree.pathTags).length > 0))
-                {
-                    entry.data = entry.data || {} as PixiManifestEntry['data'];
-                    entry.data!.tags = {
-                        ...tree.fileTags,
-                        ...tree.pathTags,
-                    };
-                }
-            });
-            bundle.assets.push(...parserResult);
             found = true;
         });
 
         if (!found)
         {
-            Logger.error(`[pixi-manifest] No parser found for ${tree.path}. Skipping file.`);
+            result = parsers?.find(
+                (parser) => parser.type === 'copy')?.parser(tree as ChildTree, processor
+            ) as PixiManifestEntry[];
         }
+
+        result.forEach((entry) =>
+        {
+            if (!entry.data?.tags && (Object.keys(tree.fileTags).length > 0 || Object.keys(tree.pathTags).length > 0))
+            {
+                entry.data = entry.data || {} as PixiManifestEntry['data'];
+                entry.data!.tags = {
+                    ...tree.fileTags,
+                    ...tree.pathTags,
+                };
+            }
+        });
+        bundle.assets.push(...result);
     }
 
     bundles.set(targetPath, bundle);
@@ -119,18 +124,34 @@ function collect(
     }
 }
 
-function defaultParser(tree: ChildTree, processor: Processor): PixiManifestEntry[]
+export function parseExtensions(name: string, file: TransformDataFile, ext: string)
+{
+    const extensions = file.transformedPaths.map((transformedPath) =>
+        path.extname(transformedPath).replace('.', ''));
+
+    extensions.push(ext.replace('.', ''));
+
+    return `${path.removeExt(name, ext)}.{${extensions.join(',')}}`;
+}
+
+export function defaultPixiParser(tree: ChildTree, processor: Processor): PixiManifestEntry[]
 {
     const transformData = SavableAssetCache.get(tree.path).transformData;
+
     const res = transformData.files.map((file) =>
     {
         const ext = path.extname(file.path);
-        const name = processor.trimOutputPath(file.path);
-        const extensions = file.transformedPaths.map((transformedPath) => path.extname(transformedPath).replace('.', ''));
+        let name = processor.trimOutputPath(file.path);
 
-        extensions.push(ext.replace('.', ''));
+        if (transformData.resolutions && transformData.prefix)
+        {
+            const prefix = transformData.prefix;
+            const resolutions = `{${transformData.resolutions.map((res: number) => res.toString()).join(',')}}`;
 
-        const fullname = `${path.removeExt(name, ext)}.{${extensions.join(',')}}`;
+            name = name.replace(ext, `${prefix.replace('%%', resolutions)}${ext}`);
+        }
+
+        const fullname = parseExtensions(name, file, ext);
 
         return {
             name: processor.trimOutputPath(file.path),

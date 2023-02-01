@@ -1,5 +1,5 @@
 import { AssetPack } from '@assetpack/core';
-import { mipmap, spineAtlasMipmap } from '@assetpack/mipmap';
+import { mipmap, spineAtlasMipmap } from '@assetpack/plugin-mipmap';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 
