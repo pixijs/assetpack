@@ -3,7 +3,13 @@
   "version": "0.0.0",
   "description": "A simple CLI to run AssetPack",
   "keywords": [
-    "oclif"
+    "assetpack",
+    "pixijs",
+    "pixi",
+    "cli",
+    "command",
+    "line",
+    "interface"
   ],
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/cli/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -13,57 +19,30 @@
   },
   "license": "MIT",
   "author": "Zyie",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "bin": {
-    "assetpack": "./bin/run"
+    "assetpack": "bin/index.js"
   },
   "files": [
-    "/bin",
-    "/dist",
-    "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
+    "dist/*",
+    "bin/*"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc -b",
-    "lint": "",
-    "prepack": "oclif manifest",
-    "postpack": "rimraf oclif.manifest.json"
+    "prebuild": "rimraf dist",
+    "build": "tsc -p tsconfig.json",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@oclif/core": "^2.0.8",
-    "@oclif/plugin-help": "^5",
     "chalk": "^4.1.2",
+    "commander": "^10.0.0",
     "fs-extra": "^11.1.0"
-  },
-  "devDependencies": {
-    "@oclif/test": "^2.2.20",
-    "@types/node": "^16.18.11",
-    "oclif": "^3",
-    "ts-node": "^10.9.1"
   },
   "peerDependencies": {
     "@assetpack/core": ">=0"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16.0.0"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "oclif": {
-    "bin": "assetpack",
-    "dirname": "assetpack",
-    "default": ".",
-    "commands": "./dist",
-    "plugins": [
-      "@oclif/plugin-help"
-    ],
-    "topicSeparator": " ",
-    "topics": {
-      "hello": {
-        "description": "Say hello to the world and others"
-      }
-    }
   }
 }

@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "declaration": true,
-    "importHelpers": true,
+    "sourceMap": true,
+    "lib": ["esnext"],
+    "moduleResolution": "node",
     "module": "commonjs",
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
-    "target": "es2019",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "esModuleInterop": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"
