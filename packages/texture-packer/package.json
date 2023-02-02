@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@assetpack/core": "^0.1.0",
-    "@assetpack/plugin-manifest": "^0.1.0",
     "@types/sharp": "^0.31.0"
   },
   "peerDependencies": {
