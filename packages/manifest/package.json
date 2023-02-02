@@ -12,11 +12,12 @@
   "author": "Zyie",
   "exports": {
     "import": "./dist/es/index.js",
-    "types": "./types/index.d.ts",
+    "types": "./dist/types/index.d.ts",
     "default": "./dist/cjs/index.js"
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist",
     "*.d.ts"
@@ -31,7 +32,7 @@
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
-    "@assetpack/core": "^0.0.0"
+    "@assetpack/core": "*"
   },
   "peerDependencies": {
     "@assetpack/core": ">=0.0.0"
