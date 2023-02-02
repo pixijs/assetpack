@@ -5,7 +5,7 @@
     "sourceMap": true,
     "lib": ["esnext"],
     "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "ESNext",
     "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,

@@ -11,6 +11,7 @@
     "line",
     "interface"
   ],
+  "type": "module",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/cli/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
   "repository": {
