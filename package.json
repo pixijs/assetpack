@@ -10,7 +10,7 @@
     "build": "nx run-many --target=build --all --parallel",
     "build:force": "nx run-many --target=build --all --parallel --skip-nx-cache",
     "clean": "rimraf packages/*/{dist,.testInput,.testOutput,.assetpack}",
-    "lint": "eslint --cache packages scripts shared --ext .js,.ts,.mjs --max-warnings 0",
+    "lint": "eslint --cache packages shared --ext .js,.ts,.mjs --max-warnings 0",
     "prerelease": "npm run lint && npm run test:force && npm run build:force",
     "release": "lerna publish --no-private",
     "prepare": "husky install",
