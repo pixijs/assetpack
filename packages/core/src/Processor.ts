@@ -161,6 +161,11 @@ export class Processor
             return res.substring(1);
         }
 
+        if (res.startsWith('./'))
+        {
+            return res.substring(2);
+        }
+
         return res;
     }
 
