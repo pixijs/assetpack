@@ -1,5 +1,6 @@
 import { builtinModules } from 'module';
 import typescript from '@rollup/plugin-typescript';
+import dts from 'rollup-plugin-dts';
 
 /**
  * Create a base rollup config
@@ -9,34 +10,52 @@ import typescript from '@rollup/plugin-typescript';
  */
 export function createConfig({ pkg, external = [] })
 {
-    return {
-        input: 'src/index.ts',
-        external: Object.keys(pkg.dependencies || {})
-            .concat(Object.keys(pkg.peerDependencies || {}))
-            .concat(builtinModules)
-            .concat(external),
-        onwarn: (warning) =>
+    return [
         {
-            throw Object.assign(new Error(), warning);
-        },
-        strictDeprecations: true,
-        output: [
+            input: 'src/index.ts',
+            external: Object.keys(pkg.dependencies || {})
+                .concat(Object.keys(pkg.peerDependencies || {}))
+                .concat(builtinModules)
+                .concat(external),
+            onwarn: (warning) =>
             {
-                format: 'cjs',
-                file: pkg.main,
-                exports: 'named',
-                footer: 'module.exports = Object.assign(exports.default, exports);',
-                sourcemap: true
+                throw Object.assign(new Error(), warning);
             },
-            {
+            strictDeprecations: true,
+            output: [
+                {
+                    format: 'cjs',
+                    file: pkg.main,
+                    exports: 'named',
+                    footer: 'module.exports = Object.assign(exports.default, exports);',
+                    sourcemap: true,
+                },
+                {
+                    format: 'es',
+                    file: pkg.module,
+                    plugins: [emitModulePackageFile()],
+                    sourcemap: true,
+                },
+            ],
+            plugins: [typescript()],
+        },
+        {
+            input: `src/index.ts`,
+            plugins: [dts()],
+            output: {
+                file: `dist/es/index.d.ts`,
                 format: 'es',
-                file: pkg.module,
-                plugins: [emitModulePackageFile()],
-                sourcemap: true
-            }
-        ],
-        plugins: [typescript()]
-    };
+            },
+        },
+        {
+            input: `src/index.ts`,
+            plugins: [dts()],
+            output: {
+                file: `dist/cjs/index.d.ts`,
+                format: 'cjs',
+            },
+        },
+    ];
 }
 
 export function emitModulePackageFile()
@@ -48,8 +67,8 @@ export function emitModulePackageFile()
             this.emitFile({
                 type: 'asset',
                 fileName: 'package.json',
-                source: `{"type":"module"}`
+                source: `{"type":"module"}`,
             });
-        }
+        },
     };
 }
