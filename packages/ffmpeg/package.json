@@ -1,6 +1,6 @@
 {
   "name": "@assetpack/plugin-ffmpeg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/ffmpeg/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@assetpack/core": "^0.1.0",
-    "@assetpack/plugin-manifest": "^0.1.0",
+    "@assetpack/plugin-manifest": "^0.1.1",
     "@types/fluent-ffmpeg": "^2.1.20"
   },
   "peerDependencies": {
