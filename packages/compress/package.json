@@ -1,6 +1,6 @@
 {
   "name": "@assetpack/plugin-compress",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/compress/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -33,7 +33,7 @@
     "sharp": "^0.31.2"
   },
   "devDependencies": {
-    "@assetpack/core": "^0.1.0",
+    "@assetpack/core": "0.2.0",
     "@types/sharp": "^0.31.0"
   },
   "peerDependencies": {
