@@ -11,7 +11,6 @@
     "line",
     "interface"
   ],
-  "type": "module",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/cli/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
   "repository": {
@@ -20,6 +19,7 @@
   },
   "license": "MIT",
   "author": "Zyie",
+  "type": "module",
   "bin": {
     "assetpack": "bin/index.js"
   },
@@ -34,7 +34,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^10.0.0",
-    "fs-extra": "^11.1.0"
+    "find-up": "^5.0.0"
   },
   "peerDependencies": {
     "@assetpack/core": ">=0"
