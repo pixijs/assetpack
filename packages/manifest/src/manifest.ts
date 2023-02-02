@@ -1,5 +1,5 @@
 import type { ChildTree, Plugin, Processor, RootTree } from '@assetpack/core';
-import { writeJSONSync } from 'fs-extra';
+import fs from 'fs-extra';
 
 export interface BaseManifestOptions
 {
@@ -42,7 +42,7 @@ export function baseManifest<T extends BaseManifestOptions>(func: Finish<T>, opt
             dirty = false;
 
             // write to disk
-            writeJSONSync(
+            fs.writeJSONSync(
                 `${defaultOptions?.output || processor.config.output}/manifest.json`,
                 func(this, tree, processor, defaultOptions),
                 { spaces: 2 }
