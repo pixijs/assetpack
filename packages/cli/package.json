@@ -29,8 +29,7 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "tsc -p tsconfig.json",
-    "test:types": "tsc --noEmit"
+    "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "chalk": "^4.1.2",

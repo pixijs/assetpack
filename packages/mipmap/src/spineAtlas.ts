@@ -45,6 +45,7 @@ export function spineAtlasMipmap(options?: Partial<SpineOptions>): Plugin<SpineO
                 : transformOptions.resolutions;
 
             const rawAtlas = fs.readFileSync(tree.path, 'utf8');
+            const files: string[] = [];
 
             for (const resolution of Object.values(resolutionHash))
             {
@@ -67,6 +68,8 @@ export function spineAtlasMipmap(options?: Partial<SpineOptions>): Plugin<SpineO
                         },
                     }
                 });
+
+                files.push(processor.trimOutputPath(outputName));
             }
 
             SavableAssetCache.set(tree.path, {
@@ -76,8 +79,8 @@ export function spineAtlasMipmap(options?: Partial<SpineOptions>): Plugin<SpineO
                     prefix: transformOptions.template,
                     resolutions: Object.values(resolutionHash),
                     files: [{
-                        path: processor.inputToOutput(tree.path),
-                        transformedPaths: []
+                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
+                        paths: files,
                     }]
                 }
             });

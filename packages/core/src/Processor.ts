@@ -345,7 +345,10 @@ export class Processor
                         tree,
                         transformData: {
                             type: 'copy',
-                            files: [{ path: this.inputToOutput(tree.path), transformedPaths: [] }],
+                            files: [{
+                                name: this.trimOutputPath(this.inputToOutput(tree.path)),
+                                paths: [this.trimOutputPath(this.inputToOutput(tree.path))],
+                            }],
                         }
                     });
                 }

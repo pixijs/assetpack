@@ -1,4 +1,4 @@
-import type { Plugin, PluginOptions, Processor, TransformData } from '@assetpack/core';
+import type { Plugin, PluginOptions, Processor, TransformDataFile } from '@assetpack/core';
 import { hasTag, path, SavableAssetCache } from '@assetpack/core';
 import type {
     MaxRectsPackerMethod,
@@ -105,11 +105,10 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                 return;
             }
 
-            const cacheData: TransformData['files'] = [];
-            const hash: Record<string, boolean> = {};
+            const cacheMap = new Map<string, TransformDataFile>();
             const front = transformOptions.resolutionOptions.template.split('%%')[0];
-            // loop through each resolution and pack the images
 
+            // loop through each resolution and pack the images
             for (const resolution of Object.values(resolutionHash))
             {
                 const scale = resolution / largestResolution;
@@ -130,13 +129,15 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                 {
                     const oo = o.split(front)[0];
 
-                    if (o.endsWith('.json') && !hash[oo])
+                    if (o.endsWith('.json'))
                     {
-                        hash[oo] = true;
-                        cacheData.push({
-                            path: `${oo}.json`,
-                            transformedPaths: [],
-                        });
+                        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                        !cacheMap.get(oo) && cacheMap.set(oo, { paths: [], name: processor.trimOutputPath(`${oo}.json`) });
+
+                        const d = cacheMap.get(oo)!;
+
+                        d.paths.push(processor.trimOutputPath(o));
+                        cacheMap.set(oo, d);
                     }
 
                     processor.addToTree({
@@ -159,7 +160,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                     type: this.name!,
                     prefix: transformOptions.resolutionOptions.template,
                     resolutions: Object.values(resolutionHash),
-                    files: cacheData
+                    files: [...cacheMap.values()],
                 }
             });
         },

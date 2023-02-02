@@ -1,9 +1,9 @@
 import { AssetPack } from '@assetpack/core';
 import { texturePacker } from '@assetpack/plugin-texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
+import sharp from 'sharp';
 import type { File } from '../../../shared/test/index';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
-import sharp from 'sharp';
 
 const pkg = 'texture-packer';
 

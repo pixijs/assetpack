@@ -1,2 +1,2 @@
 export * from './ffmpeg';
-export * from './pixiManifestParser';
+export * from './audio';

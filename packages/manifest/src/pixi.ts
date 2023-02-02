@@ -1,5 +1,5 @@
-import type { ChildTree, Plugin, Processor, RootTree, Tags, TransformDataFile } from '@assetpack/core';
-import { path, SavableAssetCache } from '@assetpack/core';
+import type { ChildTree, Plugin, Processor, RootTree, Tags } from '@assetpack/core';
+import { SavableAssetCache } from '@assetpack/core';
 import type { BaseManifestOptions } from './manifest';
 import { baseManifest } from './manifest';
 import { getManifestName } from './utils';
@@ -124,40 +124,15 @@ function collect(
     }
 }
 
-export function parseExtensions(name: string, file: TransformDataFile, ext: string)
-{
-    const extensions = file.transformedPaths.map((transformedPath) =>
-        path.extname(transformedPath).replace('.', ''));
-
-    extensions.push(ext.replace('.', ''));
-
-    return `${path.removeExt(name, ext)}.{${extensions.join(',')}}`;
-}
-
 export function defaultPixiParser(tree: ChildTree, processor: Processor): PixiManifestEntry[]
 {
     const transformData = SavableAssetCache.get(tree.path).transformData;
 
     const res = transformData.files.map((file) =>
-    {
-        const ext = path.extname(file.path);
-        let name = processor.trimOutputPath(file.path);
-
-        if (transformData.resolutions && transformData.prefix)
-        {
-            const prefix = transformData.prefix;
-            const resolutions = `{${transformData.resolutions.map((res: number) => res.toString()).join(',')}}`;
-
-            name = name.replace(ext, `${prefix.replace('%%', resolutions)}${ext}`);
-        }
-
-        const fullname = parseExtensions(name, file, ext);
-
-        return {
-            name: processor.trimOutputPath(file.path),
-            srcs: [fullname],
-        };
-    });
+        ({
+            name: processor.trimOutputPath(file.name ?? file.paths[0]),
+            srcs: file.paths.map((path) => processor.trimOutputPath(path)),
+        }));
 
     return res;
 }

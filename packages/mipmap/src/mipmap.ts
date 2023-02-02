@@ -48,6 +48,8 @@ export function mipmap(options?: Partial<MipmapOptions>): Plugin<MipmapOptions>
                 }
                 : transformOptions.resolutions;
 
+            const files: string[] = [];
+
             // loop through each resolution and pack the images
             for (const resolution of Object.values(resolutionHash))
             {
@@ -78,6 +80,8 @@ export function mipmap(options?: Partial<MipmapOptions>): Plugin<MipmapOptions>
                         },
                     }
                 });
+
+                files.push(processor.trimOutputPath(outputName));
             }
 
             SavableAssetCache.set(tree.path, {
@@ -87,8 +91,8 @@ export function mipmap(options?: Partial<MipmapOptions>): Plugin<MipmapOptions>
                     prefix: transformOptions.template,
                     resolutions: Object.values(resolutionHash),
                     files: [{
-                        path: processor.inputToOutput(tree.path),
-                        transformedPaths: []
+                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
+                        paths: files,
                     }]
                 }
             });

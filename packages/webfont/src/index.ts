@@ -59,8 +59,8 @@ export function webfont(options?: WebfontOptions): Plugin<WebfontOptions>
                 transformData: {
                     type: this.name!,
                     files: [{
-                        path: output,
-                        transformedPaths: []
+                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
+                        paths: [output]
                     }]
                 }
             });

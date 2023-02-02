@@ -44,20 +44,20 @@ type FfmpegCommands = {
 
 type FfmpegCommandKeys = keyof typeof fluentFfmpeg.FfmpegCommand.prototype;
 
-export interface AudioData
+export interface FfmpegData
 {
     formats: string[];
     recompress: boolean;
     options: Partial<FfmpegCommands>;
 }
 
-export interface AudioOptions
+export interface FfmpegOptions
 {
     inputs: string[];
-    outputs: AudioData[];
+    outputs: FfmpegData[];
 }
 
-async function convert(output: AudioData, tree: RootTree, extname: string, processor: Processor, name: string)
+async function convert(output: FfmpegData, tree: RootTree, extname: string, processor: Processor, name: string)
 {
     return new Promise<void>((resolve, reject) =>
     {
@@ -65,8 +65,8 @@ async function convert(output: AudioData, tree: RootTree, extname: string, proce
         const command = fluentFfmpeg();
 
         const paths: string[] = [];
-        // add each format to the command as an output
 
+        // add each format to the command as an output
         output.formats.forEach((format) =>
         {
             const outPath = processor.inputToOutput(tree.path, format);
@@ -89,14 +89,14 @@ async function convert(output: AudioData, tree: RootTree, extname: string, proce
                 fs.copySync(tree.path, outPath);
             }
 
-            paths.push(outPath);
+            paths.push(processor.trimOutputPath(outPath));
         });
 
         if (SavableAssetCache.has(tree.path))
         {
             const cache = SavableAssetCache.get(tree.path);
 
-            cache.transformData.files[0].transformedPaths.push(...paths);
+            cache.transformData.files[0].paths.push(...paths);
 
             SavableAssetCache.set(tree.path, cache);
         }
@@ -107,8 +107,8 @@ async function convert(output: AudioData, tree: RootTree, extname: string, proce
                 transformData: {
                     type: name,
                     files: [{
-                        path: paths[0],
-                        transformedPaths: paths.slice(1),
+                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
+                        paths,
                     }],
                 }
             });
@@ -142,19 +142,19 @@ async function convert(output: AudioData, tree: RootTree, extname: string, proce
     });
 }
 
-export function ffmpeg(options?: AudioOptions): Plugin<AudioOptions>
+export function ffmpeg(options?: FfmpegOptions): Plugin<FfmpegOptions>
 {
     const defaultOptions = merge(true, {
         inputs: [],
         outputs: [],
-    } as DeepRequired<AudioOptions>, options);
+    } as DeepRequired<FfmpegOptions>, options);
 
     return {
         folder: false,
         name: 'ffmpeg',
         test(tree, _p, optionOverrides)
         {
-            const opts = merge(true, defaultOptions, optionOverrides) as DeepRequired<AudioOptions>;
+            const opts = merge(true, defaultOptions, optionOverrides) as DeepRequired<FfmpegOptions>;
 
             if (!opts.inputs.length)
             {
@@ -166,7 +166,7 @@ export function ffmpeg(options?: AudioOptions): Plugin<AudioOptions>
         async transform(tree, processor, optionOverrides)
         {
             // merge options with defaults
-            const opts = merge(true, defaultOptions, optionOverrides) as DeepRequired<AudioOptions>;
+            const opts = merge(true, defaultOptions, optionOverrides) as DeepRequired<FfmpegOptions>;
             const extname = path.extname(tree.path);
             const promises: Promise<void>[] = [];
 
@@ -178,40 +178,4 @@ export function ffmpeg(options?: AudioOptions): Plugin<AudioOptions>
             await Promise.allSettled(promises);
         }
     };
-}
-
-export function audio(options?: AudioOptions): Plugin<AudioOptions>
-{
-    // default settings for converting mp3, ogg, wav to mp3, ogg
-    let defaultOptions: AudioOptions = {
-        inputs: ['.mp3', '.ogg', '.wav'],
-        outputs: [
-            {
-                formats: ['.mp3'],
-                recompress: false,
-                options: {
-                    audioBitrate: 96,
-                    audioChannels: 1,
-                    audioFrequency: 48000,
-                }
-            },
-            {
-                formats: ['.ogg'],
-                recompress: false,
-                options: {
-                    audioBitrate: 32,
-                    audioChannels: 1,
-                    audioFrequency: 22050,
-                }
-            },
-        ]
-    };
-
-    defaultOptions = merge(true, defaultOptions, options);
-
-    const audio = ffmpeg(defaultOptions);
-
-    audio.name = 'audio';
-
-    return audio;
 }

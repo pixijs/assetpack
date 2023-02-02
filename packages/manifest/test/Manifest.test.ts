@@ -1,5 +1,5 @@
 import { AssetPack } from '@assetpack/core';
-import { audio, pixiManifestAudio } from '@assetpack/plugin-ffmpeg';
+import { audio } from '@assetpack/plugin-ffmpeg';
 import { pixiManifest } from '@assetpack/plugin-manifest';
 import { mipmap, spineAtlasMipmap } from '@assetpack/plugin-mipmap';
 import { pixiTexturePacker } from '@assetpack/plugin-texture-packer';
@@ -10,7 +10,7 @@ import {
     assetPath,
     createFolder,
     getInputDir,
-    getOutputDir,
+    getOutputDir
 } from '../../../shared/test';
 
 const pkg = 'manifest';
@@ -117,10 +117,7 @@ describe('Manifest', () =>
                 audio: audio(),
                 mipmap: mipmap(),
                 spineAtlas: spineAtlasMipmap(),
-                // webfont: webfont(), // import is breaking definition file
-                manifest: pixiManifest({
-                    parsers: [pixiManifestAudio],
-                }),
+                manifest: pixiManifest(),
             },
         });
 
@@ -134,7 +131,7 @@ describe('Manifest', () =>
             assets: [
                 {
                     name: 'bundle/json.json',
-                    srcs: ['bundle/json.{json}'],
+                    srcs: ['bundle/json.json'],
                     data: {
                         tags: {
                             m: true,
@@ -143,7 +140,7 @@ describe('Manifest', () =>
                 },
                 {
                     name: 'bundle/json.json5',
-                    srcs: ['bundle/json.{json5}'],
+                    srcs: ['bundle/json.json5'],
                     data: {
                         tags: {
                             m: true,
@@ -152,7 +149,10 @@ describe('Manifest', () =>
                 },
                 {
                     name: 'bundle/sprite.png',
-                    srcs: ['bundle/sprite@{1,0.5}x.{png}'],
+                    srcs: [
+                        'bundle/sprite@1x.png',
+                        'bundle/sprite@0.5x.png'
+                    ],
                     data: {
                         tags: {
                             m: true,
@@ -161,7 +161,10 @@ describe('Manifest', () =>
                 },
                 {
                     name: 'bundle/tps/tps-1.json',
-                    srcs: ['bundle/tps/tps-1@{1,0.5}x.{json}'],
+                    srcs: [
+                        'bundle/tps/tps-1@1x.json',
+                        'bundle/tps/tps-1@0.5x.json'
+                    ],
                     data: {
                         tags: {
                             tps: true,
@@ -171,7 +174,10 @@ describe('Manifest', () =>
                 },
                 {
                     name: 'bundle/tps/tps-0.json',
-                    srcs: ['bundle/tps/tps-0@{1,0.5}x.{json}'],
+                    srcs: [
+                        'bundle/tps/tps-0@1x.json',
+                        'bundle/tps/tps-0@0.5x.json'
+                    ],
                     data: {
                         tags: {
                             tps: true,
@@ -186,27 +192,42 @@ describe('Manifest', () =>
             assets: [
                 {
                     name: 'defaultFolder/1.mp3',
-                    srcs: ['defaultFolder/1.{ogg,mp3}'],
+                    srcs: [
+                        'defaultFolder/1.mp3',
+                        'defaultFolder/1.ogg'
+                    ],
                 },
                 {
                     name: 'defaultFolder/3.wav',
-                    srcs: ['defaultFolder/3.{ogg,mp3}'],
+                    srcs: [
+                        'defaultFolder/3.mp3',
+                        'defaultFolder/3.ogg'
+                    ],
                 },
                 {
                     name: 'spine/dragon.json',
-                    srcs: ['spine/dragon.{json}'],
+                    srcs: ['spine/dragon.json'],
                 },
                 {
                     name: 'spine/dragon.png',
-                    srcs: ['spine/dragon@{1,0.5}x.{png}'],
+                    srcs: [
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.png'
+                    ],
                 },
                 {
                     name: 'spine/dragon2.png',
-                    srcs: ['spine/dragon2@{1,0.5}x.{png}'],
+                    srcs: [
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.png'
+                    ],
                 },
                 {
                     name: 'spine/dragon.atlas',
-                    srcs: ['spine/dragon@{1,0.5}x.{atlas}'],
+                    srcs: [
+                        'spine/dragon@1x.atlas',
+                        'spine/dragon@0.5x.atlas'
+                    ],
                     data: {
                         tags: {
                             spine: true,

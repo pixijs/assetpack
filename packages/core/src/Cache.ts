@@ -79,8 +79,8 @@ class CacheClass<T>
 
 export interface TransformDataFile
 {
-    path: string,
-    transformedPaths: string[]
+    name?: string,
+    paths: string[],
 }
 
 export interface TransformData
