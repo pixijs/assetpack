@@ -1,5 +1,5 @@
 import type { Plugin, PluginOptions, Processor } from '@assetpack/core';
-import { checkExt, hasTag } from '@assetpack/core';
+import { checkExt, hasTag, SavableAssetCache } from '@assetpack/core';
 import sharp from 'sharp';
 
 export interface MipmapOptions<T extends string = ''> extends PluginOptions<'fix' | T>
@@ -29,6 +29,7 @@ export function mipmap(options?: Partial<MipmapOptions>): Plugin<MipmapOptions>
 
     return {
         folder: false,
+        name: 'mipmap',
         test(tree)
         {
             return checkExt(tree.path, '.png', '.jpg', ',jpeg');
@@ -78,6 +79,19 @@ export function mipmap(options?: Partial<MipmapOptions>): Plugin<MipmapOptions>
                     }
                 });
             }
+
+            SavableAssetCache.set(tree.path, {
+                tree,
+                transformData: {
+                    type: this.name!,
+                    prefix: transformOptions.template,
+                    resolutions: Object.values(resolutionHash),
+                    files: [{
+                        path: processor.inputToOutput(tree.path),
+                        transformedPaths: []
+                    }]
+                }
+            });
         }
     };
 }

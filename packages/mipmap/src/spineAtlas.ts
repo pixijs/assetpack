@@ -1,5 +1,5 @@
 import type { Plugin } from '@assetpack/core';
-import { checkExt, hasTag } from '@assetpack/core';
+import { checkExt, hasTag, SavableAssetCache } from '@assetpack/core';
 import fs from 'fs-extra';
 import type { MipmapOptions } from './mipmap';
 
@@ -23,6 +23,7 @@ export function spineAtlasMipmap(options?: Partial<SpineOptions>): Plugin<SpineO
 
     return {
         folder: false,
+        name: 'spine-atlas',
         test(tree, _p, opts)
         {
             const opt = { ...defaultOptions.tags, ...opts.tags } as Required<SpineOptions['tags']>;
@@ -67,6 +68,19 @@ export function spineAtlasMipmap(options?: Partial<SpineOptions>): Plugin<SpineO
                     }
                 });
             }
+
+            SavableAssetCache.set(tree.path, {
+                tree,
+                transformData: {
+                    type: this.name!,
+                    prefix: transformOptions.template,
+                    resolutions: Object.values(resolutionHash),
+                    files: [{
+                        path: processor.inputToOutput(tree.path),
+                        transformedPaths: []
+                    }]
+                }
+            });
         }
     };
 }

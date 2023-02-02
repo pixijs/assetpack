@@ -35,11 +35,12 @@
     "sharp": "^0.31.2"
   },
   "devDependencies": {
-    "@assetpack/core": "^0.0.0",
-    "@types/sharp": "^0.31.0"
+    "@assetpack/core": "*",
+    "@types/sharp": "^0.31.0",
+    "@assetpack/plugin-manifest": "*"
   },
   "peerDependencies": {
-    "@assetpack/core": "^0.0.0"
+    "@assetpack/core": "*"
   },
   "engines": {
     "node": ">=16.0.0"

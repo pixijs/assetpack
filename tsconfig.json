@@ -13,7 +13,13 @@
         "target": "ESNext",
         "baseUrl": "./",
         "paths": {
-            "@assetpack/*": [
+            "@assetpack/core": [
+                "packages/core/src",
+            ],
+            "@assetpack/cli": [
+                "packages/cli/src",
+            ],
+            "@assetpack/plugin-*": [
                 "packages/*/src",
             ]
         },
@@ -24,6 +30,6 @@
         "files": true,
         "compilerOptions": {
             "esModuleInterop": true
-        }
+        },
     }
   }

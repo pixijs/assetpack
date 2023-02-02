@@ -1,5 +1,5 @@
 import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag, path } from '@assetpack/core';
+import { checkExt, hasTag, path, SavableAssetCache } from '@assetpack/core';
 import { fonts } from './fonts';
 
 export type WebfontOptions = PluginOptions<'font'>;
@@ -15,6 +15,7 @@ export function webfont(options?: WebfontOptions): Plugin<WebfontOptions>
 
     return {
         folder: false,
+        name: 'webfont',
         test(tree, _p, options)
         {
             const opts = { ...defaultOptions.tags, ...options.tags } as Required<WebfontOptions['tags']>;
@@ -50,6 +51,17 @@ export function webfont(options?: WebfontOptions): Plugin<WebfontOptions>
                 },
                 transformOptions: {
                     transformId: 'webfont',
+                }
+            });
+
+            SavableAssetCache.set(tree.path, {
+                tree,
+                transformData: {
+                    type: this.name!,
+                    files: [{
+                        path: output,
+                        transformedPaths: []
+                    }]
                 }
             });
         }

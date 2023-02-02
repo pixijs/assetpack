@@ -1,5 +1,5 @@
 import { AssetPack } from '@assetpack/core';
-import { audio } from '@assetpack/ffmpeg';
+import { audio } from '@assetpack/plugin-ffmpeg';
 import { existsSync } from 'fs-extra';
 import type { MockPlugin } from '../../../shared/test';
 import { assetPath, createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test';

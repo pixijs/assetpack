@@ -52,18 +52,31 @@ export function assetPath(pkg: string, pth: string): string
 }
 
 export function createPlugin(
-    data: Partial<Record<keyof Plugin, boolean>>,
+    data: Partial<Record<keyof Plugin, boolean | ((...params: any[]) => Promise<void>)>>,
+    name?: string,
 ): Plugin
 {
+    const convert = (key: keyof Plugin, isTest = false) =>
+    {
+        const d = data[key];
+
+        if (d === undefined) return undefined;
+        if (typeof d === 'function') return jest.fn(d);
+
+        return isTest ? jest.fn(() => true) : jest.fn(async () => { /**/ });
+    };
+
     return {
         folder: data.folder || false,
-        test: data.test ? jest.fn(() => true) : undefined,
-        transform: data.transform ? jest.fn(async () => { /**/ }) : undefined,
-        start: data.start ? jest.fn(async () => { /**/ }) : undefined,
-        finish: data.finish ? jest.fn(async () => { /**/ }) : undefined,
-        post: data.post ? jest.fn(async () => { /**/ }) : undefined,
-        delete: data.delete ? jest.fn(async () => { /**/ }) : undefined,
+        name: name ?? 'test',
+        cache: {},
+        test: convert('test', true),
+        transform: convert('transform'),
+        start: convert('start'),
+        finish: convert('finish'),
+        post: convert('post'),
+        delete: convert('delete'),
     } as Plugin;
 }
 
-export type MockPlugin = Omit<Record<keyof Plugin, jest.Mock>, 'folder'> & { folder: boolean };
+export type MockPlugin = Omit<Record<keyof Plugin, jest.Mock>, 'folder' | 'name'> & { folder: boolean, name: string };

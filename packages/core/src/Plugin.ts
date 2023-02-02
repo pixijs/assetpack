@@ -10,6 +10,9 @@ export interface Plugin<T = Record<string, any>>
     /** Whether the process runs on a folder */
     folder: boolean;
 
+    /** Name of the plugin used to tell the manifest parsers which one to use */
+    name?: string;
+
     /**
      * Called once at the start.
      * @param tree -

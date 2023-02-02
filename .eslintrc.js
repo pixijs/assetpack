@@ -22,6 +22,7 @@ module.exports = {
         '@typescript-eslint/consistent-type-imports': [1, { disallowTypeAnnotations: false }],
         '@typescript-eslint/no-parameter-properties': 1,
         '@typescript-eslint/type-annotation-spacing': 1,
+        "@typescript-eslint/no-non-null-assertion": 0,
     },
     overrides: [
         {

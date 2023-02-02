@@ -1,5 +1,5 @@
-import type { Plugin, PluginOptions, Processor } from '@assetpack/core';
-import { hasTag, path } from '@assetpack/core';
+import type { Plugin, PluginOptions, Processor, TransformData } from '@assetpack/core';
+import { hasTag, path, SavableAssetCache } from '@assetpack/core';
 import type {
     MaxRectsPackerMethod,
     PackerExporterType,
@@ -60,6 +60,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
 
     return {
         folder: true,
+        name: 'texture-packer',
         test(tree, _p, opts)
         {
             const opt = { ...defaultOptions.tags, ...opts.tags } as DeepRequired<TexturePackerOptions['tags']>;
@@ -104,7 +105,11 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                 return;
             }
 
+            const cacheData: TransformData['files'] = [];
+            const hash: Record<string, boolean> = {};
+            const front = transformOptions.resolutionOptions.template.split('%%')[0];
             // loop through each resolution and pack the images
+
             for (const resolution of Object.values(resolutionHash))
             {
                 const scale = resolution / largestResolution;
@@ -121,15 +126,43 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                     processor,
                 });
 
-                out.forEach((o) => processor.addToTree({
-                    tree,
-                    outputOptions: {
-                        outputPathOverride: o,
-                    },
-                    transformId: 'tps',
-                }));
+                out.forEach((o) =>
+                {
+                    const oo = o.split(front)[0];
+
+                    if (o.endsWith('.json') && !hash[oo])
+                    {
+                        hash[oo] = true;
+                        cacheData.push({
+                            path: `${oo}.json`,
+                            transformedPaths: [],
+                        });
+                    }
+
+                    processor.addToTree({
+                        tree,
+                        outputOptions: {
+                            outputPathOverride: o,
+                        },
+                        transformId: 'tps',
+                        transformData: {
+                            prefix: template,
+                        }
+                    }
+                    );
+                });
             }
-        }
+
+            SavableAssetCache.set(tree.path, {
+                tree,
+                transformData: {
+                    type: this.name!,
+                    prefix: transformOptions.resolutionOptions.template,
+                    resolutions: Object.values(resolutionHash),
+                    files: cacheData
+                }
+            });
+        },
     };
 }
 
