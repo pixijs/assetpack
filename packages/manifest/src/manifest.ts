@@ -1,4 +1,5 @@
 import type { ChildTree, Plugin, Processor, RootTree } from '@assetpack/core';
+import { path } from '@assetpack/core';
 import fs from 'fs-extra';
 
 export interface BaseManifestOptions
@@ -13,6 +14,7 @@ export type Finish<T> = (plugin: Plugin<T>, tree: RootTree, processor: Processor
 export function baseManifest<T extends BaseManifestOptions>(func: Finish<T>, options: T): Plugin<T>
 {
     const defaultOptions: T = {
+        ...options,
         parsers: [options.defaultParser, ...options?.parsers || []],
     } as T;
 
@@ -41,9 +43,16 @@ export function baseManifest<T extends BaseManifestOptions>(func: Finish<T>, opt
 
             dirty = false;
 
+            let output = defaultOptions?.output || path.join(processor.config.output, 'manifest.json');
+
+            if (!path.isAbsolute(output))
+            {
+                output = path.resolve(process.cwd(), output);
+            }
+
             // write to disk
             fs.writeJSONSync(
-                `${defaultOptions?.output || processor.config.output}/manifest.json`,
+                output,
                 func(this, tree, processor, defaultOptions),
                 { spaces: 2 }
             );

@@ -4,7 +4,7 @@ import { pixiManifest } from '@assetpack/plugin-manifest';
 import { mipmap, spineAtlasMipmap } from '@assetpack/plugin-mipmap';
 import { pixiTexturePacker } from '@assetpack/plugin-texture-packer';
 // import { webfont } from '@assetpack/plugin-webfont';
-import { readJSONSync } from 'fs-extra';
+import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
 import {
     assetPath,
@@ -236,5 +236,45 @@ describe('Manifest', () =>
                 },
             ],
         });
+    });
+
+    it('should use the correct output path', async () =>
+    {
+        const testName = 'manifest-output';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'defaultFolder',
+                    files: [
+                        {
+                            name: '1.mp3',
+                            content: assetPath(pkg, 'audio/1.mp3'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            plugins: {
+                manifest: pixiManifest({
+                    output: `${outputDir}/manifest2.json`,
+                }),
+            },
+        });
+
+        await assetpack.run();
+
+        // load the manifest json
+        expect(existsSync(`${outputDir}/manifest.json`)).toBe(false);
+        expect(existsSync(`${outputDir}/manifest2.json`)).toBe(true);
     });
 });
