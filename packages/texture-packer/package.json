@@ -32,7 +32,7 @@
     "free-tex-packer-core": "0.3.4",
     "fs-extra": "^11.1.0",
     "glob": "^8.0.3",
-    "glob-promise": "^5.0.0",
+    "glob-promise": "^6.0.0",
     "sharp": "^0.31.2"
   },
   "devDependencies": {

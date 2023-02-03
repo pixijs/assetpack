@@ -37,7 +37,7 @@ export function replaceExt(path: string, ext: string)
     // Because `path.join` removes the head './' from the given path.
     // This removal can cause a problem when passing the result to `require` or
     // `import`.
-    if (startsWithSingleDot(path))
+    if (startsWithSingleDot(path) && !startsWithSingleDot(nFilepath))
     {
         return `./${nFilepath}`;
     }
