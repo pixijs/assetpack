@@ -252,8 +252,9 @@ export class AssetPack
             }
         }
 
-        if (!this._cachedTree)
+        if (!this._cachedTree || Object.keys(this._cachedTree).length === 0)
         {
+            Logger.info('Clearing output folder.');
             fs.removeSync(this.config.output);
             fs.ensureDirSync(this.config.output);
         }
