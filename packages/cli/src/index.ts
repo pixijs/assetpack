@@ -1,11 +1,13 @@
 /* eslint-disable no-console */
 import type { AssetPackConfig } from '@assetpack/core';
-import { AssetPack } from '@assetpack/core';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import findUp from 'find-up';
 import path from 'path';
 import { pathToFileURL } from 'url';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 interface Options
 {
@@ -42,8 +44,36 @@ async function main()
         process.exit(1);
     }
 
-    const fileURL = pathToFileURL(configPath);
-    const config = (await import(fileURL.toString())).default as AssetPackConfig;
+    let config: AssetPackConfig;
+    let AssetPack: typeof import('@assetpack/core').AssetPack;
+
+    // We try to load cjs first, if that fails we try to load esm
+    try
+    {
+        /* eslint-disable @typescript-eslint/no-var-requires, global-require */
+        config = require(configPath) as AssetPackConfig;
+        AssetPack = require('@assetpack/core').AssetPack;
+        /* eslint-enable @typescript-eslint/no-var-requires, global-require */
+    }
+    catch (error: any)
+    {
+        if (error.code === 'ERR_REQUIRE_ESM')
+        {
+            const esmLoader = dynamicImportLoader();
+            const urlForConfig = pathToFileURL(configPath);
+
+            config = (await esmLoader!(urlForConfig)).default;
+            AssetPack = (await esmLoader!('@assetpack/core')).AssetPack;
+        }
+        else
+        {
+            logEvent({
+                message: error.message,
+                level: 'error',
+            });
+            process.exit(1);
+        }
+    }
 
     if (!config)
     {
@@ -88,5 +118,21 @@ function logEvent(event: {
     }
 }
 
-console.log(); // log a new line so there is a nice space
+function dynamicImportLoader()
+{
+    let importESM;
+
+    try
+    {
+        // eslint-disable-next-line no-new-func
+        importESM = new Function('id', 'return import(id);');
+    }
+    catch (e)
+    {
+        importESM = null;
+    }
+
+    return importESM;
+}
+
 main();
