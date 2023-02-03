@@ -1,6 +1,6 @@
 import { createPlugin } from '../../../shared/test';
 import type { AssetPackConfig } from '../src';
-import { AssetPack } from '../src';
+import { AssetPack, path } from '../src';
 
 describe('AssetPack Config', () =>
 {
@@ -9,8 +9,8 @@ describe('AssetPack Config', () =>
         const assetpack = new AssetPack({});
 
         expect(assetpack.config).toEqual({
-            entry: './static',
-            output: './dist',
+            entry: path.join(process.cwd(), './static'),
+            output: path.join(process.cwd(), './dist'),
             ignore: [],
             cache: true,
             logLevel: 'info',
@@ -34,8 +34,8 @@ describe('AssetPack Config', () =>
         const assetpack = new AssetPack(baseConfig);
 
         expect(assetpack.config).toEqual({
-            entry: 'src/old',
-            output: 'dist/old',
+            entry: path.join(process.cwd(), 'src/old'),
+            output: path.join(process.cwd(), 'dist/old'),
             ignore: ['scripts/**/*'],
             cache: true,
             logLevel: 'info',

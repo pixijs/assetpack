@@ -71,6 +71,8 @@ async function convert(output: FfmpegData, tree: RootTree, extname: string, proc
         {
             const outPath = processor.inputToOutput(tree.path, format);
 
+            fs.ensureDirSync(path.dirname(outPath));
+
             processor.addToTree({
                 tree,
                 outputOptions: {
@@ -175,7 +177,7 @@ export function ffmpeg(options?: FfmpegOptions): Plugin<FfmpegOptions>
                 promises.push(convert(output, tree, extname, processor, this.name!));
             });
 
-            await Promise.allSettled(promises);
+            await Promise.all(promises);
         }
     };
 }

@@ -71,6 +71,15 @@ export class AssetPack
         this.config.entry = path.normalizeSafe(this.config.entry);
         this.config.output = path.normalizeSafe(this.config.output);
 
+        if (!path.isAbsolute(this.config.entry))
+        {
+            this.config.entry = path.normalizeSafe(path.join(process.cwd(), this.config.entry));
+        }
+        if (!path.isAbsolute(this.config.output))
+        {
+            this.config.output = path.normalizeSafe(path.join(process.cwd(), this.config.output));
+        }
+
         this._processor = new Processor(this.config);
         Logger.init(this.config);
 
