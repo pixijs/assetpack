@@ -8,7 +8,7 @@ export function webfont(options?: WebfontOptions): Plugin<WebfontOptions>
 {
     const defaultOptions: WebfontOptions = {
         tags: {
-            font: 'font',
+            font: 'wf',
             ...options?.tags
         },
     };
@@ -20,7 +20,9 @@ export function webfont(options?: WebfontOptions): Plugin<WebfontOptions>
         {
             const opts = { ...defaultOptions.tags, ...options.tags } as Required<WebfontOptions['tags']>;
 
-            return checkExt(tree.path, '.otf', '.ttf') || (checkExt(tree.path, '.svg') && hasTag(tree, 'file', opts.font));
+            if (!hasTag(tree, 'path', opts.font)) return false;
+
+            return checkExt(tree.path, '.otf', '.ttf', '.svg');
         },
         async transform(tree, processor)
         {

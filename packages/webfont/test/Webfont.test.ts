@@ -20,7 +20,7 @@ describe('Webfont', () =>
                 name: testName,
                 files: [
                     {
-                        name: 'ttf.ttf',
+                        name: 'ttf{wf}.ttf',
                         content: assetPath(pkg, 'Roboto-Regular.ttf'),
                     },
                 ],
@@ -54,7 +54,7 @@ describe('Webfont', () =>
                 name: testName,
                 files: [
                     {
-                        name: 'otf.otf',
+                        name: 'otf{wf}.otf',
                         content: assetPath(pkg, 'Roboto-Regular.otf'),
                     },
                 ],
@@ -88,7 +88,7 @@ describe('Webfont', () =>
                 name: testName,
                 files: [
                     {
-                        name: 'svg{font}.svg',
+                        name: 'svg{wf}.svg',
                         content: assetPath(pkg, 'Roboto-Regular.svg'),
                     },
                 ],
@@ -120,7 +120,7 @@ describe('Webfont', () =>
             files: [],
             folders: [
                 {
-                    name: 'defaultFolder',
+                    name: 'defaultFolder{wf}',
                     files: [
                         {
                             name: 'ttf.ttf',
@@ -152,6 +152,11 @@ describe('Webfont', () =>
                 {
                     name: ['defaultFolder/ttf.ttf'],
                     srcs: ['defaultFolder/ttf.woff2'],
+                    data: {
+                        tags: {
+                            wf: true,
+                        }
+                    }
                 },
             ],
         });
