@@ -56,3 +56,20 @@ raw-assets
   - `tps`: The tag used to denote a folder that should be processed by Texture Packer.
   - `fix`: The tag used to denote that the spritesheet should be fixed to a specific resolution.
   - `jpg`: The tag used to denote the spritesheet should be saved as a jpg.
+
+## Pixi Specific
+
+If you are generating multiple resolutions of a spritesheet right now Pixi does not know how to handle this. To get around this you will need to add a `ResolveParser` like so:
+
+```ts
+import { settings, extensions, ResolveURLParser, ExtensionType } from 'pixi.js';
+
+export const resolveJsonUrl = {
+    extension: ExtensionType.ResolveParser,
+    test: (value: string): boolean =>
+        settings.RETINA_PREFIX.test(value) && value.endsWith('.json'),
+    parse: resolveTextureUrl.parse,
+} as ResolveURLParser;
+
+extensions.add(resolveJsonUrl);
+```
