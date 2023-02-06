@@ -150,7 +150,7 @@ describe('Webfont', () =>
             name: 'default',
             assets: [
                 {
-                    name: 'defaultFolder/ttf.ttf',
+                    name: ['defaultFolder/ttf.ttf'],
                     srcs: ['defaultFolder/ttf.woff2'],
                 },
             ],

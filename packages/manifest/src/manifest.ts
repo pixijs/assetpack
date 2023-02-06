@@ -2,11 +2,17 @@ import type { ChildTree, Plugin, Processor, RootTree } from '@assetpack/core';
 import { path } from '@assetpack/core';
 import fs from 'fs-extra';
 
+export interface ManifestParser<T, K>
+{
+    type: T;
+    parser: (tree: ChildTree, processor: Processor, options: K) => any[];
+}
+
 export interface BaseManifestOptions
 {
     output?: string;
-    defaultParser: { type: 'copy', parser: (tree: ChildTree, processor: Processor) => any[] };
-    parsers?: { type: string, parser: (tree: ChildTree, processor: Processor) => any[] }[]
+    defaultParser: ManifestParser<'copy', any>
+    parsers?: ManifestParser<any, any>[]
 }
 
 export type Finish<T> = (plugin: Plugin<T>, tree: RootTree, processor: Processor, options: T) => any;
