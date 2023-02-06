@@ -22,17 +22,17 @@ export default {
 };
 ```
 
-This plugin requires the `{font}` tag to be placed on a folder or file:
+This plugin requires the `{wf}` tag to be placed on a folder or file:
 
 ```bash
 raw-assets
-├── game{font}
+├── game{wf}
 │   ├── svgFont.svg
 │   └── ttfFont.ttf
 └── other
-    └── otfFont{font}.otf
+    └── otfFont{wf}.otf
 ```
 
 ## Options
 
-- `tags` - An object containing the tags to use for the plugin. Defaults to `{ font: "font" }`.
+- `tags` - An object containing the tags to use for the plugin. Defaults to `{ font: "wf" }`.
