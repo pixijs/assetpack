@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "esnext",
     "declaration": true,
     "sourceMap": true,
     "lib": ["esnext"],
     "moduleResolution": "node",
-    "module": "ESNext",
+    "module": "ES2020",
     "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,
