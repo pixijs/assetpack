@@ -12,7 +12,7 @@ describe('AssetPack Config', () =>
             entry: path.join(process.cwd(), './static'),
             output: path.join(process.cwd(), './dist'),
             ignore: [],
-            cache: true,
+            cache: false,
             logLevel: 'info',
             plugins: {},
             files: []
@@ -37,7 +37,7 @@ describe('AssetPack Config', () =>
             entry: path.join(process.cwd(), 'src/old'),
             output: path.join(process.cwd(), 'dist/old'),
             ignore: ['scripts/**/*'],
-            cache: true,
+            cache: false,
             logLevel: 'info',
             plugins: {
                 test: plugin

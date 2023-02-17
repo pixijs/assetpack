@@ -1,5 +1,5 @@
 import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag } from '@assetpack/core';
+import { checkExt, hasTag, path, SavableAssetCache } from '@assetpack/core';
 import type sharp from 'sharp';
 import { sharpCompress } from './utils';
 
@@ -41,6 +41,21 @@ export function compressWebp(options?: CompressWebpOptions): Plugin<CompressWebp
             try
             {
                 await sharpCompress('webp', { input, processor, tree, compression: webpOpts, output });
+
+                const asset  = SavableAssetCache.get(tree.creator);
+                const trimmed = processor.trimOutputPath(output);
+
+                asset.transformData.files.forEach((f) =>
+                {
+                    const paths = f.paths.find((t) => t.includes(path.trimExt(trimmed)));
+
+                    if (paths)
+                    {
+                        f.paths.push(trimmed);
+                    }
+                });
+
+                SavableAssetCache.set(tree.creator, asset);
             }
             catch (error)
             {

@@ -13,8 +13,9 @@ export interface AssetPackConfig
       */
     ignore?: string[];
     /**
+      * EXPERIMENTAL
       * If true cached tree will be used
-      * @defaultValue true
+      * @defaultValue false
       */
     cache?: boolean;
     logLevel?: keyof typeof LogLevels;
@@ -32,7 +33,7 @@ export const defaultConfig: AssetPackConfig = {
     entry: './static',
     output: './dist',
     ignore: [],
-    cache: true,
+    cache: false,
     logLevel: 'info',
     plugins: {},
     files: []
