@@ -157,3 +157,14 @@ export default {
     ]
 };
 ```
+
+# Issues
+
+### 'Error: Something went wrong installing the "sharp" module'
+
+If you get this error, it means that the `sharp` module failed to install properly.
+You can potentially fix this by running the following command:
+
+```bash
+npm rebuild sharp
+```
