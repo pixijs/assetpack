@@ -3,6 +3,7 @@ import { audio } from '@assetpack/plugin-ffmpeg';
 import { pixiManifest } from '@assetpack/plugin-manifest';
 import { mipmap, spineAtlasMipmap } from '@assetpack/plugin-mipmap';
 import { pixiTexturePacker } from '@assetpack/plugin-texture-packer';
+import { compressWebp } from '@assetpack/plugin-compress';
 // import { webfont } from '@assetpack/plugin-webfont';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
@@ -118,6 +119,7 @@ describe('Manifest', () =>
                 mipmap: mipmap(),
                 spineAtlas: spineAtlasMipmap(),
                 manifest: pixiManifest(),
+                webp: compressWebp(),
             },
         });
 
@@ -149,7 +151,12 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['bundle/sprite.png'],
-                    srcs: ['bundle/sprite@1x.png', 'bundle/sprite@0.5x.png'],
+                    srcs: [
+                        'bundle/sprite@1x.png',
+                        'bundle/sprite@0.5x.png',
+                        'bundle/sprite@0.5x.webp',
+                        'bundle/sprite@1x.webp',
+                    ],
                     data: {
                         tags: {
                             m: true,
@@ -201,11 +208,16 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['spine/dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png'],
+                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
                 },
                 {
                     name: ['spine/dragon2.png'],
-                    srcs: ['spine/dragon2@1x.png', 'spine/dragon2@0.5x.png'],
+                    srcs: [
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.png',
+                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@1x.webp',
+                    ],
                 },
                 {
                     name: ['spine/dragon.atlas'],
@@ -310,6 +322,7 @@ describe('Manifest', () =>
                     createShortcuts: true,
                     trimExtensions: true,
                 }),
+                webp: compressWebp(),
             },
         });
 
@@ -336,7 +349,12 @@ describe('Manifest', () =>
                         'sprite.png',
                         'sprite',
                     ],
-                    srcs: ['folder/sprite@1x.png', 'folder/sprite@0.5x.png'],
+                    srcs: [
+                        'folder/sprite@1x.png',
+                        'folder/sprite@0.5x.png',
+                        'folder/sprite@0.5x.webp',
+                        'folder/sprite@1x.webp',
+                    ],
                 },
                 {
                     name: ['folder2/1.mp3', 'folder2/1'],
@@ -352,7 +370,7 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['spine/dragon.png', 'dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png'],
+                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
                 },
                 {
                     name: [
@@ -361,7 +379,12 @@ describe('Manifest', () =>
                         'dragon2.png',
                         'dragon2',
                     ],
-                    srcs: ['spine/dragon2@1x.png', 'spine/dragon2@0.5x.png'],
+                    srcs: [
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.png',
+                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@1x.webp',
+                    ],
                 },
                 {
                     name: ['spine/dragon.atlas', 'dragon.atlas'],
@@ -466,6 +489,7 @@ describe('Manifest', () =>
                     createShortcuts: true,
                     trimExtensions: false,
                 }),
+                webp: compressWebp(),
             },
         });
 
@@ -487,7 +511,12 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['folder/sprite.png', 'sprite.png'],
-                    srcs: ['folder/sprite@1x.png', 'folder/sprite@0.5x.png'],
+                    srcs: [
+                        'folder/sprite@1x.png',
+                        'folder/sprite@0.5x.png',
+                        'folder/sprite@0.5x.webp',
+                        'folder/sprite@1x.webp',
+                    ],
                 },
                 {
                     name: ['folder2/1.mp3'],
@@ -503,11 +532,16 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['spine/dragon.png', 'dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png'],
+                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
                 },
                 {
                     name: ['spine/dragon2.png', 'dragon2.png'],
-                    srcs: ['spine/dragon2@1x.png', 'spine/dragon2@0.5x.png'],
+                    srcs: [
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.png',
+                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@1x.webp',
+                    ],
                 },
                 {
                     name: ['spine/dragon.atlas', 'dragon.atlas'],
@@ -612,6 +646,7 @@ describe('Manifest', () =>
                     createShortcuts: false,
                     trimExtensions: true,
                 }),
+                webp: compressWebp(),
             },
         });
 
@@ -636,7 +671,12 @@ describe('Manifest', () =>
                         'folder/sprite.png',
                         'folder/sprite',
                     ],
-                    srcs: ['folder/sprite@1x.png', 'folder/sprite@0.5x.png'],
+                    srcs: [
+                        'folder/sprite@1x.png',
+                        'folder/sprite@0.5x.png',
+                        'folder/sprite@0.5x.webp',
+                        'folder/sprite@1x.webp',
+                    ],
                 },
                 {
                     name: ['folder2/1.mp3', 'folder2/1'],
@@ -652,14 +692,19 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['spine/dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png'],
+                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
                 },
                 {
                     name: [
                         'spine/dragon2.png',
                         'spine/dragon2',
                     ],
-                    srcs: ['spine/dragon2@1x.png', 'spine/dragon2@0.5x.png'],
+                    srcs: [
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.png',
+                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@1x.webp',
+                    ],
                 },
                 {
                     name: ['spine/dragon.atlas'],
