@@ -290,8 +290,12 @@ export class Processor
                     fs.removeSync(out.path);
                 });
 
-                SavableAssetCache.remove(tree.path);
                 this._transformHash[tree.path] = null;
+            }
+
+            if (SavableAssetCache.has(tree.path))
+            {
+                SavableAssetCache.remove(tree.path);
             }
         }
 

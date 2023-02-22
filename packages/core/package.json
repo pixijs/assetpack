@@ -31,6 +31,7 @@
   "dependencies": {
     "@pixi/runner": "^7.0.0",
     "chalk": "^4.1.2",
+    "chokidar": "^3.5.2",
     "clone": "^2.1.2",
     "fs-extra": "^11.1.0",
     "merge": "^2.1.1",
