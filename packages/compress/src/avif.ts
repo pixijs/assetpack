@@ -3,17 +3,16 @@ import { checkExt, hasTag, path, SavableAssetCache } from '@assetpack/core';
 import type sharp from 'sharp';
 import { sharpCompress } from './utils';
 
-interface CompressWebpOptions extends PluginOptions<'nc'>
+interface CompressAvifOptions extends PluginOptions<'nc'>
 {
-    compression: Omit<sharp.WebpOptions, 'force'>;
+    compression: Omit<sharp.AvifOptions, 'force'>;
 }
 
 // converts png, jpg, jpeg
-export function compressWebp(options?: CompressWebpOptions): Plugin<CompressWebpOptions>
+export function compressAvif(options?: CompressAvifOptions): Plugin<CompressAvifOptions>
 {
-    const defaultOptions: Required<CompressWebpOptions> = {
+    const defaultOptions: Required<CompressAvifOptions> = {
         compression: {
-            quality: 80,
             ...options?.compression
         },
         tags: {
@@ -26,22 +25,22 @@ export function compressWebp(options?: CompressWebpOptions): Plugin<CompressWebp
         folder: false,
         test(tree, _p, opts)
         {
-            const tags = { ...defaultOptions.tags, ...opts.tags } as Required<CompressWebpOptions['tags']>;
+            const tags = { ...defaultOptions.tags, ...opts.tags } as Required<CompressAvifOptions['tags']>;
 
             return checkExt(tree.path, '.png', '.jpg', '.jpeg') && !hasTag(tree, 'path', tags.nc);
         },
         async post(tree, processor, options)
         {
-            const webpOpts = {
+            const avif = {
                 ...defaultOptions.compression,
                 ...options?.compression
             };
             const input = tree.path;
-            const output = tree.path.replace(/\.(png|jpg|jpeg)$/i, '.webp');
+            const output = tree.path.replace(/\.(png|jpg|jpeg)$/i, '.avif');
 
             try
             {
-                await sharpCompress('webp', { input, processor, tree, compression: webpOpts, output });
+                await sharpCompress('avif', { input, processor, tree, compression: avif, output });
 
                 const asset  = SavableAssetCache.get(tree.creator);
                 const trimmed = processor.trimOutputPath(output);
@@ -60,7 +59,7 @@ export function compressWebp(options?: CompressWebpOptions): Plugin<CompressWebp
             }
             catch (error)
             {
-                throw new Error(`[compressWebp] Failed to compress file to webp: ${input} - ${(error as Error).message}`);
+                throw new Error(`[compressAvif] Failed to compress file to avif: ${input} - ${(error as Error).message}`);
             }
         }
     };
