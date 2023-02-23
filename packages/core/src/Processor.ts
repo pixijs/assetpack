@@ -140,7 +140,7 @@ export class Processor
 
     public inputToOutput(inputPath: string, extension?: string): string
     {
-        const targetPath = inputPath.replace(/{(.*?)}/g, '');
+        const targetPath = this.removeTagsFromPath(inputPath);
 
         let output = targetPath.replace(this._config.entry, this._config.output);
 
@@ -150,6 +150,11 @@ export class Processor
         }
 
         return output;
+    }
+
+    public removeTagsFromPath(path: string): string
+    {
+        return path.replace(/{(.*?)}/g, '');
     }
 
     public trimOutputPath(outputPath: string): string

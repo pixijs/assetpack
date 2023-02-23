@@ -9,7 +9,7 @@ interface CompressAvifOptions extends PluginOptions<'nc'>
 }
 
 // converts png, jpg, jpeg
-export function compressAvif(options?: CompressAvifOptions): Plugin<CompressAvifOptions>
+export function compressAvif(options?: Partial<CompressAvifOptions>): Plugin<CompressAvifOptions>
 {
     const defaultOptions: Required<CompressAvifOptions> = {
         compression: {

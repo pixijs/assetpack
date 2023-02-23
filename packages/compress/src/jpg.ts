@@ -8,7 +8,7 @@ interface CompressJpgOptions extends PluginOptions<'nc'>
     compression: Omit<sharp.JpegOptions, 'force'>;
 }
 
-export function compressJpg(options?: CompressJpgOptions): Plugin<CompressJpgOptions>
+export function compressJpg(options?: Partial<CompressJpgOptions>): Plugin<CompressJpgOptions>
 {
     const defaultOptions: Required<CompressJpgOptions> = {
         compression: {

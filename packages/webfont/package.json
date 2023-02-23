@@ -32,7 +32,8 @@
     "fs-extra": "^11.1.0",
     "otf2svg": "^1.0.2",
     "svg2ttf": "^6.0.0",
-    "ttf2woff2": "^5.0.0"
+    "ttf2woff2": "^5.0.0",
+    "msdf-bmfont-xml": "^2.7.0"
   },
   "devDependencies": {
     "@assetpack/core": "0.5.1",

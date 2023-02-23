@@ -13,7 +13,8 @@ npm install --save-dev @assetpack/cli
 ```json
 {
     "scripts": {
-        "build": "assetpack -c .assetpack.js"
+        "build": "assetpack -c .assetpack.js",
+        "watch": "assetpack -c .assetpack.js -w"
     }
 }
 ```
