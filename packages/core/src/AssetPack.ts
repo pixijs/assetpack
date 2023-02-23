@@ -8,6 +8,7 @@ import type { AssetPackConfig, ReqAssetPackConfig } from './config';
 import { defaultConfig } from './config';
 import { Logger } from './logger/Logger';
 import { Processor } from './Processor';
+import chokidar from 'chokidar';
 
 export interface Tags
 {
@@ -63,6 +64,17 @@ export class AssetPack
     private readonly _processor: Processor;
     /** A signature to identify the cache */
     private _signature: string;
+    /** A watcher to watch for changes in the input directory */
+    private _watcher!: chokidar.FSWatcher;
+    /** A flag to indicate if the tree is being processed */
+    private processingTree = false;
+    /** A flag to indicate if the tree is dirty */
+    private dirty = -1;
+    /** A flag to indicate if the tree is dirty */
+    private currentDirty = 0;
+
+    private _finishPromise!: Promise<void> | null;
+    private _finishResolve!: (() => void) | null;
 
     constructor(config: AssetPackConfig)
     {
@@ -135,6 +147,85 @@ export class AssetPack
         }
 
         this._cachedTree = this._tree;
+    }
+
+    /**
+     * Watches for changes in the input directory. Reprocesses the tree on change.
+     */
+    public async watch(): Promise<void>
+    {
+        await this.run();
+
+        this._watcher = chokidar.watch(this.config.entry, {
+            // should we ignore the file based on the ignore rules provided (if any)
+            ignored: this.config.ignore,
+        });
+
+        this._watcher.on('all', (_type: any, file: string) =>
+        {
+            // adding check to see if file is null.
+            if (!file || file.indexOf('.DS_Store') !== -1) return;
+
+            file = path.join(this.config.entry, file);
+
+            if (this._treeHash[file])
+            {
+                this._treeHash[file].time = -1;
+            }
+
+            this.processTree();
+        });
+    }
+
+    /**
+     * a promise that lets you know bulldog has finished processing and is now idle, waiting for any new changes
+     */
+    public stop(): Promise<void>
+    {
+        this._watcher.close();
+        if (!this.processingTree) return Promise.resolve();
+
+        this._finishPromise = this._finishPromise ?? new Promise<void>((resolve) =>
+        {
+            this._finishResolve = resolve;
+        });
+
+        return this._finishPromise;
+    }
+
+    /**
+     * Starts processing the tree. Periodically attempts to re=process if tree is dirty
+     */
+    protected processTree(): void
+    {
+        if (this.processingTree)
+        {
+            this.currentDirty++;
+            fs.removeSync(this._cacheTreePath);
+
+            return;
+        }
+
+        this.processingTree = true;
+
+        setTimeout(async () =>
+        {
+            await this.run();
+
+            this.processingTree = false;
+
+            if (this.currentDirty !== this.dirty)
+            {
+                this.dirty = this.currentDirty;
+                this.processTree();
+            }
+            else if (this._finishResolve)
+            {
+                this._finishResolve();
+                this._finishPromise = null;
+                this._finishResolve = null;
+            }
+        }, 1000);
     }
 
     private _walk(dir: string, branch: RootTree)

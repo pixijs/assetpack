@@ -1,5 +1,7 @@
+import { existsSync, removeSync, writeJSONSync } from 'fs-extra';
+import { join } from 'path';
 import type { MockPlugin } from '../../../shared/test/index';
-import { createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test/index';
+import { assetPath, createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test/index';
 import { AssetPack } from '../src/AssetPack';
 import type { Plugin } from '../src/Plugin';
 
@@ -7,11 +9,6 @@ const pkg = 'core';
 
 describe('Core', () =>
 {
-    it('should fail gracefully if json is malformed', async () =>
-    {
-        expect(true).toBe(true);
-    });
-
     it('should add plugins', () =>
     {
         //
@@ -59,6 +56,102 @@ describe('Core', () =>
         expect(plugin.start.mock.invocationCallOrder[0]).toBeLessThan(plugin.test.mock.invocationCallOrder[0]);
         expect(plugin.test.mock.invocationCallOrder[0]).toBeLessThan(plugin.transform.mock.invocationCallOrder[0]);
         expect(plugin.transform.mock.invocationCallOrder[0]).toBeLessThan(plugin.finish.mock.invocationCallOrder[0]);
+    });
+
+    it('should watch for changes', async () =>
+    {
+        const testName = 'watch-delete';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [{
+                    name: 'json.json',
+                    content: assetPath(pkg, 'json.json'),
+                }],
+                folders: [],
+            });
+
+        const testFile = join(inputDir, 'test.json');
+
+        const bulldog = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            cache: false,
+        });
+
+        await bulldog.watch();
+
+        writeJSONSync(testFile, { nice: 'test' });
+
+        await new Promise((resolve) =>
+        {
+            setTimeout(resolve, 1500);
+        });
+
+        expect(existsSync(join(outputDir, 'test.json'))).toBe(true);
+        expect(existsSync(join(outputDir, 'json.json'))).toBe(true);
+
+        removeSync(testFile);
+
+        await new Promise((resolve) =>
+        {
+            setTimeout(resolve, 1500);
+        });
+
+        await bulldog.stop();
+
+        expect(existsSync(join(outputDir, 'test.json'))).toBe(false);
+        expect(existsSync(join(outputDir, 'json.json'))).toBe(true);
+    });
+
+    it('should ignore specified files when watching', async () =>
+    {
+        const testName = 'watch-ignore';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [{
+                    name: 'scripts',
+                    files: [{
+                        name: 'json.json',
+                        content: assetPath(pkg, 'json.json'),
+                    }],
+                    folders: [],
+                }],
+            });
+
+        const testFile = join(inputDir, 'scripts/test.json');
+
+        const bulldog = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            cache: false,
+            ignore: ['**/scripts/**/*'],
+        });
+
+        await bulldog.watch();
+
+        writeJSONSync(testFile, { nice: 'test' });
+
+        // wait a second...
+        await new Promise((resolve) =>
+        {
+            setTimeout(resolve, 1500);
+        });
+
+        await bulldog.stop();
+
+        expect(existsSync(join(outputDir, 'scripts/json.json'))).toBe(false);
+        expect(existsSync(join(outputDir, 'scripts/test.json'))).toBe(false);
     });
 
     it('should provide the correct options overrides to the plugin', () =>

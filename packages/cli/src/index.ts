@@ -20,8 +20,7 @@ const program = new Command();
 program.description('Our New CLI');
 program.version('0.2.0');
 program.option('-c, --config <path>', 'config file to use');
-// TODO: add watch option
-// program.option('-w, --watch', 'watch for changes');
+program.option('-w, --watch', 'watch for changes');
 
 async function main()
 {
@@ -86,7 +85,14 @@ async function main()
 
     const assetpack = new AssetPack(config);
 
-    await assetpack.run();
+    if (options.watch)
+    {
+        await assetpack.watch();
+    }
+    else
+    {
+        await assetpack.run();
+    }
 }
 
 function logEvent(event: {
