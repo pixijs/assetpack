@@ -37,7 +37,7 @@ raw-assets
     └── otfFont{wf}.otf
 ```
 
-### Options
+#### Options
 
 - `tags` - An object containing the tags to use for the plugin. Defaults to `{ font: "wf" }`.
 
@@ -55,7 +55,7 @@ raw-assets
 
 These plugins only work with `ttf` files.
 
-### Options
+#### Options
 
 - `tags` - An object containing the tags to use for the plugin. Defaults to `{ font: "wf" }`.
 - `font` - An object containing options to customise the font generation.
