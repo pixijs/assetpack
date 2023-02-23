@@ -9,7 +9,7 @@ interface CompressPngOptions extends PluginOptions<'nc'>
 }
 
 // converts png, jpg, jpeg
-export function compressPng(options?: CompressPngOptions): Plugin<CompressPngOptions>
+export function compressPng(options?: Partial<CompressPngOptions>): Plugin<CompressPngOptions>
 {
     const defaultOptions: Required<CompressPngOptions> = {
         compression: {

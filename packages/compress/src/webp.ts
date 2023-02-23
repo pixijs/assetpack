@@ -9,7 +9,7 @@ interface CompressWebpOptions extends PluginOptions<'nc'>
 }
 
 // converts png, jpg, jpeg
-export function compressWebp(options?: CompressWebpOptions): Plugin<CompressWebpOptions>
+export function compressWebp(options?: Partial<CompressWebpOptions>): Plugin<CompressWebpOptions>
 {
     const defaultOptions: Required<CompressWebpOptions> = {
         compression: {
