@@ -2,6 +2,7 @@ import { AssetPack } from '@assetpack/core';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 import { compressJpg, compressPng, compressWebp } from '../src';
+import { compressAvif } from '../src/avif';
 
 const pkg = 'compress';
 
@@ -34,6 +35,7 @@ describe('Compress', () =>
             output: outputDir,
             plugins: {
                 compressWebp: compressWebp(),
+                compressAvif: compressAvif(),
                 compress: compressPng(),
                 compressJpg: compressJpg()
             }
@@ -43,8 +45,10 @@ describe('Compress', () =>
 
         expect(existsSync(`${outputDir}/testPng.png`)).toBe(true);
         expect(existsSync(`${outputDir}/testPng.webp`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.avif`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.jpg`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.webp`)).toBe(true);
+        expect(existsSync(`${outputDir}/testJpg.avif`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
     });
 });

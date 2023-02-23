@@ -149,8 +149,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                         transformData: {
                             prefix: template,
                         }
-                    }
-                    );
+                    });
                 });
             }
 

@@ -15,7 +15,8 @@ export function compressJpg(options?: CompressJpgOptions): Plugin<CompressJpgOpt
             ...options?.compression
         },
         tags: {
-            nc: 'nc'
+            nc: 'nc',
+            ...options?.tags
         }
     };
 
