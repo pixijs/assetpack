@@ -7,7 +7,7 @@ import { SavableAssetCache } from './Cache';
 import type { ReqAssetPackConfig } from './config';
 import { Logger } from './logger/Logger';
 import type { Plugin } from './Plugin';
-import { hasTag, replaceExt } from './utils';
+import { hasTag, path, replaceExt } from './utils';
 
 interface SaveOptions<T extends RootTree | TransformedTree>
 {
@@ -300,6 +300,21 @@ export class Processor
 
             if (SavableAssetCache.has(tree.path))
             {
+                const asset = SavableAssetCache.get(tree.path);
+
+                if (asset.transformData?.files.length > 0)
+                {
+                    asset.transformData.files.forEach((file) =>
+                    {
+                        file.paths.forEach((shortPath) =>
+                        {
+                            const fullPath = path.join(this.config.output, shortPath);
+
+                            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                            fs.existsSync(fullPath) && fs.removeSync(fullPath);
+                        });
+                    });
+                }
                 SavableAssetCache.remove(tree.path);
             }
         }
