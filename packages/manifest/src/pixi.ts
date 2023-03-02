@@ -96,6 +96,9 @@ function collect(
     options: PixiManifestOptions
 )
 {
+    // an item may have been deleted, so we don't want to add it to the manifest!
+    if (tree.state === 'deleted') return;
+
     const targetPath = getManifestName(tree.path, processor.config.entry) || 'default';
 
     if (!bundles.has(targetPath))
