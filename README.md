@@ -1,7 +1,13 @@
-<div align="center">
-    <h1>AssetPack</h1>
-    <h3>Optimising assets for the web!</h3>
-</div>
+<p style="text-align:center;" align="center">
+  <picture align="center">
+      <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/assetpack-logo-light.svg">
+      <source media="(prefers-color-scheme: light)" srcset="./.github/assets/assetpack-logo-dark.svg">
+      <img align="center" src="./.github/assets/assetpack-logo-dark.svg" alt="Shows a dark AssetPack logo in light mode and a white logo in dark mode" width="60%"/>
+  </picture>
+  <div align="center" style="margin-top: -20px">
+      <h3>Optimising assets for the web!</h3>
+  </div>
+</p>
 <br>
 
 AssetPack is a tool for optimising assets for the web. It can be used to transform, combine, compress assets. Any asset that you want to transform or optimise into something else can be done with AssetPack.
