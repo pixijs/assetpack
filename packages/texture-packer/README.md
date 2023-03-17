@@ -62,7 +62,7 @@ raw-assets
 If you are generating multiple resolutions of a spritesheet right now Pixi does not know how to handle this. To get around this you will need to add a `ResolveParser` like so:
 
 ```ts
-import { settings, extensions, ResolveURLParser, ExtensionType } from 'pixi.js';
+import { settings, extensions, resolveTextureUrl, ResolveURLParser, ExtensionType } from 'pixi.js';
 
 export const resolveJsonUrl = {
     extension: ExtensionType.ResolveParser,

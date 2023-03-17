@@ -1,4 +1,4 @@
-import type { ChildTree, RootTree, TransformedTree } from './AssetPack';
+import type { ChildTree, RootTree, Tags, TransformedTree } from './AssetPack';
 import { Logger } from './logger/Logger';
 
 class CacheClass<T>
@@ -81,6 +81,10 @@ export interface TransformDataFile
 {
     name?: string,
     paths: string[],
+    data?: {
+        tags?: Tags,
+        [x: string]: any
+    },
 }
 
 export interface TransformData
