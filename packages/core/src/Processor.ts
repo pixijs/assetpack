@@ -179,7 +179,7 @@ export class Processor
         const outputName = data.outputOptions?.outputPathOverride
             ?? this.inputToOutput(data.tree.path, data.outputOptions?.outputExtension);
 
-        this.addToTree({
+        const transformedTree = this.addToTree({
             tree: data.tree,
             outputOptions: {
                 outputPathOverride: outputName,
@@ -194,6 +194,8 @@ export class Processor
                 outputData: data.outputOptions?.outputData,
             },
         });
+
+        return transformedTree;
     }
 
     public saveToOutput(data: Omit<SaveOptions<RootTree | TransformedTree>, 'transformOptions'>)
@@ -227,7 +229,7 @@ export class Processor
      */
     public addToTree(
         data: Omit<SaveOptions<RootTree>, 'transformOptions'> & SaveOptions<RootTree>['transformOptions'],
-    ): void
+    ): TransformedTree
     {
         // eslint-disable-next-line prefer-const
         let { tree, isFolder, fileTags, transformId, transformData } = data;
@@ -255,6 +257,8 @@ export class Processor
         };
 
         tree.transformed.push(treeData);
+
+        return treeData;
     }
 
     /**

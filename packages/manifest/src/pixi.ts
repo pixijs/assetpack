@@ -163,10 +163,15 @@ export function defaultPixiParser(tree: ChildTree, processor: Processor, _option
     {
         const name = processor.trimOutputPath(file.name ?? file.paths[0]);
 
-        return {
+        const res: PixiManifestEntry =  {
             name,
             srcs: file.paths.map((path) => processor.trimOutputPath(path)),
         };
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        file.data && (res.data = file.data as PixiManifestEntry['data']);
+
+        return res;
     });
 
     return res;
