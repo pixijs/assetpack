@@ -1,6 +1,6 @@
 {
   "name": "@assetpack/plugin-webfont",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/webfont/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -36,7 +36,7 @@
     "ttf2woff2": "^5.0.0"
   },
   "devDependencies": {
-    "@assetpack/core": "0.6.1",
+    "@assetpack/core": "0.6.2",
     "@types/svg2ttf": "^5.0.1",
     "@types/ttf2woff2": "^2.0.0"
   },
