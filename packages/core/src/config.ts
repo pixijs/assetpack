@@ -22,8 +22,8 @@ export interface AssetPackConfig
     plugins?: Record<string, Plugin>
     files?: Array<{
         files: string[],
-        settings: Record<string, any>
-        tags: Array<string | { name: string, data: any }>
+        settings?: Record<string, any>
+        tags?: Array<string | { name: string, data: any }>
     }>
 }
 

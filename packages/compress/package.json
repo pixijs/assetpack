@@ -30,11 +30,11 @@
   },
   "dependencies": {
     "fs-extra": "^11.1.0",
-    "sharp": "^0.31.2"
+    "sharp": "^0.31.2",
+    "@types/sharp": "^0.31.0"
   },
   "devDependencies": {
-    "@assetpack/core": "0.6.2",
-    "@types/sharp": "^0.31.0"
+    "@assetpack/core": "0.6.2"
   },
   "peerDependencies": {
     "@assetpack/core": ">=0.0.0"
