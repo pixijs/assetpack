@@ -1,7 +1,7 @@
 import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag } from '@assetpack/core';
+import { hasTag } from '@assetpack/core';
 import type sharp from 'sharp';
-import { sharpCompress } from './utils';
+import { compression } from './compressions';
 
 interface CompressJpgOptions extends PluginOptions<'nc'>
 {
@@ -26,7 +26,7 @@ export function compressJpg(options?: Partial<CompressJpgOptions>): Plugin<Compr
         {
             const tags = { ...defaultOptions.tags, ...opts.tags } as Required<CompressJpgOptions['tags']>;
 
-            return checkExt(tree.path, '.jpg', '.jpeg') && !hasTag(tree, 'path', tags.nc);
+            return compression.test.jpg(tree.path) && !hasTag(tree, 'path', tags.nc);
         },
         async post(tree, processor, options)
         {
@@ -38,7 +38,9 @@ export function compressJpg(options?: Partial<CompressJpgOptions>): Plugin<Compr
 
             try
             {
-                await sharpCompress('jpeg', { input, processor, tree, compression: jpgOptions });
+                const buffer = await compression.compress.to.jpg(input, jpgOptions);
+
+                compression.save.to.jpg(input, buffer, processor, tree);
             }
             catch (error)
             {

@@ -1,7 +1,7 @@
 import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag, path, SavableAssetCache } from '@assetpack/core';
+import { hasTag } from '@assetpack/core';
 import type sharp from 'sharp';
-import { sharpCompress } from './utils';
+import { compression } from './compressions';
 
 interface CompressAvifOptions extends PluginOptions<'nc'>
 {
@@ -27,7 +27,7 @@ export function compressAvif(options?: Partial<CompressAvifOptions>): Plugin<Com
         {
             const tags = { ...defaultOptions.tags, ...opts.tags } as Required<CompressAvifOptions['tags']>;
 
-            return checkExt(tree.path, '.png', '.jpg', '.jpeg') && !hasTag(tree, 'path', tags.nc);
+            return compression.test.avif(tree.path) && !hasTag(tree, 'path', tags.nc);
         },
         async post(tree, processor, options)
         {
@@ -36,26 +36,12 @@ export function compressAvif(options?: Partial<CompressAvifOptions>): Plugin<Com
                 ...options?.compression
             };
             const input = tree.path;
-            const output = tree.path.replace(/\.(png|jpg|jpeg)$/i, '.avif');
 
             try
             {
-                await sharpCompress('avif', { input, processor, tree, compression: avif, output });
+                const buffer = await compression.compress.to.avif(input, avif);
 
-                const asset  = SavableAssetCache.get(tree.creator);
-                const trimmed = processor.trimOutputPath(output);
-
-                asset.transformData.files.forEach((f) =>
-                {
-                    const paths = f.paths.find((t) => t.includes(path.trimExt(trimmed)));
-
-                    if (paths)
-                    {
-                        f.paths.push(trimmed);
-                    }
-                });
-
-                SavableAssetCache.set(tree.creator, asset);
+                compression.save.to.avif(input, buffer, processor, tree, true);
             }
             catch (error)
             {

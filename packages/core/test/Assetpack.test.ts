@@ -154,9 +154,71 @@ describe('Core', () =>
         expect(existsSync(join(outputDir, 'scripts/test.json'))).toBe(false);
     });
 
-    it('should provide the correct options overrides to the plugin', () =>
+    it('should provide the correct options overrides to the plugin', async () =>
     {
-        //
+        const testName = 'plugin-options-override';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'anything',
+                        files: [],
+                        folders: [
+                            {
+                                name: 'test',
+                                files: [],
+                                folders: [],
+                            }
+                        ],
+                    },
+                ],
+            });
+
+        const plugin = createPlugin({
+            folder: false,
+            test: true,
+            start: true,
+            finish: true,
+            transform: true,
+        }) as MockPlugin;
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            plugins: {
+                json: plugin as Plugin<any>,
+            },
+            cache: false,
+            files: [
+                {
+                    files: ['anything/**'],
+                    settings: {
+                        json: {
+                            test: 'test',
+                        },
+                    },
+                    tags: [],
+                },
+            ]
+        });
+
+        const treePath = join(inputDir, 'anything/test');
+        const treePath2 = join(inputDir, 'anything');
+        const plug = assetpack['_processor']['_plugins'][0];
+
+        const opts = assetpack['_processor']['getOptions'](treePath, plug);
+        const optsBad = assetpack['_processor']['getOptions'](treePath2, plug);
+
+        expect(opts).toEqual({
+            test: 'test',
+        });
+        expect(optsBad).toEqual({});
     });
 
     it('should not copy to output if transformed', () =>
