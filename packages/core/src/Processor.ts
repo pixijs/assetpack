@@ -490,7 +490,7 @@ export class Processor
             const fileConfig = this._config.files[i];
 
             // use minimatch to see if we have a match on any item in the files array
-            const match = fileConfig.files.some((item: string) => minimatch(relativePath, item));
+            const match = fileConfig.files.some((item: string) => minimatch(relativePath, item, { dot: true }));
 
             if (match)
             {

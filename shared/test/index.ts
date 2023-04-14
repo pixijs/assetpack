@@ -52,7 +52,7 @@ export function assetPath(pkg: string, pth: string): string
 }
 
 export function createPlugin(
-    data: Partial<Record<keyof Plugin, boolean | ((...params: any[]) => Promise<void>)>>,
+    data: Partial<Record<keyof Plugin, boolean | ((...params: any[]) => Promise<any>)>>,
     name?: string,
 ): Plugin
 {

@@ -29,13 +29,13 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
+    "@types/fluent-ffmpeg": "^2.1.20",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
     "@assetpack/core": "0.6.2",
-    "@assetpack/plugin-manifest": "0.6.2",
-    "@types/fluent-ffmpeg": "^2.1.20"
+    "@assetpack/plugin-manifest": "0.6.2"
   },
   "peerDependencies": {
     "@assetpack/core": ">=0.0.0",

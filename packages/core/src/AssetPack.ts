@@ -12,7 +12,7 @@ import chokidar from 'chokidar';
 
 export interface Tags
 {
-    [x: string]: boolean | Array<any> | Record<string, any>
+    [x: string]: boolean | Array<any> | Record<string, any> | string
 }
 
 export interface RootTree
@@ -406,13 +406,36 @@ export class AssetPack
 
         const values: Tags = {};
 
+        const parseMultiValue = (i: string, trim = true) =>
+        {
+            if (trim) i = i.substring(1, i.length - 1);
+
+            const multiValue = i.split('=');
+
+            let value: boolean | string | string[] = true;
+
+            if (multiValue.length > 1)
+            {
+                const tagValues = multiValue[1].split('&');
+
+                for (let i = 0; i < tagValues.length; i++)
+                {
+                    tagValues[i] = tagValues[i].trim();
+                }
+
+                value = tagValues.length === 1 ? tagValues[0] : tagValues;
+            }
+
+            return { key: multiValue[0], value };
+        };
+
         if (tagMatches)
         {
             tagMatches.forEach((i) =>
             {
-                const trim = i.substring(1, i.length - 1);
+                const res = parseMultiValue(i);
 
-                values[trim] = true;
+                values[res.key] = res.value;
             });
         }
 
@@ -425,7 +448,7 @@ export class AssetPack
 
                 if (!tags) return;
 
-                const found = files.find((f) => minimatch(fileName, f));
+                const found = files.find((f) => minimatch(fileName, f, { dot: true }));
 
                 if (found)
                 {
@@ -434,7 +457,9 @@ export class AssetPack
                         // check if key is a string
                         if (typeof key === 'string')
                         {
-                            values[key] = true;
+                            const res = parseMultiValue(key, false);
+
+                            values[res.key] = res.value;
                         }
                         else
                         {
