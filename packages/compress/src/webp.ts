@@ -1,7 +1,7 @@
 import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag, path, SavableAssetCache } from '@assetpack/core';
+import { hasTag } from '@assetpack/core';
 import type sharp from 'sharp';
-import { sharpCompress } from './utils';
+import { compression } from './compressions';
 
 interface CompressWebpOptions extends PluginOptions<'nc'>
 {
@@ -28,7 +28,7 @@ export function compressWebp(options?: Partial<CompressWebpOptions>): Plugin<Com
         {
             const tags = { ...defaultOptions.tags, ...opts.tags } as Required<CompressWebpOptions['tags']>;
 
-            return checkExt(tree.path, '.png', '.jpg', '.jpeg') && !hasTag(tree, 'path', tags.nc);
+            return compression.test.avif(tree.path) && !hasTag(tree, 'path', tags.nc);
         },
         async post(tree, processor, options)
         {
@@ -37,26 +37,12 @@ export function compressWebp(options?: Partial<CompressWebpOptions>): Plugin<Com
                 ...options?.compression
             };
             const input = tree.path;
-            const output = tree.path.replace(/\.(png|jpg|jpeg)$/i, '.webp');
 
             try
             {
-                await sharpCompress('webp', { input, processor, tree, compression: webpOpts, output });
+                const buffer = await compression.compress.to.webp(input, webpOpts);
 
-                const asset  = SavableAssetCache.get(tree.creator);
-                const trimmed = processor.trimOutputPath(output);
-
-                asset.transformData.files.forEach((f) =>
-                {
-                    const paths = f.paths.find((t) => t.includes(path.trimExt(trimmed)));
-
-                    if (paths)
-                    {
-                        f.paths.push(trimmed);
-                    }
-                });
-
-                SavableAssetCache.set(tree.creator, asset);
+                compression.save.to.webp(input, buffer, processor, tree, true);
             }
             catch (error)
             {
