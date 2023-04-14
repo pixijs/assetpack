@@ -482,6 +482,7 @@ export class Processor
     private getOptions(file: string, plugin: Plugin)
     {
         let options: Record<string, any> = {};
+        const relativePath = path.relative(this.config.entry, file);
 
         // walk through the config.files and see if we have a match..
         for (const i in this._config.files)
@@ -489,7 +490,7 @@ export class Processor
             const fileConfig = this._config.files[i];
 
             // use minimatch to see if we have a match on any item in the files array
-            const match = fileConfig.files.some((item: string) => minimatch(file, item));
+            const match = fileConfig.files.some((item: string) => minimatch(relativePath, item));
 
             if (match)
             {
