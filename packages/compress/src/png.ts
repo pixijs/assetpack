@@ -1,7 +1,7 @@
 import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag } from '@assetpack/core';
+import { hasTag } from '@assetpack/core';
 import type sharp from 'sharp';
-import { sharpCompress } from './utils';
+import { compression } from './compressions';
 
 interface CompressPngOptions extends PluginOptions<'nc'>
 {
@@ -13,7 +13,7 @@ export function compressPng(options?: Partial<CompressPngOptions>): Plugin<Compr
 {
     const defaultOptions: Required<CompressPngOptions> = {
         compression: {
-            quality: 80,
+            quality: 90,
             ...options?.compression
         },
         tags: {
@@ -28,7 +28,7 @@ export function compressPng(options?: Partial<CompressPngOptions>): Plugin<Compr
         {
             const tags = { ...defaultOptions.tags, ...opts.tags } as Required<CompressPngOptions['tags']>;
 
-            return checkExt(tree.path, '.png') && !hasTag(tree, 'path', tags.nc);
+            return compression.test.png(tree.path) && !hasTag(tree, 'path', tags.nc);
         },
         async post(tree, processor, options)
         {
@@ -40,7 +40,9 @@ export function compressPng(options?: Partial<CompressPngOptions>): Plugin<Compr
 
             try
             {
-                await sharpCompress('png', { input, processor, tree, compression: pngOpts });
+                const buffer = await compression.compress.to.png(input, pngOpts);
+
+                compression.save.to.png(input, buffer, processor, tree);
             }
             catch (error)
             {
