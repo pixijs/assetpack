@@ -1,7 +1,10 @@
 import type { Plugin, Processor, RootTree } from '@assetpack/core';
 import { checkExt, merge, path, SavableAssetCache } from '@assetpack/core';
 import fluentFfmpeg from 'fluent-ffmpeg';
+import ffmpegPath from "@ffmpeg-installer/ffmpeg";
 import fs from 'fs-extra';
+
+fluentFfmpeg.setFfmpegPath(ffmpegPath.path);
 
 type DeepRequired<T> = {
     [K in keyof T]: Required<DeepRequired<T[K]>>
