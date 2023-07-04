@@ -49,3 +49,5 @@ export function compressJpg(options?: Partial<CompressJpgOptions>): Plugin<Compr
         }
     };
 }
+
+export const jpgDefaults: CompressJpgOptions['compression'] = {};

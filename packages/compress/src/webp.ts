@@ -8,12 +8,16 @@ interface CompressWebpOptions extends PluginOptions<'nc'>
     compression: Omit<sharp.WebpOptions, 'force'>;
 }
 
+export const webpDefaults: CompressWebpOptions['compression'] = {
+    quality: 80
+};
+
 // converts png, jpg, jpeg
 export function compressWebp(options?: Partial<CompressWebpOptions>): Plugin<CompressWebpOptions>
 {
     const defaultOptions: Required<CompressWebpOptions> = {
         compression: {
-            quality: 80,
+            ...webpDefaults,
             ...options?.compression
         },
         tags: {

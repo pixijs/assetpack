@@ -50,3 +50,5 @@ export function compressAvif(options?: Partial<CompressAvifOptions>): Plugin<Com
         }
     };
 }
+
+export const avifDefaults: CompressAvifOptions['compression'] = {};

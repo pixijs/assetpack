@@ -1,4 +1,4 @@
-import type { Processor, TransformedTree } from '@assetpack/core';
+import type { Processor, RootTree, TransformedTree } from '@assetpack/core';
 import { SavableAssetCache, checkExt, path } from '@assetpack/core';
 import sharp from 'sharp';
 
@@ -20,7 +20,7 @@ const compress = {
     }
 };
 
-function saveToOutput(buffer: Buffer, output: string, processor: Processor, tree: TransformedTree)
+function saveToOutput(buffer: Buffer, output: string, processor: Processor, tree: RootTree | TransformedTree)
 {
     processor.saveToOutput({
         tree,
@@ -51,15 +51,21 @@ function addToSavableAssetCache(output: string, processor: Processor, tree: Tran
 
 const save = {
     to: {
-        png: async (output: string, buffer: Buffer, processor: Processor, tree: TransformedTree) =>
+        png: async (output: string, buffer: Buffer, processor: Processor, tree: RootTree | TransformedTree) =>
         {
             saveToOutput(buffer, output, processor, tree);
         },
-        jpg: async (output: string, buffer: Buffer, processor: Processor, tree: TransformedTree) =>
+        jpg: async (output: string, buffer: Buffer, processor: Processor, tree: RootTree | TransformedTree) =>
         {
             saveToOutput(buffer, output, processor, tree);
         },
-        webp: async (output: string, buffer: Buffer, processor: Processor, tree: TransformedTree, addToCache = true) =>
+        webp: async (
+            output: string,
+            buffer: Buffer,
+            processor: Processor,
+            tree: RootTree | TransformedTree,
+            addToCache = true
+        ) =>
         {
             const newInput = output.replace(/\.(png|jpg|jpeg)$/i, '.webp');
 
@@ -67,10 +73,16 @@ const save = {
 
             if (addToCache)
             {
-                addToSavableAssetCache(newInput, processor, tree);
+                addToSavableAssetCache(newInput, processor, tree as TransformedTree);
             }
         },
-        avif: async (output: string, buffer: Buffer, processor: Processor, tree: TransformedTree, addToCache = true) =>
+        avif: async (
+            output: string,
+            buffer: Buffer,
+            processor: Processor,
+            tree: RootTree | TransformedTree,
+            addToCache = true
+        ) =>
         {
             const newInput = output.replace(/\.(png|jpg|jpeg)$/i, '.avif');
 
@@ -78,7 +90,7 @@ const save = {
 
             if (addToCache)
             {
-                addToSavableAssetCache(newInput, processor, tree);
+                addToSavableAssetCache(newInput, processor, tree as TransformedTree);
             }
         }
     }

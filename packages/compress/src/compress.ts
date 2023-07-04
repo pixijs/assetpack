@@ -2,8 +2,12 @@ import type { Plugin, PluginOptions } from '@assetpack/core';
 import { hasTag } from '@assetpack/core';
 import type { WebpOptions, PngOptions, AvifOptions, JpegOptions } from 'sharp';
 import { compression } from './compressions';
+import { webpDefaults } from './webp';
+import { pngDefaults } from './png';
+import { avifDefaults } from './avif';
+import { jpgDefaults } from './jpg';
 
-interface CompressOptions extends PluginOptions<'nc'>
+export interface CompressOptions extends PluginOptions<'nc'>
 {
     webp: Omit<WebpOptions, 'force'> | false
     png: Omit<PngOptions, 'force'> | false
@@ -25,10 +29,10 @@ export function compress(options?: Partial<CompressOptions>): Plugin<CompressOpt
     };
 
     const defaultOptions: Required<CompressOptions> = {
-        webp: combineOptions('webp', { quality: 80 }),
-        png: combineOptions('png', { quality: 90 }),
-        avif: combineOptions('avif', {}),
-        jpg: combineOptions('jpg', {}),
+        webp: combineOptions('webp', webpDefaults),
+        png: combineOptions('png', pngDefaults),
+        avif: combineOptions('avif', avifDefaults),
+        jpg: combineOptions('jpg', jpgDefaults),
         tags: {
             nc: 'nc',
             ...options?.tags

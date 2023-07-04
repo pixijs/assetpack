@@ -8,12 +8,16 @@ interface CompressPngOptions extends PluginOptions<'nc'>
     compression: Omit<sharp.PngOptions, 'force'>;
 }
 
+export const pngDefaults: CompressPngOptions['compression'] = {
+    quality: 90
+};
+
 // converts png, jpg, jpeg
 export function compressPng(options?: Partial<CompressPngOptions>): Plugin<CompressPngOptions>
 {
     const defaultOptions: Required<CompressPngOptions> = {
         compression: {
-            quality: 90,
+            ...pngDefaults,
             ...options?.compression
         },
         tags: {
