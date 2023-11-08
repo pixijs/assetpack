@@ -1,4 +1,10 @@
-import type { ChildTree, Plugin, Processor, RootTree, Tags } from '@assetpack/core';
+import type {
+    ChildTree,
+    Plugin,
+    Processor,
+    RootTree,
+    Tags,
+} from '@assetpack/core';
 import { path, SavableAssetCache } from '@assetpack/core';
 import type { BaseManifestOptions, ManifestParser } from './manifest';
 import { baseManifest } from './manifest';
@@ -26,10 +32,28 @@ export interface PixiManifestOptions extends BaseManifestOptions
     trimExtensions?: boolean;
     ignoreFileExtensions?: string[];
     defaultParser: ManifestParser<'copy', PixiManifestOptions>;
-    parsers: ManifestParser<any, PixiManifestOptions>[]
+    parsers: ManifestParser<any, PixiManifestOptions>[];
 }
 
-export function pixiManifest(options?: Partial<PixiManifestOptions>): Plugin<PixiManifestOptions>
+export function pixiManifest(
+    options?: Partial<PixiManifestOptions>
+): Plugin<PixiManifestOptions>
+{
+    const defaultOptions: PixiManifestOptions = {
+        createShortcuts: false,
+        trimExtensions: false,
+        defaultParser: { type: 'copy', parser: defaultPixiParser },
+        parsers: [],
+        ...options,
+    };
+    const plugin = baseManifest<PixiManifestOptions>(finish, defaultOptions);
+
+    return plugin;
+}
+
+export function pixiManifest2(
+    options?: Partial<PixiManifestOptions>
+): Plugin<PixiManifestOptions>
 {
     const defaultOptions: PixiManifestOptions = {
         createShortcuts: false,
@@ -65,11 +89,17 @@ function finish(
     {
         const nameMap = new Map<PixiManifestEntry, string[]>();
 
-        bundles.forEach((bundle) => bundle.assets.forEach((asset) => nameMap.set(asset, asset.name as string[])));
+        bundles.forEach((bundle) =>
+            bundle.assets.forEach((asset) =>
+                nameMap.set(asset, asset.name as string[])
+            )
+        );
 
         const arrays = Array.from(nameMap.values());
         const sets = arrays.map((arr) => new Set(arr));
-        const uniqueArrays = arrays.map((arr, i) => arr.filter((x) => sets.every((set, j) => j === i || !set.has(x))));
+        const uniqueArrays = arrays.map((arr, i) =>
+            arr.filter((x) => sets.every((set, j) => j === i || !set.has(x)))
+        );
 
         bundles.forEach((bundle) =>
         {
@@ -77,7 +107,9 @@ function finish(
             {
                 const names = nameMap.get(asset) as string[];
 
-                asset.name = uniqueArrays.find((arr) => arr.every((x) => names.includes(x))) as string[];
+                asset.name = uniqueArrays.find((arr) =>
+                    arr.every((x) => names.includes(x))
+                ) as string[];
             });
         });
     }
@@ -101,7 +133,8 @@ function collect(
     // an item may have been deleted, so we don't want to add it to the manifest!
     if (tree.state === 'deleted') return;
 
-    const targetPath = getManifestName(tree.path, processor.config.entry) || 'default';
+    const targetPath
+        = getManifestName(tree.path, processor.config.entry) || 'default';
 
     if (!bundles.has(targetPath))
     {
@@ -120,7 +153,11 @@ function collect(
 
         options.parsers.forEach((parser) =>
         {
-            if (parser.type !== SavableAssetCache.get(tree.path).transformData.type) return;
+            if (
+                parser.type
+                !== SavableAssetCache.get(tree.path).transformData.type
+            )
+            { return; }
             result = parser.parser(tree as ChildTree, processor, options);
 
             found = true;
@@ -128,8 +165,13 @@ function collect(
 
         if (!found)
         {
-            result = options.parsers.find(
-                (parser) => parser.type === 'copy')?.parser(tree as ChildTree, processor, options) as PixiManifestEntry[];
+            result = options.parsers
+                .find((parser) => parser.type === 'copy')
+                ?.parser(
+                    tree as ChildTree,
+                    processor,
+                    options
+                ) as PixiManifestEntry[];
         }
 
         const hasIgnoreFileExtensions
@@ -154,7 +196,7 @@ function collect(
 
             if (!entry.data?.tags && (Object.keys(tree.fileTags).length > 0 || Object.keys(tree.pathTags).length > 0))
             {
-                entry.data = entry.data || {} as PixiManifestEntry['data'];
+                entry.data = entry.data || ({} as PixiManifestEntry['data']);
                 entry.data!.tags = {
                     ...tree.fileTags,
                     ...tree.pathTags,
@@ -175,7 +217,11 @@ function collect(
     }
 }
 
-export function defaultPixiParser(tree: ChildTree, processor: Processor, _options: PixiManifestOptions): PixiManifestEntry[]
+export function defaultPixiParser(
+    tree: ChildTree,
+    processor: Processor,
+    _options: PixiManifestOptions
+): PixiManifestEntry[]
 {
     const transformData = SavableAssetCache.get(tree.path).transformData;
 
@@ -183,7 +229,7 @@ export function defaultPixiParser(tree: ChildTree, processor: Processor, _option
     {
         const name = processor.trimOutputPath(file.name ?? file.paths[0]);
 
-        const res: PixiManifestEntry =  {
+        const res: PixiManifestEntry = {
             name,
             srcs: file.paths.map((path) => processor.trimOutputPath(path)),
         };
@@ -208,13 +254,15 @@ function getShortNames(name: string | string[], options: PixiManifestOptions)
 
     const allNames = [];
 
-    name = isNameArray ? name[0] : name as string;
+    name = isNameArray ? name[0] : (name as string);
 
     allNames.push(name);
     /* eslint-disable @typescript-eslint/no-unused-expressions */
     trimExtensions && allNames.push(path.trimExt(name));
     createShortcuts && allNames.push(path.basename(name));
-    createShortcuts && trimExtensions && allNames.push(path.trimExt(path.basename(name)));
+    createShortcuts
+        && trimExtensions
+        && allNames.push(path.trimExt(path.basename(name)));
     /* eslint-enable @typescript-eslint/no-unused-expressions */
 
     return allNames;
