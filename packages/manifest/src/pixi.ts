@@ -182,15 +182,36 @@ function collect(
         {
             if (hasIgnoreFileExtensions)
             {
-                if (
-                    options.ignoreFileExtensions?.some((extensionName) =>
-                        entry.srcs[0].endsWith(extensionName)
-                    )
-                )
+                if (Array.isArray(entry.srcs))
                 {
-                    result.splice(index, 1);
+                    for (const src of entry.srcs)
+                    {
+                        if (
+                            options.ignoreFileExtensions?.some(
+                                (extensionName) => src.endsWith(extensionName)
+                            )
+                        )
+                        {
+                            result.splice(index, 1);
 
-                    return;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    const src = entry.srcs as string;
+
+                    if (
+                        options.ignoreFileExtensions?.some((extensionName) =>
+                            src.endsWith(extensionName)
+                        )
+                    )
+                    {
+                        result.splice(index, 1);
+
+                        return;
+                    }
                 }
             }
 
