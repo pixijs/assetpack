@@ -127,13 +127,8 @@ function collect(
 
         if (!found)
         {
-            result = options.parsers
-                .find((parser) => parser.type === 'copy')
-                ?.parser(
-                    tree as ChildTree,
-                    processor,
-                    options
-                ) as PixiManifestEntry[];
+            result = options.parsers.find(
+                (parser) => parser.type === 'copy')?.parser(tree as ChildTree, processor, options) as PixiManifestEntry[];
         }
 
         const hasIgnoreFileExtensions
@@ -208,7 +203,7 @@ export function defaultPixiParser(tree: ChildTree, processor: Processor, _option
     {
         const name = processor.trimOutputPath(file.name ?? file.paths[0]);
 
-        const res: PixiManifestEntry = {
+        const res: PixiManifestEntry =  {
             name,
             srcs: file.paths.map((path) => processor.trimOutputPath(path)),
         };
