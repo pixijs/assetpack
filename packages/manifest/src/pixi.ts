@@ -131,8 +131,7 @@ function collect(
                 (parser) => parser.type === 'copy')?.parser(tree as ChildTree, processor, options) as PixiManifestEntry[];
         }
 
-        const hasIgnoreFileExtensions
-            = options.ignoreFileExtensions !== undefined
+        const hasIgnoreFileExtensions = options.ignoreFileExtensions !== undefined
             && options.ignoreFileExtensions.length > 0;
 
         result.forEach((entry, index) =>
@@ -143,11 +142,7 @@ function collect(
                 {
                     for (const src of entry.srcs)
                     {
-                        if (
-                            options.ignoreFileExtensions?.some(
-                                (extensionName) => src.endsWith(extensionName)
-                            )
-                        )
+                        if (options.ignoreFileExtensions?.some((extensionName) => src.endsWith(extensionName)))
                         {
                             result.splice(index, 1);
 
@@ -159,11 +154,7 @@ function collect(
                 {
                     const src = entry.srcs as string;
 
-                    if (
-                        options.ignoreFileExtensions?.some((extensionName) =>
-                            src.endsWith(extensionName)
-                        )
-                    )
+                    if (options.ignoreFileExtensions?.some((extensionName) => src.endsWith(extensionName)))
                     {
                         result.splice(index, 1);
 
