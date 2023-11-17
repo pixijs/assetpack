@@ -272,8 +272,8 @@ describe('Webfont', () =>
             name: 'default',
             assets: [
                 {
-                    name: ['defaultFolder/ttf.ttf'],
-                    srcs: ['defaultFolder/ttf.woff2'],
+                    alias: ['defaultFolder/ttf.ttf'],
+                    src: ['defaultFolder/ttf.woff2'],
                     data: {
                         tags: {
                             wf: true,
@@ -281,8 +281,8 @@ describe('Webfont', () =>
                     }
                 },
                 {
-                    name: ['sdfFolder/ttf.ttf'],
-                    srcs: ['sdfFolder/ttf.fnt'],
+                    alias: ['sdfFolder/ttf.ttf'],
+                    src: ['sdfFolder/ttf.fnt'],
                     data: {
                         tags: {
                             sdf: true,

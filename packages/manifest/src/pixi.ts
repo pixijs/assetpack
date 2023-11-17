@@ -12,8 +12,8 @@ export interface PixiManifest
 
 export interface PixiManifestEntry
 {
-    name: string | string[];
-    srcs: string | string[];
+    alias: string | string[];
+    src: string | string[];
     data?: {
         tags: Tags;
         [x: string]: any;
@@ -63,7 +63,7 @@ function finish(
     {
         const nameMap = new Map<PixiManifestEntry, string[]>();
 
-        bundles.forEach((bundle) => bundle.assets.forEach((asset) => nameMap.set(asset, asset.name as string[])));
+        bundles.forEach((bundle) => bundle.assets.forEach((asset) => nameMap.set(asset, asset.alias as string[])));
 
         const arrays = Array.from(nameMap.values());
         const sets = arrays.map((arr) => new Set(arr));
@@ -75,7 +75,7 @@ function finish(
             {
                 const names = nameMap.get(asset) as string[];
 
-                asset.name = uniqueArrays.find((arr) => arr.every((x) => names.includes(x))) as string[];
+                asset.alias = uniqueArrays.find((arr) => arr.every((x) => names.includes(x))) as string[];
             });
         });
     }
@@ -141,7 +141,7 @@ function collect(
                 };
             }
 
-            entry.name = getShortNames(entry.name, options);
+            entry.alias = getShortNames(entry.alias, options);
         });
         bundle.assets.push(...result);
     }
@@ -164,8 +164,8 @@ export function defaultPixiParser(tree: ChildTree, processor: Processor, _option
         const name = processor.trimOutputPath(file.name ?? file.paths[0]);
 
         const res: PixiManifestEntry =  {
-            name,
-            srcs: file.paths.map((path) => processor.trimOutputPath(path)),
+            alias: name,
+            src: file.paths.map((path) => processor.trimOutputPath(path)),
         };
 
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
