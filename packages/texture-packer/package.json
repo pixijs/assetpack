@@ -1,6 +1,6 @@
 {
   "name": "@assetpack/plugin-texture-packer",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/texture-packer/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -36,7 +36,7 @@
     "sharp": "^0.32.0"
   },
   "devDependencies": {
-    "@assetpack/core": "0.7.0"
+    "@assetpack/core": "0.8.0"
   },
   "peerDependencies": {
     "@assetpack/core": ">=0.0.0"
