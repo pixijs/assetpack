@@ -120,6 +120,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                     inputDir: tree.path,
                     outputDir: processor.inputToOutput(tree.path),
                     template,
+                    textureFormat: transformOptions.texturePacker.textureFormat,
                     scale,
                     originalScale: origScale,
                     processor,
@@ -178,11 +179,14 @@ export function pixiTexturePacker(options?: Partial<TexturePackerOptions>): Plug
 }
 type ReturnedPromiseResolvedType<T> = T extends (...args: any[]) => Promise<infer R> ? R : never;
 
+const FILE_EXTENSION_RE = /(\.[\w\d_-]+)$/i;
+
 interface ProcessOptions
 {
     inputDir: string;
     outputDir: string;
     template: string;
+    textureFormat: TextureFormat;
     scale: number;
     originalScale: number;
     processor: Processor;
@@ -194,14 +198,14 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
     for (const item of files)
     {
         // create a name that injects a template eg _mip
-        const templateName = item.name.replace(/(\.[\w\d_-]+)$/i, `${options.template}$1`);
+        const templateName = item.name.replace(FILE_EXTENSION_RE, `${options.template}$1`);
         const outputDir = options.outputDir;
 
         // make sure the folder we save to exists
         fs.ensureDirSync(outputDir);
 
         // this is where we save the files
-        const outputFile = path.joinSafe(outputDir, templateName);
+        let outputFile = path.joinSafe(outputDir, templateName);
 
         // so one thing FREE texture packer does different is that it either puts the full paths in
         // or the image name.
@@ -210,9 +214,17 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
         // eg raw-assets/image/icons{tps}/cool/image.png -> cool/image.png
         if (outputFile.split('.').pop() === 'json')
         {
+            // Spritesheet JSON files for Pixi must follow the naming
+            // `my-spritesheet{resolution}.{imageFormat}.json` by convention. We
+            // must add the imageFormat to outputFile.
+            outputFile = outputFile.replace(
+                FILE_EXTENSION_RE,
+                `.${options.textureFormat}$1`
+            );
+
             const json = JSON.parse(item.buffer.toString('utf8'));
 
-            const newFrames: {[x: string]: any} = {};
+            const newFrames: { [x: string]: any } = {};
 
             for (const i in json.frames)
             {
@@ -223,7 +235,10 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
             }
 
             json.frames = newFrames;
-            json.meta.image = json.meta.image.replace(/(\.[\w\d_-]+)$/i, `${options.template}$1`);
+            json.meta.image = json.meta.image.replace(
+                FILE_EXTENSION_RE,
+                `${options.template}$1`
+            );
             json.meta.scale *= options.originalScale;
 
             options.processor.saveToOutput({
@@ -231,7 +246,7 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
                 outputOptions: {
                     outputPathOverride: outputFile,
                     outputData: JSON.stringify(json),
-                }
+                },
             });
         }
         else

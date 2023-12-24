@@ -166,8 +166,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps/tps-1.json'],
                     src: [
-                        'bundle/tps/tps-1@1x.json',
-                        'bundle/tps/tps-1@0.5x.json',
+                        'bundle/tps/tps-1@1x.png.json',
+                        'bundle/tps/tps-1@0.5x.png.json',
                     ],
                     data: {
                         tags: {
@@ -179,8 +179,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps/tps-0.json'],
                     src: [
-                        'bundle/tps/tps-0@1x.json',
-                        'bundle/tps/tps-0@0.5x.json',
+                        'bundle/tps/tps-0@1x.png.json',
+                        'bundle/tps/tps-0@0.5x.png.json',
                     ],
                     data: {
                         tags: {
