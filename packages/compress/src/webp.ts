@@ -32,7 +32,7 @@ export function compressWebp(options?: Partial<CompressWebpOptions>): Plugin<Com
         {
             const tags = { ...defaultOptions.tags, ...opts.tags } as Required<CompressWebpOptions['tags']>;
 
-            return compression.test.avif(tree.path) && !hasTag(tree, 'path', tags.nc);
+            return compression.test.webp(tree.path) && !hasTag(tree, 'path', tags.nc);
         },
         async post(tree, processor, options)
         {
