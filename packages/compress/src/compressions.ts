@@ -9,13 +9,13 @@ Omit<sharp.AvifOptions, 'force'>;
 
 const compress = {
     to: {
-        png: async (input: string, compression: SharpOptions) =>
+        png: async (input: string, compression: SharpOptions = {}) =>
             await sharp(input).png({ ...compression, force: true }).toBuffer(),
-        webp: async (input: string, compression: SharpOptions) =>
+        webp: async (input: string, compression: SharpOptions = {}) =>
             await sharp(input).webp({ ...compression, force: true }).toBuffer(),
-        avif: async (input: string, compression: SharpOptions) =>
+        avif: async (input: string, compression: SharpOptions = {}) =>
             await sharp(input).avif({ ...compression, force: true }).toBuffer(),
-        jpg: async (input: string, compression: SharpOptions) =>
+        jpg: async (input: string, compression: SharpOptions = {}) =>
             await sharp(input).jpeg({ ...compression, force: true }).toBuffer(),
     }
 };

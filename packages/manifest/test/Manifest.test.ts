@@ -3,7 +3,7 @@ import { audio } from '@assetpack/plugin-ffmpeg';
 import { pixiManifest } from '@assetpack/plugin-manifest';
 import { mipmap, spineAtlasMipmap } from '@assetpack/plugin-mipmap';
 import { pixiTexturePacker } from '@assetpack/plugin-texture-packer';
-import { compressWebp } from '@assetpack/plugin-compress';
+import { compression, compressWebp } from '@assetpack/plugin-compress';
 // import { webfont } from '@assetpack/plugin-webfont';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
@@ -114,6 +114,10 @@ describe('Manifest', () =>
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
+                    compression: {
+                        avif: compression.compress.to.avif,
+                        webp: compression.compress.to.webp
+                    },
                 }),
                 audio: audio(),
                 mipmap: mipmap(),
@@ -166,8 +170,12 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps/tps-1.json'],
                     src: [
-                        'bundle/tps/tps-1@1x.json',
-                        'bundle/tps/tps-1@0.5x.json',
+                        'bundle/tps/tps-1@1x.png.json',
+                        'bundle/tps/tps-1@1x.avif.json',
+                        'bundle/tps/tps-1@1x.webp.json',
+                        'bundle/tps/tps-1@0.5x.png.json',
+                        'bundle/tps/tps-1@0.5x.avif.json',
+                        'bundle/tps/tps-1@0.5x.webp.json',
                     ],
                     data: {
                         tags: {
@@ -179,8 +187,12 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps/tps-0.json'],
                     src: [
-                        'bundle/tps/tps-0@1x.json',
-                        'bundle/tps/tps-0@0.5x.json',
+                        'bundle/tps/tps-0@1x.png.json',
+                        'bundle/tps/tps-0@1x.avif.json',
+                        'bundle/tps/tps-0@1x.webp.json',
+                        'bundle/tps/tps-0@0.5x.png.json',
+                        'bundle/tps/tps-0@0.5x.avif.json',
+                        'bundle/tps/tps-0@0.5x.webp.json',
                     ],
                     data: {
                         tags: {
@@ -313,6 +325,9 @@ describe('Manifest', () =>
                 texturePacker: pixiTexturePacker({
                     resolutionOptions: {
                         maximumTextureSize: 512,
+                    },
+                    compression: {
+                        webp: compression.compress.to.webp
                     },
                 }),
                 audio: audio(),
@@ -481,6 +496,9 @@ describe('Manifest', () =>
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
+                    compression: {
+                        webp: compression.compress.to.webp
+                    },
                 }),
                 audio: audio(),
                 mipmap: mipmap(),
@@ -638,6 +656,9 @@ describe('Manifest', () =>
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
+                    compression: {
+                        webp: compression.compress.to.webp
+                    },
                 }),
                 audio: audio(),
                 mipmap: mipmap(),
@@ -646,7 +667,7 @@ describe('Manifest', () =>
                     createShortcuts: false,
                     trimExtensions: true,
                 }),
-                webp: compressWebp(),
+                webp: compressWebp()
             },
         });
 

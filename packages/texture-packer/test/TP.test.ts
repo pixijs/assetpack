@@ -4,6 +4,7 @@ import { existsSync, readJSONSync } from 'fs-extra';
 import sharp from 'sharp';
 import type { File } from '../../../shared/test/index';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
+import { compression } from '@assetpack/plugin-compress/';
 
 const pkg = 'texture-packer';
 
@@ -48,6 +49,10 @@ describe('Texture Packer', () =>
             output: outputDir,
             plugins: {
                 tps: texturePacker({
+                    compression: {
+                        avif: compression.compress.to.avif,
+                        webp: compression.compress.to.webp,
+                    },
                     resolutionOptions: {
                         resolutions: { default: 1 },
                     },
@@ -57,7 +62,7 @@ describe('Texture Packer', () =>
 
         await assetpack.run();
 
-        const sheet1 = readJSONSync(`${outputDir}/sprites/sprites@1x.json`);
+        const sheet1 = readJSONSync(`${outputDir}/sprites/sprites@1x.png.json`);
 
         const expectedSize =  {
             w: 560,
@@ -89,20 +94,31 @@ describe('Texture Packer', () =>
                         resolutions: { default: 1, low: 0.5 },
                         maximumTextureSize: size,
                     },
+                    compression: {
+                        avif: compression.compress.to.avif,
+                    }
                 })
             }
         });
 
         await assetpack.run();
 
-        const sheet1 = readJSONSync(`${outputDir}/sprites/sprites-0@1x.json`);
-        const sheet2 = readJSONSync(`${outputDir}/sprites/sprites-1@1x.json`);
+        const sheet1 = readJSONSync(`${outputDir}/sprites/sprites-0@1x.png.json`);
+        const sheet2 = readJSONSync(`${outputDir}/sprites/sprites-1@1x.png.json`);
+        const sheet3 = readJSONSync(`${outputDir}/sprites/sprites-0@1x.avif.json`);
+        const sheet4 = readJSONSync(`${outputDir}/sprites/sprites-1@1x.avif.json`);
 
         expect(sheet1.meta.size.w).toBeLessThanOrEqual(size);
         expect(sheet1.meta.size.h).toBeLessThanOrEqual(size);
 
         expect(sheet2.meta.size.w).toBeLessThanOrEqual(size);
         expect(sheet2.meta.size.h).toBeLessThanOrEqual(size);
+
+        expect(sheet3.meta.size.w).toBeLessThanOrEqual(size);
+        expect(sheet3.meta.size.h).toBeLessThanOrEqual(size);
+
+        expect(sheet4.meta.size.w).toBeLessThanOrEqual(size);
+        expect(sheet4.meta.size.h).toBeLessThanOrEqual(size);
     });
 
     it('should override default texture packer options', async () =>
@@ -123,6 +139,9 @@ describe('Texture Packer', () =>
                     },
                     texturePacker: {
                         textureName: 'something',
+                    },
+                    compression: {
+                        avif: compression.compress.to.avif,
                     }
                 })
             }
@@ -130,11 +149,15 @@ describe('Texture Packer', () =>
 
         await assetpack.run();
 
-        const json = existsSync(`${outputDir}/sprites/something@1x.json`);
+        const json = existsSync(`${outputDir}/sprites/something@1x.png.json`);
+        const jsonAvif = existsSync(`${outputDir}/sprites/something@1x.avif.json`);
         const png = existsSync(`${outputDir}/sprites/something@1x.png`);
+        const avif = existsSync(`${outputDir}/sprites/something@1x.avif`);
 
         expect(png).toBe(true);
         expect(json).toBe(true);
+        expect(avif).toBe(true);
+        expect(jsonAvif).toBe(true);
     });
 
     it('should override default texture packer options (resolutions)', async () =>
@@ -153,22 +176,36 @@ describe('Texture Packer', () =>
                     resolutionOptions: {
                         resolutions: { low: 0.5, default: 1, high: 2 },
                     },
+                    compression: {
+                        avif: compression.compress.to.avif,
+                    }
                 })
             }
         });
 
         await assetpack.run();
 
-        expect(existsSync(`${outputDir}/sprites/sprites@0.5x.json`)).toBe(true);
-        expect(existsSync(`${outputDir}/sprites/sprites@1x.json`)).toBe(true);
-        expect(existsSync(`${outputDir}/sprites/sprites@2x.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@0.5x.png.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@1x.png.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@2x.png.json`)).toBe(true);
         expect(existsSync(`${outputDir}/sprites/sprites@0.5x.png`)).toBe(true);
         expect(existsSync(`${outputDir}/sprites/sprites@1x.png`)).toBe(true);
         expect(existsSync(`${outputDir}/sprites/sprites@2x.png`)).toBe(true);
 
-        const sheet1Data = readJSONSync(`${outputDir}/sprites/sprites@1x.json`);
-        const sheet2Data = readJSONSync(`${outputDir}/sprites/sprites@2x.json`);
-        const sheet3Data = readJSONSync(`${outputDir}/sprites/sprites@0.5x.json`);
+        expect(existsSync(`${outputDir}/sprites/sprites@0.5x.avif.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@1x.avif.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@2x.avif.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@0.5x.avif`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@1x.avif`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites/sprites@2x.avif`)).toBe(true);
+
+        const sheet1Data = readJSONSync(`${outputDir}/sprites/sprites@1x.png.json`);
+        const sheet2Data = readJSONSync(`${outputDir}/sprites/sprites@2x.png.json`);
+        const sheet3Data = readJSONSync(`${outputDir}/sprites/sprites@0.5x.png.json`);
+
+        const sheet1DataAvif = readJSONSync(`${outputDir}/sprites/sprites@1x.avif.json`);
+        const sheet2DataAvif = readJSONSync(`${outputDir}/sprites/sprites@2x.avif.json`);
+        const sheet3DataAvif = readJSONSync(`${outputDir}/sprites/sprites@0.5x.avif.json`);
 
         expect(sheet2Data.frames['sprite0.png'].frame).toEqual({ x: 2, y: 2, w: 136, h: 196 });
         expect(sheet2Data.meta.size).toEqual({ w: 560, h: 480 });
@@ -180,9 +217,23 @@ describe('Texture Packer', () =>
         expect(sheet3Data.meta.size).toEqual({ w: 560 / 4, h: 480 / 4 });
         expect(sheet3Data.meta.scale).toEqual(0.5);
 
+        expect(sheet2DataAvif.frames['sprite0.png'].frame).toEqual({ x: 2, y: 2, w: 136, h: 196 });
+        expect(sheet2DataAvif.meta.size).toEqual({ w: 560, h: 480 });
+        expect(sheet2DataAvif.meta.scale).toEqual(2);
+        expect(sheet1DataAvif.frames['sprite0.png'].frame).toEqual({ x: 2 / 2, y: 2 / 2, w: 136 / 2, h: 196 / 2 });
+        expect(sheet1DataAvif.meta.size).toEqual({ w: 560 / 2, h: 480 / 2 });
+        expect(sheet1DataAvif.meta.scale).toEqual(1);
+        expect(sheet3DataAvif.frames['sprite0.png'].frame).toEqual({ x: 2 / 4, y: 2 / 4, w: 136 / 4, h: 196 / 4 });
+        expect(sheet3DataAvif.meta.size).toEqual({ w: 560 / 4, h: 480 / 4 });
+        expect(sheet3DataAvif.meta.scale).toEqual(0.5);
+
         const meta = await sharp(`${outputDir}/sprites/sprites@2x.png`).metadata();
         const meta2 = await sharp(`${outputDir}/sprites/sprites@1x.png`).metadata();
         const meta3 = await sharp(`${outputDir}/sprites/sprites@0.5x.png`).metadata();
+
+        const metaAvif = await sharp(`${outputDir}/sprites/sprites@2x.avif`).metadata();
+        const meta2Avif = await sharp(`${outputDir}/sprites/sprites@1x.avif`).metadata();
+        const meta3Avif = await sharp(`${outputDir}/sprites/sprites@0.5x.avif`).metadata();
 
         expect(meta.width).toEqual(560);
         expect(meta.height).toEqual(480);
@@ -192,6 +243,15 @@ describe('Texture Packer', () =>
 
         expect(meta3.width).toEqual(560 / 4);
         expect(meta3.height).toEqual(480 / 4);
+
+        expect(metaAvif.width).toEqual(560);
+        expect(metaAvif.height).toEqual(480);
+
+        expect(meta2Avif.width).toEqual(560 / 2);
+        expect(meta2Avif.height).toEqual(480 / 2);
+
+        expect(meta3Avif.width).toEqual(560 / 4);
+        expect(meta3Avif.height).toEqual(480 / 4);
     });
 
     it('should allow tags to be overridden', async () =>
@@ -234,6 +294,9 @@ describe('Texture Packer', () =>
                     },
                     tags: {
                         tps: 'random',
+                    },
+                    compression: {
+                        avif: compression.compress.to.avif,
                     }
                 })
             }
@@ -241,7 +304,7 @@ describe('Texture Packer', () =>
 
         await assetpack.run();
 
-        const sheet1 = readJSONSync(`${outputDir}/sprites/sprites@1x.json`);
+        const sheet1 = readJSONSync(`${outputDir}/sprites/sprites@1x.png.json`);
 
         const expectedSize =  {
             w: 560,
@@ -250,9 +313,17 @@ describe('Texture Packer', () =>
 
         expect(sheet1.meta.size).toEqual(expectedSize);
 
-        const sheet2Exists = existsSync(`${outputDir}/sprites/sprites-1@1x.json`);
+        const sheet2Exists = existsSync(`${outputDir}/sprites/sprites-1@1x.png.json`);
 
         expect(sheet2Exists).toBe(false);
+
+        const sheet1Avif = readJSONSync(`${outputDir}/sprites/sprites@1x.avif.json`);
+
+        expect(sheet1Avif.meta.size).toEqual(expectedSize);
+
+        const sheet2AvifExists = existsSync(`${outputDir}/sprites/sprites-1@1x.avif.json`);
+
+        expect(sheet2AvifExists).toBe(false);
     });
 
     it('should create mip spritesheets', async () =>
@@ -273,8 +344,8 @@ describe('Texture Packer', () =>
 
         await assetpack.run();
 
-        const sheet1 = existsSync(`${outputDir}/sprites/sprites@1x.json`);
-        const sheet2 = existsSync(`${outputDir}/sprites/sprites@0.5x.json`);
+        const sheet1 = existsSync(`${outputDir}/sprites/sprites@1x.png.json`);
+        const sheet2 = existsSync(`${outputDir}/sprites/sprites@0.5x.png.json`);
 
         expect(sheet1).toBe(true);
         expect(sheet2).toBe(true);
@@ -285,7 +356,7 @@ describe('Texture Packer', () =>
             h: 480 / 2,
         };
 
-        const sheetJson = readJSONSync(`${outputDir}/sprites/sprites@0.5x.json`);
+        const sheetJson = readJSONSync(`${outputDir}/sprites/sprites@0.5x.png.json`);
 
         expect(sheetJson.meta.size).toEqual(expectedSize);
     });
@@ -336,9 +407,9 @@ describe('Texture Packer', () =>
 
         await assetpack.run();
 
-        const sheet1 = existsSync(`${outputDir}/sprites/sprites/sprites@1x.json`);
-        const sheet2 = existsSync(`${outputDir}/sprites/sprites/sprites@0.5x.json`);
-        const sheet3 = existsSync(`${outputDir}/sprites/sprites/sprites@2x.json`);
+        const sheet1 = existsSync(`${outputDir}/sprites/sprites/sprites@1x.png.json`);
+        const sheet2 = existsSync(`${outputDir}/sprites/sprites/sprites@0.5x.png.json`);
+        const sheet3 = existsSync(`${outputDir}/sprites/sprites/sprites@2x.png.json`);
 
         expect(sheet1).toBe(true);
         expect(sheet2).toBe(false);
@@ -385,7 +456,7 @@ describe('Texture Packer', () =>
 
         await assetpack.run();
 
-        const sheet1 = existsSync(`${outputDir}/sprites/sprites@1x.json`);
+        const sheet1 = existsSync(`${outputDir}/sprites/sprites@1x.jpg.json`);
         const sheet2 = existsSync(`${outputDir}/sprites/sprites@1x.jpg`);
         const sheet3 = existsSync(`${outputDir}/sprites/sprites@1x.png`);
 
