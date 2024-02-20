@@ -13,6 +13,7 @@ import {
     getInputDir,
     getOutputDir,
 } from '../../../shared/test';
+import { generateAstc, generateBc } from '@assetpack/plugin-compressed-textures';
 
 const pkg = 'manifest';
 
@@ -120,6 +121,8 @@ describe('Manifest', () =>
                 spineAtlas: spineAtlasMipmap(),
                 manifest: pixiManifest(),
                 webp: compressWebp(),
+                astc: generateAstc(),
+                bc: generateBc()
             },
         });
 
@@ -156,6 +159,10 @@ describe('Manifest', () =>
                         'bundle/sprite@0.5x.png',
                         'bundle/sprite@0.5x.webp',
                         'bundle/sprite@1x.webp',
+                        'bundle/sprite@0.5x.astc.ktx',
+                        'bundle/sprite@1x.astc.ktx',
+                        'bundle/sprite@0.5x.bc7.dds',
+                        'bundle/sprite@1x.bc7.dds',
                     ],
                     data: {
                         tags: {
@@ -208,7 +215,16 @@ describe('Manifest', () =>
                 },
                 {
                     alias: ['spine/dragon.png'],
-                    src: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    src: [
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.png',
+                        'spine/dragon@0.5x.webp',
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@0.5x.astc.ktx',
+                        'spine/dragon@1x.astc.ktx',
+                        'spine/dragon@0.5x.bc7.dds',
+                        'spine/dragon@1x.bc7.dds'
+                    ],
                 },
                 {
                     alias: ['spine/dragon2.png'],
@@ -217,6 +233,10 @@ describe('Manifest', () =>
                         'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
                         'spine/dragon2@1x.webp',
+                        'spine/dragon2@0.5x.astc.ktx',
+                        'spine/dragon2@1x.astc.ktx',
+                        'spine/dragon2@0.5x.bc7.dds',
+                        'spine/dragon2@1x.bc7.dds'
                     ],
                 },
                 {
@@ -323,6 +343,7 @@ describe('Manifest', () =>
                     trimExtensions: true,
                 }),
                 webp: compressWebp(),
+                astc: generateAstc(),
             },
         });
 
@@ -354,6 +375,8 @@ describe('Manifest', () =>
                         'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@1x.webp',
+                        'folder/sprite@0.5x.astc.ktx',
+                        'folder/sprite@1x.astc.ktx'
                     ],
                 },
                 {
@@ -370,7 +393,14 @@ describe('Manifest', () =>
                 },
                 {
                     alias: ['spine/dragon.png', 'dragon.png'],
-                    src: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    src: [
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.png',
+                        'spine/dragon@0.5x.webp',
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@0.5x.astc.ktx',
+                        'spine/dragon@1x.astc.ktx'
+                    ],
                 },
                 {
                     alias: [
@@ -384,6 +414,8 @@ describe('Manifest', () =>
                         'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
                         'spine/dragon2@1x.webp',
+                        'spine/dragon2@0.5x.astc.ktx',
+                        'spine/dragon2@1x.astc.ktx',
                     ],
                 },
                 {
@@ -490,6 +522,7 @@ describe('Manifest', () =>
                     trimExtensions: false,
                 }),
                 webp: compressWebp(),
+                astc: generateAstc(),
             },
         });
 
@@ -516,6 +549,8 @@ describe('Manifest', () =>
                         'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@1x.webp',
+                        'folder/sprite@0.5x.astc.ktx',
+                        'folder/sprite@1x.astc.ktx'
                     ],
                 },
                 {
@@ -532,7 +567,14 @@ describe('Manifest', () =>
                 },
                 {
                     alias: ['spine/dragon.png', 'dragon.png'],
-                    src: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    src: [
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.png',
+                        'spine/dragon@0.5x.webp',
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@0.5x.astc.ktx',
+                        'spine/dragon@1x.astc.ktx'
+                    ],
                 },
                 {
                     alias: ['spine/dragon2.png', 'dragon2.png'],
@@ -541,6 +583,8 @@ describe('Manifest', () =>
                         'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
                         'spine/dragon2@1x.webp',
+                        'spine/dragon2@0.5x.astc.ktx',
+                        'spine/dragon2@1x.astc.ktx',
                     ],
                 },
                 {
@@ -647,6 +691,7 @@ describe('Manifest', () =>
                     trimExtensions: true,
                 }),
                 webp: compressWebp(),
+                astc: generateAstc(),
             },
         });
 
@@ -676,6 +721,8 @@ describe('Manifest', () =>
                         'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@1x.webp',
+                        'folder/sprite@0.5x.astc.ktx',
+                        'folder/sprite@1x.astc.ktx'
                     ],
                 },
                 {
@@ -692,7 +739,14 @@ describe('Manifest', () =>
                 },
                 {
                     alias: ['spine/dragon.png'],
-                    src: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    src: [
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.png',
+                        'spine/dragon@0.5x.webp',
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@0.5x.astc.ktx',
+                        'spine/dragon@1x.astc.ktx'
+                    ],
                 },
                 {
                     alias: [
@@ -704,6 +758,8 @@ describe('Manifest', () =>
                         'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
                         'spine/dragon2@1x.webp',
+                        'spine/dragon2@0.5x.astc.ktx',
+                        'spine/dragon2@1x.astc.ktx',
                     ],
                 },
                 {
