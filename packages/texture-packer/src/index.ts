@@ -20,16 +20,17 @@ type DeepRequired<T> = {
 export interface TexturePackerOptions extends PluginOptions<'tps' | 'fix' | 'jpg'>
 {
     texturePacker: TPOptions;
+    compression: { [textureType: string]: (input: string) => Promise<Buffer | string> };
     resolutionOptions: {
         /** A template for denoting the resolution of the images. */
         template?: string;
         /** An object containing the resolutions that the images will be resized to. */
-        resolutions?: {[x: string]: number};
+        resolutions?: { [x: string]: number };
         /** A resolution used if the fixed tag is applied. Resolution must match one found in resolutions. */
         fixedResolution?: string;
         /** The maximum size a sprite sheet can be before its split out */
         maximumTextureSize?: number;
-    }
+    };
 }
 
 type ReqTexturePackerOptions = DeepRequired<TexturePackerOptions>;
@@ -43,6 +44,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
             jpg: 'jpg',
             ...options?.tags,
         },
+        compression: options?.compression ?? {},
         resolutionOptions: {
             template: '@%%x',
             resolutions: { default: 1, low: 0.5 },
@@ -74,6 +76,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
             const transformOptions = {
                 tags,
                 resolutionOptions,
+                compression: { ...defaultOptions.compression, ...optionOverrides.compression },
                 texturePacker: {
                     textureName: path.basename(processor.inputToOutput(tree.path)),
                     textureFormat: (hasTag(tree, 'file', tags.jpg) ? 'jpg' : 'png') as TextureFormat,
@@ -114,6 +117,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                 const scale = resolution / largestResolution;
                 const origScale = largestResolution;
                 const template = transformOptions.resolutionOptions.template.replace('%%', resolution.toString());
+                const compression = transformOptions.compression as any;
 
                 const res = await packAsync(imagesToPack, { ...transformOptions.texturePacker, scale });
                 const out = await processTPSFiles(res, {
@@ -123,6 +127,7 @@ export function texturePacker(options?: Partial<TexturePackerOptions>): Plugin<T
                     scale,
                     originalScale: origScale,
                     processor,
+                    compression,
                 });
 
                 out.forEach((o) =>
@@ -186,6 +191,7 @@ interface ProcessOptions
     scale: number;
     originalScale: number;
     processor: Processor;
+    compression: { [textureType: string]: (input: string) => Promise<Buffer | string> };
 }
 async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsync>, options: ProcessOptions)
 {
@@ -201,7 +207,7 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
         fs.ensureDirSync(outputDir);
 
         // this is where we save the files
-        const outputFile = path.joinSafe(outputDir, templateName);
+        let outputFile = path.joinSafe(outputDir, templateName);
 
         // so one thing FREE texture packer does different is that it either puts the full paths in
         // or the image name.
@@ -212,7 +218,7 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
         {
             const json = JSON.parse(item.buffer.toString('utf8'));
 
-            const newFrames: {[x: string]: any} = {};
+            const newFrames: { [x: string]: any } = {};
 
             for (const i in json.frames)
             {
@@ -226,6 +232,7 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
             json.meta.image = json.meta.image.replace(/(\.[\w\d_-]+)$/i, `${options.template}$1`);
             json.meta.scale *= options.originalScale;
 
+            outputFile = path.changeExt(outputFile, `${path.extname(json.meta.image)}.json`);
             options.processor.saveToOutput({
                 tree: undefined as any,
                 outputOptions: {
@@ -248,5 +255,60 @@ async function processTPSFiles(files: ReturnedPromiseResolvedType<typeof packAsy
         outputFilePaths.push(outputFile);
     }
 
-    return outputFilePaths;
+    return applyCompression(outputFilePaths, options);
+}
+
+async function applyCompression(outputFilePaths: any[], options: ProcessOptions)
+{
+    const resultFilePaths = [...outputFilePaths];
+
+    for (const textureFormat in options.compression)
+    {
+        for (const jsonPath of outputFilePaths)
+        {
+            if (jsonPath.endsWith('.json'))
+            {
+                const jsonValue = JSON.parse(readFileSync(jsonPath).toString('utf8'));
+                const inputImage = path.joinSafe(path.dirname(jsonPath), jsonValue.meta.image);
+                const result = await options.compression[textureFormat](inputImage);
+
+                if (result)
+                {
+                    const buffer = typeof result === 'string'
+                        ? await fs.readFile(result) : result;
+                    const textureExtension = typeof result === 'string'
+                        ? result.split('.').pop() : textureFormat;
+                    const extension = textureFormat === textureExtension
+                        ? textureExtension : `${textureFormat}.${textureExtension}`;
+
+                    options.processor.saveToOutput({
+                        tree: undefined as any,
+                        outputOptions: {
+                            outputPathOverride: path.changeExt(inputImage, extension),
+                            outputData: buffer,
+                        }
+                    });
+
+                    const clone = structuredClone(jsonValue);
+
+                    const outputImage = path.changeExt(jsonValue.meta.image, extension);
+                    const clonePath = path.changeExt(path.trimExt(jsonPath), `.${textureFormat}.json`);
+
+                    clone.meta.image = outputImage;
+
+                    options.processor.saveToOutput({
+                        tree: undefined as any,
+                        outputOptions: {
+                            outputPathOverride: clonePath,
+                            outputData: JSON.stringify(clone),
+                        },
+                    });
+
+                    resultFilePaths.push(clonePath, outputImage);
+                }
+            }
+        }
+    }
+
+    return resultFilePaths;
 }
