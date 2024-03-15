@@ -3,8 +3,7 @@ import { audio } from '@assetpack/plugin-ffmpeg';
 import { pixiManifest } from '@assetpack/plugin-manifest';
 import { mipmap, spineAtlasMipmap } from '@assetpack/plugin-mipmap';
 import { pixiTexturePacker } from '@assetpack/plugin-texture-packer';
-import { compressWebp } from '@assetpack/plugin-compress';
-// import { webfont } from '@assetpack/plugin-webfont';
+import { compress, compressPng, compressWebp } from '@assetpack/plugin-compress';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
 import {
@@ -39,88 +38,106 @@ describe('Manifest', () =>
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(pkg, {
-            name: testName,
-            files: [],
-            folders: [
-                {
-                    name: 'bundle{m}',
-                    files: [
-                        {
-                            name: 'json.json',
-                            content: assetPath(pkg, 'json.json'),
-                        },
-                        {
-                            name: 'json.json5',
-                            content: assetPath(pkg, 'json.json'),
-                        },
-                        {
-                            name: 'sprite.png',
-                            content: assetPath(pkg, 'tps/sp-1.png'),
-                        },
-                    ],
-                    folders: [
-                        {
-                            name: 'tps{tps}',
-                            files: genSprites(),
-                            folders: [],
-                        },
-                    ],
-                },
-                {
-                    name: 'defaultFolder',
-                    files: [
-                        {
-                            name: '1.mp3',
-                            content: assetPath(pkg, 'audio/1.mp3'),
-                        },
-                        {
-                            name: '3.wav',
-                            content: assetPath(pkg, 'audio/3.wav'),
-                        },
-                    ],
-                    folders: [],
-                },
-                {
-                    name: 'spine',
-                    files: [
-                        {
-                            name: 'dragon{spine}.atlas',
-                            content: assetPath(pkg, 'spine/dragon.atlas'),
-                        },
-                        {
-                            name: 'dragon.json',
-                            content: assetPath(pkg, 'spine/dragon.json'),
-                        },
-                        {
-                            name: 'dragon.png',
-                            content: assetPath(pkg, 'spine/dragon.png'),
-                        },
-                        {
-                            name: 'dragon2.png',
-                            content: assetPath(pkg, 'spine/dragon2.png'),
-                        },
-                    ],
-                    folders: [],
-                },
-            ],
-        });
+        const useCache = false;
+
+        if (!useCache)
+        {
+            createFolder(pkg, {
+                name: testName,
+                files: [],
+
+                folders: [
+                    {
+                        name: 'bundle{m}',
+                        files: [
+                            {
+                                name: 'json.json',
+                                content: assetPath(pkg, 'json.json'),
+                            },
+                            {
+                                name: 'json.json5',
+                                content: assetPath(pkg, 'json.json'),
+                            },
+                            {
+                                name: 'sprite.png',
+                                content: assetPath(pkg, 'tps/sp-1.png'),
+                            },
+                        ],
+                        folders: [
+                            {
+                                name: 'tps{tps}',
+                                files: genSprites(),
+                                folders: [],
+                            },
+                        ],
+                    },
+                    {
+                        name: 'defaultFolder',
+                        files: [
+                            {
+                                name: '1.mp3',
+                                content: assetPath(pkg, 'audio/1.mp3'),
+                            },
+                            {
+                                name: '3.wav',
+                                content: assetPath(pkg, 'audio/3.wav'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                    {
+                        name: 'spine',
+                        files: [
+                            {
+                                name: 'dragon{spine}.atlas',
+                                content: assetPath(pkg, 'spine/dragon.atlas'),
+                            },
+                            {
+                                name: 'dragon.json',
+                                content: assetPath(pkg, 'spine/dragon.json'),
+                            },
+                            {
+                                name: 'dragon.png',
+                                content: assetPath(pkg, 'spine/dragon.png'),
+                            },
+                            {
+                                name: 'dragon2.png',
+                                content: assetPath(pkg, 'spine/dragon2.png'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                ],
+            });
+        }
 
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                texturePacker: pixiTexturePacker({
+            cache: useCache,
+            pipes: [
+                pixiTexturePacker({
+
                     resolutionOptions: {
+                        // resolutions: { default: 2, low: 0.5 }
                         maximumTextureSize: 512,
                     },
                 }),
-                audio: audio(),
-                mipmap: mipmap(),
-                spineAtlas: spineAtlasMipmap(),
-                manifest: pixiManifest(),
-                webp: compressWebp(),
-            },
+                audio(),
+                mipmap({
+
+                    /// resolutions: { default: 2, low: 0.5 }
+                    // maximumTextureSize: 512,
+
+                }),
+                spineAtlasMipmap(),
+                //  compressWebp(),
+                compress({
+                    avif: false,
+                    // jpg: true
+                }),
+                pixiManifest(),
+            ]
         });
 
         await assetpack.run();
@@ -134,60 +151,50 @@ describe('Manifest', () =>
                 {
                     name: ['bundle/json.json'],
                     srcs: ['bundle/json.json'],
-                    data: {
-                        tags: {
-                            m: true,
-                        },
-                    },
                 },
                 {
                     name: ['bundle/json.json5'],
                     srcs: ['bundle/json.json5'],
-                    data: {
-                        tags: {
-                            m: true,
-                        },
-                    },
                 },
                 {
                     name: ['bundle/sprite.png'],
                     srcs: [
                         'bundle/sprite@1x.png',
+                        'bundle/sprite@1x.webp',
                         'bundle/sprite@0.5x.png',
                         'bundle/sprite@0.5x.webp',
-                        'bundle/sprite@1x.webp',
                     ],
-                    data: {
-                        tags: {
-                            m: true,
-                        },
-                    },
+                    // data: {
+                    //     tags: {
+                    //         m: true,
+                    //     },
+                    // },
                 },
                 {
-                    name: ['bundle/tps/tps-1.json'],
+                    name: ['bundle/tps-0'],
                     srcs: [
-                        'bundle/tps/tps-1@1x.json',
-                        'bundle/tps/tps-1@0.5x.json',
+                        'bundle/tps-0@0.5x.json',
+                        'bundle/tps-0@1x.json',
                     ],
-                    data: {
-                        tags: {
-                            tps: true,
-                            m: true,
-                        },
-                    },
+                    // data: {
+                    //     tags: {
+                    //         tps: true,
+                    //         m: true,
+                    //     },
+                    // },
                 },
                 {
-                    name: ['bundle/tps/tps-0.json'],
+                    name: ['bundle/tps-1'],
                     srcs: [
-                        'bundle/tps/tps-0@1x.json',
-                        'bundle/tps/tps-0@0.5x.json',
+                        'bundle/tps-1@0.5x.json',
+                        'bundle/tps-1@1x.json',
                     ],
-                    data: {
-                        tags: {
-                            tps: true,
-                            m: true,
-                        },
-                    },
+                    // data: {
+                    //     tags: {
+                    //         tps: true,
+                    //         m: true,
+                    //     },
+                    // },
                 },
             ],
         });
@@ -208,25 +215,30 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['spine/dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    srcs: [
+                        'spine/dragon@1x.png',
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@0.5x.png',
+                        'spine/dragon@0.5x.webp',
+                    ],
                 },
                 {
                     name: ['spine/dragon2.png'],
                     srcs: [
                         'spine/dragon2@1x.png',
+                        'spine/dragon2@1x.webp',
                         'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
-                        'spine/dragon2@1x.webp',
                     ],
                 },
                 {
                     name: ['spine/dragon.atlas'],
                     srcs: ['spine/dragon@1x.atlas', 'spine/dragon@0.5x.atlas'],
-                    data: {
-                        tags: {
-                            spine: true,
-                        },
-                    },
+                    // data: {
+                    //     tags: {
+                    //         spine: true,
+                    //     },
+                    // },
                 },
             ],
         });
@@ -309,21 +321,21 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                texturePacker: pixiTexturePacker({
+            pipes: [
+                pixiTexturePacker({
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
                 }),
-                audio: audio(),
-                mipmap: mipmap(),
-                spineAtlas: spineAtlasMipmap(),
-                manifest: pixiManifest({
+                audio(),
+                mipmap(),
+                spineAtlasMipmap(),
+                [compressWebp(), compressPng()],
+                pixiManifest({
                     createShortcuts: true,
                     trimExtensions: true,
                 }),
-                webp: compressWebp(),
-            },
+            ],
         });
 
         await assetpack.run();
@@ -335,67 +347,117 @@ describe('Manifest', () =>
             name: 'default',
             assets: [
                 {
-                    name: ['folder/json.json', 'json.json'],
-                    srcs: ['folder/json.json'],
+                    name: [
+                        'folder/json.json',
+                        'folder/json',
+                        'json.json',
+                        'json'
+                    ],
+                    srcs: [
+                        'folder/json.json'
+                    ]
                 },
                 {
-                    name: ['folder/json.json5', 'json.json5'],
-                    srcs: ['folder/json.json5'],
+                    name: [
+                        'folder/json.json5',
+                        'folder/json',
+                        'json.json5',
+                        'json'
+                    ],
+                    srcs: [
+                        'folder/json.json5'
+                    ]
                 },
                 {
                     name: [
                         'folder/sprite.png',
                         'folder/sprite',
                         'sprite.png',
-                        'sprite',
+                        'sprite'
                     ],
                     srcs: [
-                        'folder/sprite@1x.png',
-                        'folder/sprite@0.5x.png',
-                        'folder/sprite@0.5x.webp',
                         'folder/sprite@1x.webp',
+                        'folder/sprite@1x.png',
+                        'folder/sprite@0.5x.webp',
+                        'folder/sprite@0.5x.png'
+                    ]
+                },
+                {
+                    name: [
+                        'folder2/1.mp3',
+                        'folder2/1',
+                        '1.mp3',
+                        '1'
                     ],
+                    srcs: [
+                        'folder2/1.mp3',
+                        'folder2/1.ogg'
+                    ]
                 },
                 {
-                    name: ['folder2/1.mp3', 'folder2/1'],
-                    srcs: ['folder2/1.mp3', 'folder2/1.ogg'],
+                    name: [
+                        'folder2/folder3/1.mp3',
+                        'folder2/folder3/1',
+                        '1.mp3',
+                        '1'
+                    ],
+                    srcs: [
+                        'folder2/folder3/1.mp3',
+                        'folder2/folder3/1.ogg'
+                    ]
                 },
                 {
-                    name: ['folder2/folder3/1.mp3', 'folder2/folder3/1'],
-                    srcs: ['folder2/folder3/1.mp3', 'folder2/folder3/1.ogg'],
+                    name: [
+                        'spine/dragon.json',
+                        'spine/dragon',
+                        'dragon.json',
+                        'dragon'
+                    ],
+                    srcs: [
+                        'spine/dragon.json'
+                    ]
                 },
                 {
-                    name: ['spine/dragon.json', 'dragon.json'],
-                    srcs: ['spine/dragon.json'],
-                },
-                {
-                    name: ['spine/dragon.png', 'dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    name: [
+                        'spine/dragon.png',
+                        'spine/dragon',
+                        'dragon.png',
+                        'dragon'
+                    ],
+                    srcs: [
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.webp',
+                        'spine/dragon@0.5x.png'
+                    ]
                 },
                 {
                     name: [
                         'spine/dragon2.png',
                         'spine/dragon2',
                         'dragon2.png',
-                        'dragon2',
+                        'dragon2'
                     ],
                     srcs: [
-                        'spine/dragon2@1x.png',
-                        'spine/dragon2@0.5x.png',
-                        'spine/dragon2@0.5x.webp',
                         'spine/dragon2@1x.webp',
-                    ],
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@0.5x.png'
+                    ]
                 },
                 {
-                    name: ['spine/dragon.atlas', 'dragon.atlas'],
-                    srcs: ['spine/dragon@1x.atlas', 'spine/dragon@0.5x.atlas'],
-                    data: {
-                        tags: {
-                            spine: true,
-                        },
-                    },
-                },
-            ],
+                    name: [
+                        'spine/dragon.atlas',
+                        'spine/dragon',
+                        'dragon.atlas',
+                        'dragon'
+                    ],
+                    srcs: [
+                        'spine/dragon@1x.atlas',
+                        'spine/dragon@0.5x.atlas'
+                    ]
+                }
+            ]
         });
     });
 
@@ -476,21 +538,21 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                texturePacker: pixiTexturePacker({
+            pipes: [
+                pixiTexturePacker({
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
                 }),
-                audio: audio(),
-                mipmap: mipmap(),
-                spineAtlas: spineAtlasMipmap(),
-                manifest: pixiManifest({
+                audio(),
+                mipmap(),
+                spineAtlasMipmap(),
+                [compressWebp(), compressPng()],
+                pixiManifest({
                     createShortcuts: true,
                     trimExtensions: false,
                 }),
-                webp: compressWebp(),
-            },
+            ],
         });
 
         await assetpack.run();
@@ -512,18 +574,18 @@ describe('Manifest', () =>
                 {
                     name: ['folder/sprite.png', 'sprite.png'],
                     srcs: [
-                        'folder/sprite@1x.png',
-                        'folder/sprite@0.5x.png',
-                        'folder/sprite@0.5x.webp',
                         'folder/sprite@1x.webp',
+                        'folder/sprite@1x.png',
+                        'folder/sprite@0.5x.webp',
+                        'folder/sprite@0.5x.png'
                     ],
                 },
                 {
-                    name: ['folder2/1.mp3'],
+                    name: ['folder2/1.mp3', '1.mp3'],
                     srcs: ['folder2/1.mp3', 'folder2/1.ogg'],
                 },
                 {
-                    name: ['folder2/folder3/1.mp3'],
+                    name: ['folder2/folder3/1.mp3', '1.mp3'],
                     srcs: ['folder2/folder3/1.mp3', 'folder2/folder3/1.ogg'],
                 },
                 {
@@ -532,25 +594,25 @@ describe('Manifest', () =>
                 },
                 {
                     name: ['spine/dragon.png', 'dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    srcs: [
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.webp',
+                        'spine/dragon@0.5x.png'
+                    ],
                 },
                 {
                     name: ['spine/dragon2.png', 'dragon2.png'],
                     srcs: [
-                        'spine/dragon2@1x.png',
-                        'spine/dragon2@0.5x.png',
-                        'spine/dragon2@0.5x.webp',
                         'spine/dragon2@1x.webp',
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@0.5x.png'
                     ],
                 },
                 {
                     name: ['spine/dragon.atlas', 'dragon.atlas'],
                     srcs: ['spine/dragon@1x.atlas', 'spine/dragon@0.5x.atlas'],
-                    data: {
-                        tags: {
-                            spine: true,
-                        },
-                    },
                 },
             ],
         });
@@ -633,21 +695,21 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                texturePacker: pixiTexturePacker({
+            pipes: [
+                pixiTexturePacker({
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
                 }),
-                audio: audio(),
-                mipmap: mipmap(),
-                spineAtlas: spineAtlasMipmap(),
-                manifest: pixiManifest({
+                audio(),
+                mipmap(),
+                spineAtlasMipmap(),
+                [compressWebp(), compressPng()],
+                pixiManifest({
                     createShortcuts: false,
                     trimExtensions: true,
                 }),
-                webp: compressWebp(),
-            },
+            ],
         });
 
         await assetpack.run();
@@ -659,63 +721,100 @@ describe('Manifest', () =>
             name: 'default',
             assets: [
                 {
-                    name: ['folder/json.json'],
-                    srcs: ['folder/json.json'],
+                    name: [
+                        'folder/json.json',
+                        'folder/json'
+                    ],
+                    srcs: [
+                        'folder/json.json'
+                    ]
                 },
                 {
-                    name: ['folder/json.json5'],
-                    srcs: ['folder/json.json5'],
+                    name: [
+                        'folder/json.json5',
+                        'folder/json'
+                    ],
+                    srcs: [
+                        'folder/json.json5'
+                    ]
                 },
                 {
                     name: [
                         'folder/sprite.png',
-                        'folder/sprite',
+                        'folder/sprite'
                     ],
                     srcs: [
-                        'folder/sprite@1x.png',
-                        'folder/sprite@0.5x.png',
-                        'folder/sprite@0.5x.webp',
                         'folder/sprite@1x.webp',
+                        'folder/sprite@1x.png',
+                        'folder/sprite@0.5x.webp',
+                        'folder/sprite@0.5x.png'
+                    ]
+                },
+                {
+                    name: [
+                        'folder2/1.mp3',
+                        'folder2/1'
                     ],
+                    srcs: [
+                        'folder2/1.mp3',
+                        'folder2/1.ogg'
+                    ]
                 },
                 {
-                    name: ['folder2/1.mp3', 'folder2/1'],
-                    srcs: ['folder2/1.mp3', 'folder2/1.ogg'],
+                    name: [
+                        'folder2/folder3/1.mp3',
+                        'folder2/folder3/1'
+                    ],
+                    srcs: [
+                        'folder2/folder3/1.mp3',
+                        'folder2/folder3/1.ogg'
+                    ]
                 },
                 {
-                    name: ['folder2/folder3/1.mp3', 'folder2/folder3/1'],
-                    srcs: ['folder2/folder3/1.mp3', 'folder2/folder3/1.ogg'],
+                    name: [
+                        'spine/dragon.json',
+                        'spine/dragon'
+                    ],
+                    srcs: [
+                        'spine/dragon.json'
+                    ]
                 },
                 {
-                    name: ['spine/dragon.json'],
-                    srcs: ['spine/dragon.json'],
-                },
-                {
-                    name: ['spine/dragon.png'],
-                    srcs: ['spine/dragon@1x.png', 'spine/dragon@0.5x.png', 'spine/dragon@0.5x.webp', 'spine/dragon@1x.webp'],
+                    name: [
+                        'spine/dragon.png',
+                        'spine/dragon'
+                    ],
+                    srcs: [
+                        'spine/dragon@1x.webp',
+                        'spine/dragon@1x.png',
+                        'spine/dragon@0.5x.webp',
+                        'spine/dragon@0.5x.png'
+                    ]
                 },
                 {
                     name: [
                         'spine/dragon2.png',
-                        'spine/dragon2',
+                        'spine/dragon2'
                     ],
                     srcs: [
-                        'spine/dragon2@1x.png',
-                        'spine/dragon2@0.5x.png',
-                        'spine/dragon2@0.5x.webp',
                         'spine/dragon2@1x.webp',
-                    ],
+                        'spine/dragon2@1x.png',
+                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@0.5x.png'
+                    ]
                 },
                 {
-                    name: ['spine/dragon.atlas'],
-                    srcs: ['spine/dragon@1x.atlas', 'spine/dragon@0.5x.atlas'],
-                    data: {
-                        tags: {
-                            spine: true,
-                        },
-                    },
-                },
-            ],
+                    name: [
+                        'spine/dragon.atlas',
+                        'spine/dragon'
+                    ],
+                    srcs: [
+                        'spine/dragon@1x.atlas',
+                        'spine/dragon@0.5x.atlas'
+                    ]
+                }
+            ]
+
         });
     });
 
@@ -745,11 +844,11 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                manifest: pixiManifest({
+            pipes: [
+                pixiManifest({
                     output: `${outputDir}/manifest2.json`,
                 }),
-            },
+            ],
         });
 
         await assetpack.run();

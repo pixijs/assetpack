@@ -1,3 +1,3 @@
 export * from './manifest';
-export * from './pixi';
+export * from './pixiManifest';
 export * from './utils';

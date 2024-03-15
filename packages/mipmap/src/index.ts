@@ -1,2 +1,2 @@
 export * from './mipmap';
-export * from './spineAtlas';
+export * from './spineAtlasMipmap';

@@ -1,7 +1,6 @@
-export * from './png';
-export * from './jpg';
-export * from './webp';
-export * from './utils';
-export * from './avif';
-export * from './compressions';
 export * from './compress';
+export * from './compressAvif';
+export * from './compressJpg';
+export * from './compressPng';
+export * from './compressWebp';
+

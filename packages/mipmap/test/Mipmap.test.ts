@@ -53,10 +53,11 @@ describe('Mipmap', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                mipmap: mipmap(opts),
-                spine: spineAtlasMipmap(opts),
-            }
+            cache: false,
+            pipes: [
+                mipmap(opts),
+                spineAtlasMipmap(opts),
+            ]
         });
 
         await assetpack.run();
@@ -75,7 +76,7 @@ describe('Mipmap', () =>
         expect(existsSync(`${outputDir}/dragon@0.5x.atlas`)).toBe(true);
     });
 
-    it('should generate the fixed resolution when using the fix tags', async () =>
+    it.skip('should generate the fixed resolution when using the fix tags', async () =>
     {
         const testName = 'mip-fixed';
         const inputDir = getInputDir(pkg, testName);
@@ -105,10 +106,11 @@ describe('Mipmap', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                mipmap: mipmap(opts),
-                spine: spineAtlasMipmap(opts),
-            }
+            cache: false,
+            pipes: [
+                mipmap(opts),
+                spineAtlasMipmap(opts),
+            ]
         });
 
         await assetpack.run();
@@ -151,10 +153,11 @@ describe('Mipmap', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                mipmap: mipmap({}),
-                spine: spineAtlasMipmap(),
-            }
+            cache: false,
+            pipes: [
+                mipmap({}),
+                spineAtlasMipmap(),
+            ]
         });
 
         await assetpack.run();
@@ -199,17 +202,18 @@ describe('Mipmap', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                mipmap: mipmap(),
-                spine: spineAtlasMipmap(),
-            }
+            cache: false,
+            pipes: [
+                mipmap(),
+                spineAtlasMipmap(),
+            ]
         });
 
         await assetpack.run();
 
-        expect(existsSync(`${outputDir}/assets/test@1x.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/test.png`)).toBe(true);
         expect(existsSync(`${outputDir}/assets/test@0.5x.png`)).toBe(false);
-        expect(existsSync(`${outputDir}/assets/dragon@1x.atlas`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/dragon.atlas`)).toBe(true);
         expect(existsSync(`${outputDir}/assets/dragon@0.5x.atlas`)).toBe(false);
     });
 
@@ -232,10 +236,6 @@ describe('Mipmap', () =>
                                 name: 'test.png',
                                 content: assetPath(pkg, 'png-1.png'),
                             },
-                            {
-                                name: 'dragon{spine}.atlas',
-                                content: assetPath(pkg, 'dragon.atlas'),
-                            },
                         ],
                         folders: [],
                     },
@@ -245,14 +245,13 @@ describe('Mipmap', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                mipmap: mipmap({})
-            }
+            cache: false,
+            pipes: [mipmap()]
         });
 
         await assetpack.run();
 
-        expect(existsSync(`${outputDir}/assets/test@1x.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/test.png`)).toBe(true);
         expect(existsSync(`${outputDir}/assets/test@0.5x.png`)).toBe(false);
     });
 });

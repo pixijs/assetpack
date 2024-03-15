@@ -29,7 +29,8 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "fs-extra": "^11.1.0"
+    "fs-extra": "^11.1.0",
+    "upath": "^2.0.1"
   },
   "devDependencies": {
     "@assetpack/core": "0.7.0"

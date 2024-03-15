@@ -1,12 +1,13 @@
 import chalk from 'chalk';
-import { LogLevels } from './logLevel';
+import type { LogLevel } from './logLevel';
+import { LogLevelEnum } from './logLevel';
 import { persistMessage, resetWindow, setSpinnerStatus, updateSpinner } from './render';
 import { prettifyTime } from './utils';
 
 export interface LogEvent
 {
     type: 'log';
-    level: keyof typeof LogLevels;
+    level: LogLevel;
     message: string;
 }
 
@@ -19,76 +20,85 @@ export interface BuildEvent
 
 export type ReporterEvent = LogEvent | BuildEvent;
 
+function getProgressBar(ratio: number)
+{
+    const size = 40;
+    const prog = [];
+
+    for (let i = 0; i < size; i++)
+    {
+        if (ratio > (i / size))
+        {
+            prog.push('█');
+        }
+        else
+        {
+            prog.push('░');
+        }
+    }
+
+    return prog.join('');
+}
 export class Reporter
 {
-    public level: keyof typeof LogLevels = 'info';
+    public level: LogLevel = 'info';
     private _buildTime = 0;
 
     // Exported only for test
     public report(event: ReporterEvent): void
     {
-        const logLevelFilter = LogLevels[this.level || 'info'];
+        const logLevelFilter = LogLevelEnum[this.level || 'info'];
 
         switch (event.type)
         {
             case 'buildStart': {
-                if (logLevelFilter < LogLevels.info)
+                if (logLevelFilter < LogLevelEnum.info)
                 {
                     break;
                 }
 
                 this._buildTime = Date.now();
-
+                updateSpinner('Starting Plugins...');
                 // Clear any previous output
                 resetWindow();
 
+                /// / persistMessage(`${chalk.blue.bold('›')} ${chalk.blue.bold(`Building: ${event.message}`)}`);
+
+                setSpinnerStatus('success', `AssetPack Initialized`);
                 persistMessage(`${chalk.blue.bold('›')} ${chalk.blue.bold(`Building: ${event.message}`)}`);
 
                 break;
             }
             case 'buildProgress': {
-                if (logLevelFilter < LogLevels.info)
+                if (logLevelFilter < LogLevelEnum.info)
                 {
                     break;
                 }
 
-                switch (event.phase)
-                {
-                    case 'start':
-                        updateSpinner('Starting Plugins...');
-                        break;
-                    case 'delete':
-                        setSpinnerStatus('success', 'Plugins Started');
-                        updateSpinner('Cleaning Tree...');
-                        break;
-                    case 'transform':
-                        setSpinnerStatus('success', 'Tree Cleaned');
-                        updateSpinner('Transforming Assets...');
-                        break;
-                    case 'post':
-                        setSpinnerStatus('success', 'Assets Transformed');
-                        updateSpinner('Post Processing Assets...');
-                        break;
-                    case 'finish':
-                        setSpinnerStatus('success', 'Assets Post Processed');
-                        updateSpinner('Tearing Down Plugins...');
-                        break;
-                }
+                // render a bar..
+                const progress = parseInt(event.message || '0', 10) / 100;
+
+                const progressBar = getProgressBar(progress);
+
+                const message = `${progressBar} ${event.message}%`;
+
+                updateSpinner(`${chalk.green(message)}`);
+
                 break;
             }
             case 'buildSuccess':
-                if (logLevelFilter < LogLevels.info)
+                if (logLevelFilter < LogLevelEnum.info)
                 {
                     break;
                 }
 
-                setSpinnerStatus('success', 'Plugins Torn Down');
+                setSpinnerStatus('success', 'Build Complete');
                 resetWindow();
 
-                persistMessage(chalk.green.bold(`› Built in: ${prettifyTime(Date.now() - this._buildTime)}`));
+                persistMessage(chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Date.now() - this._buildTime)}`));
                 break;
             case 'buildFailure':
-                if (logLevelFilter < LogLevels.error)
+                if (logLevelFilter < LogLevelEnum.error)
                 {
                     break;
                 }
@@ -99,7 +109,7 @@ export class Reporter
 
                 break;
             case 'log': {
-                if (logLevelFilter < LogLevels[event.level])
+                if (logLevelFilter < LogLevelEnum[event.level])
                 {
                     break;
                 }

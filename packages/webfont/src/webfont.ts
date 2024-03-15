@@ -1,71 +1,43 @@
-import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag, path, SavableAssetCache } from '@assetpack/core';
+import type { AssetPipe, Asset } from '@assetpack/core';
+import { checkExt, createNewAssetAt, extname } from '@assetpack/core';
 import { fonts } from './fonts';
+import { writeFile } from 'fs-extra';
 
-export type WebfontOptions = PluginOptions<'font'>;
-
-export function webfont(options?: Partial<WebfontOptions>): Plugin<WebfontOptions>
+export function webfont(): AssetPipe
 {
-    const defaultOptions: WebfontOptions = {
-        tags: {
-            font: 'wf',
-            ...options?.tags
-        },
-    };
-
     return {
         folder: false,
         name: 'webfont',
-        test(tree, _p, options)
+        test(asset: Asset)
         {
-            const opts = { ...defaultOptions.tags, ...options.tags } as Required<WebfontOptions['tags']>;
-
-            if (!hasTag(tree, 'path', opts.font)) return false;
-
-            return checkExt(tree.path, '.otf', '.ttf', '.svg');
+            return checkExt(asset.path, '.otf', '.ttf', '.svg');
         },
-        async transform(tree, processor)
+        async transform(asset: Asset)
         {
-            const ext = path.extname(tree.path);
-            const input = tree.path;
-            const output = processor.inputToOutput(input, '.woff2');
+            const ext = extname(asset.path);
 
-            let res: Buffer | null = null;
+            let buffer: Buffer | null = null;
 
             switch (ext)
             {
                 case '.otf':
-                    res = fonts.otf.to.woff2(input);
+                    buffer = fonts.otf.to.woff2(asset.path);
                     break;
                 case '.ttf':
-                    res = fonts.ttf.to.woff2(input);
+                    buffer = fonts.ttf.to.woff2(asset.path);
                     break;
                 case '.svg':
-                    res = fonts.svg.to.woff2(input);
+                    buffer = fonts.svg.to.woff2(asset.path);
                     break;
             }
 
-            processor.addToTreeAndSave({
-                tree,
-                outputOptions: {
-                    outputPathOverride: output,
-                    outputData: res
-                },
-                transformOptions: {
-                    transformId: 'webfont',
-                }
-            });
+            const newFileName = asset.filename.replace(/\.(otf|ttf|svg)$/i, '.woff2');
 
-            SavableAssetCache.set(tree.path, {
-                tree,
-                transformData: {
-                    type: this.name!,
-                    files: [{
-                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
-                        paths: [output]
-                    }]
-                }
-            });
+            const newAsset = createNewAssetAt(asset, newFileName);
+
+            await writeFile(newAsset.path, buffer as Buffer);
+
+            return [newAsset];
         }
     };
 }

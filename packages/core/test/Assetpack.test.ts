@@ -1,9 +1,10 @@
 import { existsSync, removeSync, writeJSONSync } from 'fs-extra';
 import { join } from 'path';
-import type { MockPlugin } from '../../../shared/test/index';
-import { assetPath, createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test/index';
+import type { MockAssetPipe } from '../../../shared/test/index';
+import { assetPath, createFolder, createAssetPipe, getInputDir, getOutputDir } from '../../../shared/test/index';
 import { AssetPack } from '../src/AssetPack';
-import type { Plugin } from '../src/Plugin';
+import { logAssetGraph } from '../src/utils/logAssetGraph';
+import type { AssetPipe } from '../src/pipes/AssetPipe';
 
 const pkg = 'core';
 
@@ -34,20 +35,20 @@ describe('Core', () =>
                 ],
             });
 
-        const plugin = createPlugin({
+        const plugin = createAssetPipe({
             folder: false,
             test: true,
             start: true,
             finish: true,
             transform: true,
-        }) as MockPlugin;
+        }) as MockAssetPipe;
 
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                json: plugin as Plugin<any>,
-            },
+            pipes: [
+                plugin as AssetPipe<any>,
+            ],
             cache: false,
         });
 
@@ -64,6 +65,8 @@ describe('Core', () =>
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
+        removeSync(inputDir);
+
         createFolder(
             pkg,
             {
@@ -75,15 +78,17 @@ describe('Core', () =>
                 folders: [],
             });
 
-        const testFile = join(inputDir, 'test.json');
+        const testFile = join(inputDir, 'new-json-file.json');
 
-        const bulldog = new AssetPack({
+        const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
             cache: false,
         });
 
-        await bulldog.watch();
+        await assetpack.watch();
+
+        expect(existsSync(join(outputDir, 'json.json'))).toBe(true);
 
         writeJSONSync(testFile, { nice: 'test' });
 
@@ -92,7 +97,7 @@ describe('Core', () =>
             setTimeout(resolve, 1500);
         });
 
-        expect(existsSync(join(outputDir, 'test.json'))).toBe(true);
+        expect(existsSync(join(outputDir, 'new-json-file.json'))).toBe(true);
         expect(existsSync(join(outputDir, 'json.json'))).toBe(true);
 
         removeSync(testFile);
@@ -102,9 +107,9 @@ describe('Core', () =>
             setTimeout(resolve, 1500);
         });
 
-        await bulldog.stop();
+        await assetpack.stop();
 
-        expect(existsSync(join(outputDir, 'test.json'))).toBe(false);
+        expect(existsSync(join(outputDir, 'new-json-file.json'))).toBe(false);
         expect(existsSync(join(outputDir, 'json.json'))).toBe(true);
     });
 
@@ -180,22 +185,22 @@ describe('Core', () =>
                 ],
             });
 
-        const plugin = createPlugin({
+        const plugin = createAssetPipe({
             folder: false,
             test: true,
             start: true,
             finish: true,
             transform: true,
-        }) as MockPlugin;
+        }) as MockAssetPipe;
 
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                json: plugin as Plugin<any>,
-            },
+            pipes: [
+                plugin as AssetPipe<any>,
+            ],
             cache: false,
-            files: [
+            assetSettings: [
                 {
                     files: ['anything/**'],
                     settings: {
@@ -203,22 +208,24 @@ describe('Core', () =>
                             test: 'test',
                         },
                     },
-                    tags: [],
+                    metaData: [],
                 },
-            ]
+            ],
         });
 
-        const treePath = join(inputDir, 'anything/test');
-        const treePath2 = join(inputDir, 'anything');
-        const plug = assetpack['_processor']['_plugins'][0];
+        await assetpack.run();
 
-        const opts = assetpack['_processor']['getOptions'](treePath, plug);
-        const optsBad = assetpack['_processor']['getOptions'](treePath2, plug);
+        const rootAsset = assetpack['_assetWatcher']['_root'].children[0];
 
-        expect(opts).toEqual({
-            test: 'test',
+        logAssetGraph(rootAsset);
+
+        expect(rootAsset.children[0].settings).toStrictEqual({
+            json: {
+                test: 'test',
+            },
         });
-        expect(optsBad).toEqual({});
+
+        expect(rootAsset.settings).toBeUndefined();
     });
 
     it('should not copy to output if transformed', () =>
