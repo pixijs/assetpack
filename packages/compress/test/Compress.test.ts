@@ -1,9 +1,7 @@
 import { AssetPack } from '@assetpack/core';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
-import { compressJpg, compressPng, compressWebp } from '../src';
-import { compressAvif } from '../src/avif';
-import { compress } from '../src/compress';
+import { compress, compressAvif, compressJpg, compressPng, compressWebp } from '../src';
 
 const pkg = 'compress';
 
@@ -34,12 +32,16 @@ describe('Compress', () =>
         const pack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                compressWebp: compressWebp(),
-                compressAvif: compressAvif(),
-                compress: compressPng(),
-                compressJpg: compressJpg()
-            }
+            cache: false,
+            pipes: [
+                // this will make sure that the images are tests and compressed by each pipe
+                [
+                    compressPng(),
+                    compressWebp(),
+                    compressAvif(),
+                    compressJpg()
+                ]
+            ]
         });
 
         await pack.run();
@@ -78,9 +80,10 @@ describe('Compress', () =>
         const pack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                compress: compress(),
-            }
+            cache: false,
+            pipes: [
+                compress(),
+            ]
         });
 
         await pack.run();
@@ -119,12 +122,13 @@ describe('Compress', () =>
         const pack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                compress: compress({
+            cache: false,
+            pipes: [
+                compress({
                     webp: false,
                     avif: false,
-                }),
-            }
+                })
+            ]
         });
 
         await pack.run();

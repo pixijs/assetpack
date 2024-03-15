@@ -1,0 +1,363 @@
+{
+    "assets": {
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim": {
+            "isFolder": true,
+            "lastModified": 0,
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder": {
+            "isFolder": true,
+            "lastModified": 1710507334238.0044,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder/json.json": {
+            "isFolder": false,
+            "lastModified": 1710507334237.7993,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder/json.json": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder/json.json",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder/json.json5": {
+            "isFolder": false,
+            "lastModified": 1710507334237.9414,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder/json.json5": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder/json.json5",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder/sprite.png": {
+            "isFolder": false,
+            "lastModified": 1710507334238.0977,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder",
+            "metaData": {}
+        },
+        ".asset-pack/mipmap/folder/sprite@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder/sprite.png",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/folder/sprite@1x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/folder/sprite@1x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder/sprite@1x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/folder/sprite@1x.webp",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/folder/sprite@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/folder/sprite@1x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder/sprite@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/folder/sprite@1x.png",
+            "metaData": {}
+        },
+        ".asset-pack/mipmap/folder/sprite@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder/sprite.png",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/folder/sprite@0.5x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/folder/sprite@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder/sprite@0.5x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/folder/sprite@0.5x.webp",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/folder/sprite@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/folder/sprite@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder/sprite@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/folder/sprite@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2": {
+            "isFolder": true,
+            "lastModified": 1710507334238.3943,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/1.mp3": {
+            "isFolder": false,
+            "lastModified": 1710507334238.295,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2",
+            "metaData": {}
+        },
+        ".asset-pack/audio/folder2/1.mp3": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/1.mp3",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder2/1.mp3": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/audio/folder2/1.mp3",
+            "metaData": {}
+        },
+        ".asset-pack/audio/folder2/1.ogg": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/1.mp3",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder2/1.ogg": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/audio/folder2/1.ogg",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/folder3": {
+            "isFolder": true,
+            "lastModified": 1710507334238.4521,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/folder3/1.mp3": {
+            "isFolder": false,
+            "lastModified": 1710507334238.515,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/folder3",
+            "metaData": {}
+        },
+        ".asset-pack/audio/folder2/folder3/1.mp3": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/folder3/1.mp3",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder2/folder3/1.mp3": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/audio/folder2/folder3/1.mp3",
+            "metaData": {}
+        },
+        ".asset-pack/audio/folder2/folder3/1.ogg": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/folder2/folder3/1.mp3",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/folder2/folder3/1.ogg": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/audio/folder2/folder3/1.ogg",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine": {
+            "isFolder": true,
+            "lastModified": 1710507334239.6365,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon.json": {
+            "isFolder": false,
+            "lastModified": 1710507334238.8757,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon.json": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon.json",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon.png": {
+            "isFolder": false,
+            "lastModified": 1710507334239.5413,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine",
+            "metaData": {}
+        },
+        ".asset-pack/mipmap/spine/dragon@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon.png",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon@1x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon@1x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon@1x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon@1x.webp",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon@1x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon@1x.png",
+            "metaData": {}
+        },
+        ".asset-pack/mipmap/spine/dragon@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon.png",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon@0.5x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon@0.5x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon@0.5x.webp",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon2.png": {
+            "isFolder": false,
+            "lastModified": 1710507334239.9097,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine",
+            "metaData": {}
+        },
+        ".asset-pack/mipmap/spine/dragon2@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon2.png",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon2@1x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon2@1x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon2@1x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon2@1x.webp",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon2@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon2@1x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon2@1x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon2@1x.png",
+            "metaData": {}
+        },
+        ".asset-pack/mipmap/spine/dragon2@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon2.png",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon2@0.5x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon2@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon2@0.5x.webp": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon2@0.5x.webp",
+            "metaData": {}
+        },
+        ".asset-pack/multi-pipe-2/spine/dragon2@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon2@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon2@0.5x.png": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/multi-pipe-2/spine/dragon2@0.5x.png",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon{spine}.atlas": {
+            "isFolder": false,
+            "lastModified": 1710507334238.7275,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine",
+            "metaData": {
+                "spine": true
+            }
+        },
+        ".asset-pack/mipmap/spine/dragon{spine}@1x.atlas": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon{spine}.atlas",
+            "metaData": {
+                "spine": true
+            }
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon@1x.atlas": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon{spine}@1x.atlas",
+            "metaData": {}
+        },
+        ".asset-pack/mipmap/spine/dragon{spine}@0.5x.atlas": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testInput/manifest-shortcut-no-trim/spine/dragon{spine}.atlas",
+            "metaData": {
+                "spine": true
+            }
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/manifest/.testOutput/manifest-shortcut-no-trim/spine/dragon@0.5x.atlas": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/mipmap/spine/dragon{spine}@0.5x.atlas",
+            "metaData": {}
+        }
+    }
+}

@@ -1,8 +1,12 @@
-import type { Plugin, PluginOptions, Processor } from '@assetpack/core';
-import { checkExt, hasTag, SavableAssetCache } from '@assetpack/core';
+import type { Asset } from '@assetpack/core';
+import { checkExt, type AssetPipe, type PluginOptions, createNewAssetAt } from '@assetpack/core';
+import { writeFile } from 'fs-extra';
+
+// import { checkExt, hasTag, SavableAssetCache } from '@assetpack/core';
+import type { Sharp } from 'sharp';
 import sharp from 'sharp';
 
-export interface MipmapOptions<T extends string = ''> extends PluginOptions<'fix' | T>
+export interface MipmapOptions extends PluginOptions<'fix'>
 {
     /** A template for denoting the resolution of the images. */
     template?: string;
@@ -12,130 +16,81 @@ export interface MipmapOptions<T extends string = ''> extends PluginOptions<'fix
     fixedResolution?: string;
 }
 
-type RequiredMipmapOptions = Required<MipmapOptions>;
-
-export function mipmap(options?: Partial<MipmapOptions>): Plugin<MipmapOptions>
+export function mipmap(_options: Partial<MipmapOptions> = {}): AssetPipe<MipmapOptions>
 {
-    const defaultOptions: MipmapOptions = {
+    const defaultOptions = {
         template: '@%%x',
         resolutions: { default: 1, low: 0.5 },
         fixedResolution: 'default',
-        ...options,
+        ..._options,
         tags: {
             fix: 'fix',
-            ...options?.tags
+            ..._options?.tags
         },
     };
 
     return {
         folder: false,
         name: 'mipmap',
-        test(tree)
+        defaultOptions,
+        test(asset: Asset, options)
         {
-            return checkExt(tree.path, '.png', '.jpg', ',jpeg');
+            return !asset.allMetaData[options.tags.fix] && checkExt(asset.path, '.png', '.jpg', ',jpeg');
         },
-        async transform(tree, processor, options)
+        async transform(asset: Asset, options)
         {
-            const tags = { ...defaultOptions.tags, ...options.tags } as Required<RequiredMipmapOptions['tags']>;
-            const transformOptions = { ...defaultOptions, ...options } as RequiredMipmapOptions;
+            const fixedResolutions: {[x: string]: number} = {};
 
-            const largestResolution = Math.max(...Object.values(transformOptions.resolutions));
-            const resolutionHash = hasTag(tree, 'path', tags.fix)
-                ? {
-                    default: transformOptions.resolutions[
-                        transformOptions.fixedResolution
-                    ]
-                }
-                : transformOptions.resolutions;
+            fixedResolutions[options.fixedResolution] = options.resolutions[options.fixedResolution];
 
-            const files: string[] = [];
+            const largestResolution = Math.max(...Object.values(options.resolutions));
+            const resolutionHash = asset.allMetaData[options.tags.fix] ? fixedResolutions : options.resolutions;
 
-            // loop through each resolution and pack the images
-            for (const resolution of Object.values(resolutionHash))
+            let sharpAsset: Sharp;
+            let meta: {width: number, height: number};
+
+            try
             {
-                const scale = resolution / largestResolution;
-                const template = transformOptions.template.replace('%%', resolution.toString());
-                let outputName = processor.inputToOutput(tree.path);
-
-                // replace the extension with the template
-                outputName = outputName.replace(/(\.[\w\d_-]+)$/i, `${template}$1`);
-
-                const out = await processFile({
-                    output: outputName,
-                    input: tree.path,
-                    scale,
-                    processor,
-                });
-
-                processor.addToTreeAndSave({
-                    tree,
-                    outputOptions: {
-                        outputPathOverride: outputName,
-                        outputData: out
-                    },
-                    transformOptions: {
-                        transformId: 'mipmap',
-                        transformData: {
-                            resolution: resolution.toString(),
-                        },
-                    }
-                });
-
-                files.push(processor.trimOutputPath(outputName));
+                sharpAsset = await sharp(asset.path);
+                meta = await sharpAsset.metadata() as {width: number, height: number};
+            }
+            catch (e: any)
+            {
+                throw new Error(`[mipmap] Could not get metadata for ${asset.path}: ${e.message}`);
             }
 
-            SavableAssetCache.set(tree.path, {
-                tree,
-                transformData: {
-                    type: this.name!,
-                    prefix: transformOptions.template,
-                    resolutions: Object.values(resolutionHash),
-                    files: [{
-                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
-                        paths: files,
-                    }]
-                }
+            if (!meta.width || !meta.height)
+            {
+                throw new Error(`[mipmap] Could not get metadata for ${asset.path}`);
+            }
+
+            const promises: Promise<void>[] = [];
+
+            // loop through each resolution and pack the images
+            const assets = Object.values(resolutionHash).map((resolution) =>
+            {
+                const scale = resolution / largestResolution;
+                const template = options.template.replace('%%', resolution.toString());
+                const outputName = asset.filename.replace(/(\.[\w\d_-]+)$/i, `${template}$1`);
+
+                const scaleAsset = createNewAssetAt(asset, outputName);
+
+                const promise = sharpAsset
+                    .resize({
+                        width: Math.ceil(meta.width * scale),
+                        height: Math.ceil(meta.height * scale)
+                    })
+                    .toBuffer()
+                    .then((data) => writeFile(scaleAsset.path, data));
+
+                promises.push(promise); //
+
+                return scaleAsset;
             });
+
+            await Promise.all(promises);
+
+            return assets;
         }
     };
-}
-
-interface ProcessOptions
-{
-    output: string;
-    input: string;
-    scale: number;
-    processor: Processor;
-}
-
-async function processFile(options: ProcessOptions)
-{
-    // now mip the file..
-    const meta = await sharp(options.input).metadata().catch((e) =>
-    {
-        throw new Error(`[mipmap] Could not get metadata for ${options.input}: ${e.message}`);
-    });
-
-    if (!meta.width || !meta.height)
-    {
-        throw new Error(`[mipmap] Could not get metadata for ${options.input}`);
-    }
-
-    let res;
-
-    try
-    {
-        res = await sharp(options.input)
-            .resize({
-                width: Math.ceil(meta.width * options.scale),
-                height: Math.ceil(meta.height * options.scale)
-            })
-            .toBuffer();
-    }
-    catch (error)
-    {
-        throw new Error(`[mipmap] Could not resize ${options.input}: ${(error as Error).message}`);
-    }
-
-    return res;
 }

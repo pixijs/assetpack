@@ -1,0 +1,33 @@
+{
+    "assets": {
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify": {
+            "isFolder": true,
+            "lastModified": 1710507347386.2063,
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json": {
+            "isFolder": true,
+            "lastModified": 1710507347386.2063,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json/json.json": {
+            "isFolder": false,
+            "lastModified": 1710507347386.49,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json",
+            "metaData": {}
+        },
+        ".asset-pack/json/json/json.json": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json/json.json",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testOutput/json-minify/json/json.json": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": ".asset-pack/json/json/json.json",
+            "metaData": {}
+        }
+    }
+}

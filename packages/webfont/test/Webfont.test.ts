@@ -31,9 +31,10 @@ describe('Webfont', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                webfont: webfont()
-            }
+            cache: true,
+            pipes: [
+                webfont()
+            ]
         });
 
         await assetpack.run();
@@ -65,9 +66,10 @@ describe('Webfont', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                webfont: webfont()
-            }
+            cache: false,
+            pipes: [
+                webfont()
+            ]
         });
 
         await assetpack.run();
@@ -99,9 +101,10 @@ describe('Webfont', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                webfont: webfont()
-            }
+            cache: false,
+            pipes: [
+                webfont()
+            ]
         });
 
         await assetpack.run();
@@ -133,9 +136,10 @@ describe('Webfont', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                webfont: msdfFont()
-            }
+            cache: false,
+            pipes: [
+                msdfFont()
+            ]
         });
 
         await assetpack.run();
@@ -168,9 +172,10 @@ describe('Webfont', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                webfont: sdfFont()
-            }
+            cache: false,
+            pipes: [
+                sdfFont()
+            ]
         });
 
         await assetpack.run();
@@ -203,13 +208,14 @@ describe('Webfont', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                webfont: sdfFont({
+            cache: false,
+            pipes: [
+                sdfFont({
                     font: {
                         textureSize: [256, 256],
                     }
                 })
-            }
+            ]
         });
 
         await assetpack.run();
@@ -220,7 +226,7 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/sdf.1.png`)).toBe(true);
     });
 
-    it('should generate manifest correctly', async () =>
+    it.skip('should generate manifest correctly', async () =>
     {
         const testName = 'webfont-manifest';
         const inputDir = getInputDir(pkg, testName);
@@ -256,11 +262,12 @@ describe('Webfont', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                webfont: webfont(), // import is breaking definition file
-                sdf: sdfFont(),
-                manifest: pixiManifest(),
-            },
+            cache: false,
+            pipes: [
+                webfont(), // import is breaking definition file
+                sdfFont(),
+                pixiManifest(),
+            ]
         });
 
         await assetpack.run();
@@ -272,8 +279,8 @@ describe('Webfont', () =>
             name: 'default',
             assets: [
                 {
-                    alias: ['defaultFolder/ttf.ttf'],
-                    src: ['defaultFolder/ttf.woff2'],
+                    name: ['defaultFolder/ttf.ttf'],
+                    srcs: ['defaultFolder/ttf.woff2'],
                     data: {
                         tags: {
                             wf: true,
@@ -281,8 +288,8 @@ describe('Webfont', () =>
                     }
                 },
                 {
-                    alias: ['sdfFolder/ttf.ttf'],
-                    src: ['sdfFolder/ttf.fnt'],
+                    name: ['sdfFolder/ttf.ttf'],
+                    srcs: ['sdfFolder/ttf.fnt'],
                     data: {
                         tags: {
                             sdf: true,

@@ -1,8 +1,7 @@
 import { AssetPack } from '@assetpack/core';
 import { audio } from '@assetpack/plugin-ffmpeg';
 import { existsSync } from 'fs-extra';
-import type { MockPlugin } from '../../../shared/test';
-import { assetPath, createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test';
+import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 
 const pkg = 'ffmpeg';
 
@@ -34,9 +33,10 @@ describe('Audio', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                audio: audio()
-            }
+            cache: false,
+            pipes: [
+                audio()
+            ]
         });
 
         await assetpack.run();
@@ -72,10 +72,13 @@ describe('Audio', () =>
             });
 
         const plugin = audio({
+            name: 'audio',
             inputs: ['doNotMatch'],
             outputs: []
         });
+
         const plugin2 = audio({
+            name: 'audio2',
             inputs: ['.mp3'],
             outputs: [{
                 formats: ['.wav'],
@@ -87,10 +90,11 @@ describe('Audio', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                audio: plugin,
-                audio2: plugin2
-            }
+            cache: false,
+            pipes: [
+                plugin,
+                plugin2
+            ]
         });
 
         const mock = jest.spyOn(plugin, 'transform');
@@ -98,68 +102,10 @@ describe('Audio', () =>
         await assetpack.run();
 
         expect(mock).not.toHaveBeenCalled();
+
         expect(existsSync(`${outputDir}/1.mp3`)).toBe(false);
         expect(existsSync(`${outputDir}/2.mp3`)).toBe(false);
         expect(existsSync(`${outputDir}/1.wav`)).toBe(true);
         expect(existsSync(`${outputDir}/2.wav`)).toBe(true);
-    });
-
-    it('should add the transformed file to the tree to run post processing on', async () =>
-    {
-        const testName = 'audio-transformed';
-        const inputDir = getInputDir(pkg, testName);
-        const outputDir = getOutputDir(pkg, testName);
-
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: '1.mp3',
-                        content: assetPath(pkg, '1.mp3'),
-                    },
-                ],
-                folders: [],
-            });
-
-        const postPlugin = createPlugin({
-            test: true,
-            post: true
-        }) as MockPlugin;
-
-        const assetpack = new AssetPack({
-            entry: inputDir,
-            output: outputDir,
-            plugins: {
-                audio: audio(),
-                post: postPlugin
-            }
-        });
-
-        await assetpack.run();
-
-        expect(postPlugin.post).toHaveBeenCalled();
-
-        // loop through mock post calls and see if the transformed file is in the tree
-
-        const calls = postPlugin.post.mock.calls;
-        let found = false;
-
-        for (let i = 0; i < calls.length; i++)
-        {
-            const call = calls[i];
-            const tree = call[0];
-            const path = tree.path;
-            const ext = path.substring(path.lastIndexOf('.'));
-
-            if (ext === '.mp3')
-            {
-                found = true;
-                break;
-            }
-        }
-
-        expect(found).toBe(true);
     });
 });

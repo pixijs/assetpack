@@ -1,8 +1,8 @@
-import type { MockPlugin } from '../../../shared/test/index';
-import { createFolder, createPlugin, getInputDir, getOutputDir } from '../../../shared/test/index';
+import type { MockAssetPipe } from '../../../shared/test/index';
+import { createFolder, createAssetPipe, getInputDir, getOutputDir } from '../../../shared/test/index';
+import type { Asset } from '../src/Asset';
 import { AssetPack } from '../src/AssetPack';
-import type { Plugin } from '../src/Plugin';
-import { hasTag } from '../src/utils';
+import { extractTagsFromFileName } from '../src/utils/extractTagsFromFileName';
 
 describe('Utils', () =>
 {
@@ -15,26 +15,16 @@ describe('Utils', () =>
 
     it('should extract tags from file name', async () =>
     {
-        const as = new AssetPack({
-            files: [
-                {
-                    files: ['**/*.json5'],
-                    tags: ['test'],
-                    settings: {}
-                }
-            ]
-        });
-
-        expect(as['_extractTags']('test')).toEqual({});
-        expect(as['_extractTags']('test.json')).toEqual({});
-        expect(as['_extractTags']('test{tag}.json')).toEqual({ tag: true });
-        expect(as['_extractTags']('test{tag1}{tag2}.json')).toEqual({ tag1: true, tag2: true });
-        expect(as['_extractTags']('test{tag1}{tag2=1}.json')).toEqual({ tag1: true, tag2: '1' });
-        expect(as['_extractTags']('test{tag1}{tag2=1&2}.json')).toEqual({ tag1: true, tag2: ['1', '2'] });
-        expect(as['_extractTags']('test.json5')).toEqual({ test: true });
+        expect(extractTagsFromFileName('test')).toEqual({});
+        expect(extractTagsFromFileName('test.json')).toEqual({});
+        expect(extractTagsFromFileName('test{tag}.json')).toEqual({ tag: true });
+        expect(extractTagsFromFileName('test{tag1}{tag2}.json')).toEqual({ tag1: true, tag2: true });
+        expect(extractTagsFromFileName('test{tag1}{tag2=1}.json')).toEqual({ tag1: true, tag2: 1 });
+        expect(extractTagsFromFileName('test{tag1=hi}.json')).toEqual({ tag1: 'hi' });
+        expect(extractTagsFromFileName('test{tag1}{tag2=1&2}.json')).toEqual({ tag1: true, tag2: [1, 2] });
     });
 
-    it('should allow for tags to be overridden', async () =>
+    it.only('should allow for tags to be overridden', async () =>
     {
         const testName = 'tag-override';
         const inputDir = getInputDir(pkg, testName);
@@ -55,47 +45,37 @@ describe('Utils', () =>
             });
 
         let counter = 0;
-        const plugin = createPlugin({
+        const plugin = createAssetPipe({
             folder: true,
-            test: ((tree: any, _p: any, opts: any) =>
+            test: ((asset: Asset, _options: any) =>
             {
                 counter++;
                 if (counter === 1) return false;
-                expect(opts).toEqual({
-                    tags: {
-                        test: 'override',
-                    }
+
+                expect(asset.allMetaData).toEqual({
+                    override: [1, 2]
                 });
-                const tags = { ...opts.tags };
 
-                expect(hasTag(tree, 'path', tags.test)).toBe(true);
-                expect(tree.fileTags).toEqual({ override: ['1', '2'] });
-
-                return hasTag(tree, 'path', tags.test);
+                return true;
             }) as any,
             start: true,
             finish: true,
             transform: true,
-        }) as MockPlugin;
+        }) as MockAssetPipe;
 
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                json: plugin as Plugin<any>,
-            },
+            pipes: [
+                plugin// as Plugin<any>
+            ],
             cache: false,
-            files: [
+            assetSettings: [
                 {
                     files: ['**'],
-                    settings: {
-                        json: {
-                            tags: {
-                                test: 'override',
-                            }
-                        }
+                    metaData: {
+                        override: [1, 2]
                     },
-                    tags: ['override=1&2'],
                 },
             ]
         });

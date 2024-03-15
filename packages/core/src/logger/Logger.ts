@@ -1,14 +1,19 @@
-import type { AssetPackConfig } from '../config';
 import type { ReporterEvent } from './Reporter';
 import { Reporter } from './Reporter';
+import type { LogLevel } from './logLevel';
+
+export interface LoggerOptions
+{
+    level: LogLevel;
+}
 
 class LoggerClass
 {
     private _reporter: Reporter = new Reporter();
 
-    public init(config: AssetPackConfig)
+    public init(options: LoggerOptions)
     {
-        this._reporter.level = config.logLevel || 'info';
+        this._reporter.level = options.level || 'info';
     }
 
     public verbose(message: string)
@@ -27,6 +32,7 @@ class LoggerClass
 
     public info(message: string)
     {
+        return;
         this.report({
             type: 'log',
             level: 'info',
