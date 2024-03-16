@@ -6,6 +6,7 @@
 // export * from './Processor';
 // export * from './utils';
 export * from './AssetPack';
+export * from './config';
 export * from './pipes/PipeSystem';
 export * from './pipes/AssetPipe';
 export * from './pipes/multiPipe';

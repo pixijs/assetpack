@@ -51,7 +51,7 @@ export function mipmap(_options: Partial<MipmapOptions> = {}): AssetPipe<MipmapO
 
             try
             {
-                sharpAsset = await sharp(asset.path);
+                sharpAsset = sharp(asset.path);
                 meta = await sharpAsset.metadata() as {width: number, height: number};
             }
             catch (e: any)

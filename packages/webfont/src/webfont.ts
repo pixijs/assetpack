@@ -8,6 +8,7 @@ export function webfont(): AssetPipe
     return {
         folder: false,
         name: 'webfont',
+        defaultOptions: {},
         test(asset: Asset)
         {
             return checkExt(asset.path, '.otf', '.ttf', '.svg');

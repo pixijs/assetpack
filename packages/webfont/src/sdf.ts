@@ -9,23 +9,22 @@ export interface SDFFontOptions extends PluginOptions<'sdf'>
 {
     name: string,
     type: BitmapFontOptions['fieldType'],
-    font: Omit<BitmapFontOptions, 'outputType' | 'fieldType'>;
+    font?: Omit<BitmapFontOptions, 'outputType' | 'fieldType'>;
 }
 
 export function signedFont(
-    options: SDFFontOptions
-): AssetPipe
+    defaultOptions: SDFFontOptions
+): AssetPipe<SDFFontOptions>
 {
-    const tag = options.type as string;
-
     return {
         folder: false,
-        name: options.name,
-        test(asset: Asset)
+        name: defaultOptions.name,
+        defaultOptions,
+        test(asset: Asset, options)
         {
-            return asset.allMetaData[tag] && checkExt(asset.path, '.ttf');
+            return asset.allMetaData[options.type] && checkExt(asset.path, '.ttf');
         },
-        async transform(asset: Asset)
+        async transform(asset: Asset, options)
         {
             const newFileName = stripTags(asset.filename.replace(/\.(ttf)$/i, ''));
 

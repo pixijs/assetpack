@@ -90,15 +90,15 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                 return { path: f, contents };
             }));
 
-            const textureFormat = asset.metaData[tags.jpg] ? 'jpg' : 'png' as TextureFormat;
+            const textureFormat = (asset.metaData[tags.jpg] ? 'jpg' : 'png')as TextureFormat;
 
             const texturePackerOptions = {
                 textureFormat,
-                ...texturePacker,
+                ...texturePacker as Partial<TexturePackerOptions>,
                 ...{
                     width: resolutionOptions?.maximumTextureSize,
                     height: resolutionOptions?.maximumTextureSize,
-                }
+                },
             };
 
             const promises: Promise<void>[] = [];
@@ -115,8 +115,8 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                     const textureName = stripTags(asset.filename);
 
                     const out = await packAsync(imagesToPack, {
-                        textureName,
                         ...texturePackerOptions,
+                        textureName,
                         scale
                     });
 
@@ -135,7 +135,10 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                             // replace extension with 'jpg'
                             const imagePath = outputAsset.filename.replace(/(\.[\w\d_-]+)$/i, `.${textureFormat}`);
 
-                            outputAsset.metaData.page = out.length > 2 ? output.name.match(/-(.*?)\.json/)[1] : 0;
+                            const match = output.name.match(/-(.*?)\.json/);
+
+                            // eslint-disable-next-line no-nested-ternary
+                            outputAsset.metaData.page = out.length > 2 ? (match ? match[1] : 0) : 0;
 
                             processJsonFile(json, asset.path, imagePath, largestResolution, options.shortNames);
 

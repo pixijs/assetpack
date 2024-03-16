@@ -13,6 +13,7 @@ describe('PipeSystem', () =>
 
         const dummyPipe: AssetPipe = {
             name: 'dummy',
+            defaultOptions: {},
             transform: async (_asset: Asset) =>
             {
                 const newAsset = new Asset({

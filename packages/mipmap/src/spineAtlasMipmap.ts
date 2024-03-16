@@ -25,7 +25,7 @@ export function spineAtlasMipmap(_options?: Partial<MipmapOptions>): AssetPipe
         defaultOptions,
         test(asset: Asset, options: Required<SpineOptions>)
         {
-            return !asset.allMetaData[options.tags.fix] && checkExt(asset.path, '.atlas');
+            return !asset.allMetaData[options.tags.fix as any] && checkExt(asset.path, '.atlas');
         },
         async transform(asset: Asset, options: Required<SpineOptions>)
         {
@@ -34,7 +34,7 @@ export function spineAtlasMipmap(_options?: Partial<MipmapOptions>): AssetPipe
             fixedResolutions[options.fixedResolution] = options.resolutions[options.fixedResolution];
 
             const largestResolution = Math.max(...Object.values(options.resolutions));
-            const resolutionHash = asset.allMetaData[options.tags.fix] ? fixedResolutions : options.resolutions;
+            const resolutionHash = asset.allMetaData[options.tags.fix as any] ? fixedResolutions : options.resolutions;
 
             const rawAtlas = await readFile(asset.path, { encoding: 'utf8' });
 
