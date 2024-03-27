@@ -1,5 +1,5 @@
 import { AssetPack } from '@assetpack/core';
-import { compress } from '@assetpack/plugin-compress';
+import { mipmapCompress } from '@assetpack/plugin-mipmap-compress';
 import { texturePacker, texturePackerCompress } from '@assetpack/plugin-texture-packer';
 import { readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test/index';
@@ -53,7 +53,7 @@ describe('Texture Packer Compression', () =>
                         resolutions: { default: 1 },
                     },
                 }),
-                compress(),
+                mipmapCompress(),
                 texturePackerCompress({
                     formats: ['webp', 'avif'],
                 }),
@@ -62,8 +62,8 @@ describe('Texture Packer Compression', () =>
 
         await assetpack.run();
 
-        const sheet1 = readJSONSync(`${outputDir}/sprites@1x.json`);
+        const sheet1 = readJSONSync(`${outputDir}/sprites.json`);
 
-        expect(sheet1.meta.image).toEqual(`sprites@1x.{webp,avif,png}`);
+        expect(sheet1.meta.image).toEqual(`sprites.{webp,avif,png}`);
     });
 });

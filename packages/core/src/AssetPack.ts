@@ -60,7 +60,7 @@ export class AssetPack
         if (!cache)
         {
             removeSync(this._outputPath);
-            removeSync('.asset-pack');
+            removeSync('.assetpack');
         }
         else
         {
@@ -82,7 +82,7 @@ export class AssetPack
 
         // make sure the output folders exists
         ensureDirSync(this._outputPath);
-        ensureDirSync('.asset-pack');
+        ensureDirSync('.assetpack');
 
         // create the pipe system, this is used to transform the assets
         // we add the finalCopyPipe to the end of the pipes array. This is a pipe

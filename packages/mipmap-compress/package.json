@@ -1,12 +1,12 @@
 {
-  "name": "@assetpack/plugin-texture-packer",
+  "name": "@assetpack/plugin-mipmap-compress",
   "version": "0.7.0",
   "description": "",
-  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/texture-packer/#readme",
+  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/mipmap-compress/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
   "repository": {
     "url": "pixijs/assetpack",
-    "directory": "packages/texture-packer"
+    "directory": "packages/mipmap-compress"
   },
   "license": "MIT",
   "author": "Zyie",
@@ -30,10 +30,7 @@
   },
   "dependencies": {
     "fs-extra": "^11.1.0",
-    "glob": "^8.0.3",
-    "glob-promise": "^6.0.0",
-    "maxrects-packer": "^2.7.3",
-    "sharp": "^0.33.3"
+    "sharp": "^0.32.0"
   },
   "devDependencies": {
     "@assetpack/core": "0.7.0"

@@ -1,20 +1,13 @@
 import type { PluginOptions, Asset, AssetPipe } from '@assetpack/core';
-import { createNewAssetAt, stripTags, relative, extname, basename  } from '@assetpack/core';
-import type {
-    MaxRectsPackerMethod,
-    PackerExporterType,
-    PackerType,
-    TextureFormat,
-    TexturePackerOptions as TPOptions
-} from 'free-tex-packer-core';
-import { packAsync } from 'free-tex-packer-core';
+import { createNewAssetAt, stripTags, relative  } from '@assetpack/core';
 import { readFile, writeFile, writeJson } from 'fs-extra';
 import glob from 'glob-promise';
+import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures';
+import { packTextures } from './packer/packTextures';
 
 export interface TexturePackerOptions extends PluginOptions<'tps' | 'fix' | 'jpg' | 'nc' >
 {
-    texturePacker?: TPOptions;
-    shortNames?: boolean;
+    texturePacker?: Partial<PackTexturesOptions>;
     resolutionOptions?: {
         /** A template for denoting the resolution of the images. */
         template?: string;
@@ -30,19 +23,16 @@ export interface TexturePackerOptions extends PluginOptions<'tps' | 'fix' | 'jpg
 export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<TexturePackerOptions>
 {
     const defaultOptions = {
-        shortNames: false,
         resolutionOptions: {
             template: '@%%x',
             resolutions: { default: 1, low: 0.5 },
             fixedResolution: 'default',
             maximumTextureSize: 4096,
             ..._options.resolutionOptions,
-
         },
         texturePacker: {
             padding: 2,
-            packer: 'MaxRectsPacker' as PackerType,
-            packerMethod: 'Smart' as MaxRectsPackerMethod,
+            nameStyle: 'relative',
             ..._options.texturePacker,
         },
         tags: {
@@ -51,15 +41,15 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             jpg: 'jpg',
             ..._options.tags,
         }
-    };
+    } as TexturePackerOptions;
 
     return {
         folder: true,
-        name: 'texture-packer',
+        name: 'texture-packer-pixi',
         defaultOptions,
         test(asset: Asset, options)
         {
-            return asset.isFolder && asset.metaData[options.tags.tps];
+            return asset.isFolder && asset.metaData[options.tags.tps as any];
         },
         async transform(asset: Asset, options)
         {
@@ -68,12 +58,12 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             const fixedResolutions: {[x: string]: number} = {};
 
             // eslint-disable-next-line max-len
-            fixedResolutions[resolutionOptions.fixedResolution] = resolutionOptions.resolutions[resolutionOptions.fixedResolution];
+            fixedResolutions[resolutionOptions.fixedResolution as any] = resolutionOptions.resolutions[resolutionOptions.fixedResolution];
 
             asset.ignoreChildren = true;
 
             const largestResolution = Math.max(...Object.values(resolutionOptions.resolutions));
-            const resolutionHash = asset.allMetaData[tags.fix] ? fixedResolutions : resolutionOptions.resolutions;
+            const resolutionHash = asset.allMetaData[tags.fix as any] ? fixedResolutions : resolutionOptions.resolutions;
 
             const globPath = `${asset.path}/**/*.{jpg,png,gif}`;
             const files = await glob(globPath);
@@ -83,81 +73,69 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                 return [];
             }
 
-            const imagesToPack = await Promise.all(files.map(async (f) =>
+            const texturesToPack = await Promise.all(files.map(async (f) =>
             {
                 const contents = await readFile(f);
 
-                return { path: f, contents };
+                return { path: stripTags(relative(asset.path, f)), contents };
             }));
 
-            const textureFormat = (asset.metaData[tags.jpg] ? 'jpg' : 'png')as TextureFormat;
+            const textureFormat = (asset.metaData[tags.jpg as any] ? 'jpg' : 'png') as TexturePackerFormat;
 
             const texturePackerOptions = {
-                textureFormat,
-                ...texturePacker as Partial<TexturePackerOptions>,
+                ...texturePacker,
                 ...{
                     width: resolutionOptions?.maximumTextureSize,
                     height: resolutionOptions?.maximumTextureSize,
                 },
+                textureFormat,
             };
 
             const promises: Promise<void>[] = [];
 
             const assets: Asset[] = [];
 
-            Object.values(resolutionHash).forEach((resolution) =>
+            Object.values(resolutionHash).sort((a, b) => b - a).forEach((resolution) =>
             {
                 const scale = resolution / largestResolution;
 
                 promises.push((async () =>
                 {
-                    const template = resolutionOptions.template.replace('%%', resolution.toString());
-                    const textureName = stripTags(asset.filename);
+                    const textureName = texturePackerOptions.textureName ?? stripTags(asset.filename);
 
-                    const out = await packAsync(imagesToPack, {
+                    const out = await packTextures({
                         ...texturePackerOptions,
                         textureName,
-                        scale
+                        texturesToPack,
+                        scale,
+                        resolution,
                     });
 
                     const outPromises: Promise<void>[] = [];
 
-                    for (let i = 0; i < out.length; i++)
+                    for (let i = 0; i < out.textures.length; i++)
                     {
-                        const output = out[i];
-                        const outputAssetName = output.name.replace(/(\.[\w\d_-]+)$/i, `${template}$1`);
-                        const outputAsset = createNewAssetAt(asset, outputAssetName);
+                        const { buffer, name } = out.textures[i];
 
-                        if (extname(output.name) === '.json')
-                        {
-                            const json = JSON.parse(out[0].buffer.toString('utf8'));
+                        const textureAsset = createNewAssetAt(asset, name);
 
-                            // replace extension with 'jpg'
-                            const imagePath = outputAsset.filename.replace(/(\.[\w\d_-]+)$/i, `.${textureFormat}`);
+                        outPromises.push(writeFile(textureAsset.path, buffer));
 
-                            const match = output.name.match(/-(.*?)\.json/);
+                        const { json, name: jsonName } = out.jsons[i];
 
-                            // eslint-disable-next-line no-nested-ternary
-                            outputAsset.metaData.page = out.length > 2 ? (match ? match[1] : 0) : 0;
+                        const jsonAsset = createNewAssetAt(asset, jsonName);
 
-                            processJsonFile(json, asset.path, imagePath, largestResolution, options.shortNames);
+                        jsonAsset.metaData.page = i;
 
-                            outPromises.push(writeJson(outputAsset.path, json, { spaces: 2 }));// );
+                        outPromises.push(writeJson(jsonAsset.path, json, { spaces: 2 }));
 
-                            outputAsset.metaData[tags.nc] = true;
-                        }
-                        else
-                        {
-                            // this will make sure the resizer ignore this asset as we already resized them here!
-                            outputAsset.metaData[tags.fix] = true;
+                        textureAsset.metaData[tags.fix] = true;
+                        jsonAsset.metaData[tags.nc] = true;
 
-                            outPromises.push(writeFile(outputAsset.path, output.buffer));
-                        }
-
-                        await Promise.all(outPromises);
-
-                        assets.push(outputAsset);
+                        assets.push(textureAsset, jsonAsset);
                     }
+
+                    await Promise.all(outPromises);
                 })());
             });
 
@@ -167,37 +145,4 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
         },
 
     };
-}
-
-export function pixiTexturePacker(options?: TexturePackerOptions): AssetPipe
-{
-    return texturePacker({
-        ...options,
-        texturePacker: {
-            ...options?.texturePacker,
-            exporter: 'Pixi' as PackerExporterType,
-        },
-    });
-}
-
-function processJsonFile(json: any, basePath: string, imagePath: string, originalScale: number, shortNames: boolean): void
-{
-    const newFrames: {[x: string]: any} = {};
-
-    // so one thing FREE texture packer does different is that it either puts the full paths in
-    // or the image name.
-    // we rely on the folder names being preserved in the frame data.
-    // we need to modify the frame names before we save so they are the same
-    // eg raw-assets/image/icons{tps}/cool/image.png -> cool/image.png
-
-    for (const i in json.frames)
-    {
-        const frameName = shortNames ? basename(i) : relative(basePath, i);
-
-        newFrames[frameName] = json.frames[i];
-    }
-
-    json.frames = newFrames;
-    json.meta.scale *= originalScale;
-    json.meta.image = imagePath;
 }

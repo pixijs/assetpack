@@ -95,9 +95,11 @@ function collectAssets(
     {
         if (asset.metaData.tps)
         {
+            // console.log('SPRITE SHEEET PACKED');
             // do some special think for textures packed sprite sheet pages..
             getTexturePackedAssets(finalAssets).forEach((pages, pageIndex) =>
             {
+                //     console.log('PAGES', pages, pageIndex);
                 bundleAssets.push({
                     name: getShortNames(stripTags(relative(entryPath, `${asset.path}-${pageIndex}`)), options),
                     srcs: pages.map((finalAsset) => relative(outputPath, finalAsset.path))

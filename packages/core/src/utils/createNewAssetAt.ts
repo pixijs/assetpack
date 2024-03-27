@@ -40,9 +40,9 @@ function createNewFilePath(asset: Asset, newFileName: string, outputBase?: strin
     }
     else
     {
-        outputDir = joinSafe('.asset-pack', asset.transformName, relativePath);
+        outputDir = joinSafe('.assetpack', asset.transformName, relativePath);
 
-        //        outputDir = joinSafe(`.asset-pack/${asset.transformName}`, assetDir);
+        //        outputDir = joinSafe(`.assetpack/${asset.transformName}`, assetDir);
     }
 
     if (shouldStripTags)

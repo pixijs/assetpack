@@ -1,9 +1,8 @@
 import { AssetPack } from '@assetpack/core';
 import { audio } from '@assetpack/plugin-ffmpeg';
 import { pixiManifest } from '@assetpack/plugin-manifest';
-import { mipmap, spineAtlasMipmap } from '@assetpack/plugin-mipmap';
-import { pixiTexturePacker } from '@assetpack/plugin-texture-packer';
-import { compress, compressPng, compressWebp } from '@assetpack/plugin-compress';
+import { mipmapCompress, spineAtlasMipmap } from '@assetpack/plugin-mipmap-compress';
+import { texturePacker } from '@assetpack/plugin-texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
 import {
@@ -116,25 +115,20 @@ describe('Manifest', () =>
             output: outputDir,
             cache: useCache,
             pipes: [
-                pixiTexturePacker({
-
+                texturePacker({
                     resolutionOptions: {
-                        // resolutions: { default: 2, low: 0.5 }
                         maximumTextureSize: 512,
                     },
                 }),
                 audio(),
-                mipmap({
-
-                    /// resolutions: { default: 2, low: 0.5 }
-                    // maximumTextureSize: 512,
-
-                }),
                 spineAtlasMipmap(),
-                //  compressWebp(),
-                compress({
-                    avif: false,
-                    // jpg: true
+                mipmapCompress({
+                    compress: {
+                        png: true,
+                        jpg: true,
+                        webp: true,
+                        avif: false,
+                    }
                 }),
                 pixiManifest(),
             ]
@@ -159,10 +153,10 @@ describe('Manifest', () =>
                 {
                     name: ['bundle/sprite.png'],
                     srcs: [
-                        'bundle/sprite@1x.png',
-                        'bundle/sprite@1x.webp',
-                        'bundle/sprite@0.5x.png',
+                        'bundle/sprite.webp',
+                        'bundle/sprite.png',
                         'bundle/sprite@0.5x.webp',
+                        'bundle/sprite@0.5x.png',
                     ],
                     // data: {
                     //     tags: {
@@ -173,8 +167,8 @@ describe('Manifest', () =>
                 {
                     name: ['bundle/tps-0'],
                     srcs: [
+                        'bundle/tps-0.json',
                         'bundle/tps-0@0.5x.json',
-                        'bundle/tps-0@1x.json',
                     ],
                     // data: {
                     //     tags: {
@@ -186,8 +180,8 @@ describe('Manifest', () =>
                 {
                     name: ['bundle/tps-1'],
                     srcs: [
+                        'bundle/tps-1.json',
                         'bundle/tps-1@0.5x.json',
-                        'bundle/tps-1@1x.json',
                     ],
                     // data: {
                     //     tags: {
@@ -216,24 +210,27 @@ describe('Manifest', () =>
                 {
                     name: ['spine/dragon.png'],
                     srcs: [
-                        'spine/dragon@1x.png',
-                        'spine/dragon@1x.webp',
-                        'spine/dragon@0.5x.png',
+                        'spine/dragon.webp',
+                        'spine/dragon.png',
                         'spine/dragon@0.5x.webp',
+                        'spine/dragon@0.5x.png',
                     ],
                 },
                 {
                     name: ['spine/dragon2.png'],
                     srcs: [
-                        'spine/dragon2@1x.png',
-                        'spine/dragon2@1x.webp',
-                        'spine/dragon2@0.5x.png',
+                        'spine/dragon2.webp',
+                        'spine/dragon2.png',
                         'spine/dragon2@0.5x.webp',
+                        'spine/dragon2@0.5x.png',
                     ],
                 },
                 {
                     name: ['spine/dragon.atlas'],
-                    srcs: ['spine/dragon@1x.atlas', 'spine/dragon@0.5x.atlas'],
+                    srcs: [
+                        'spine/dragon.atlas',
+                        'spine/dragon@0.5x.atlas',
+                    ],
                     // data: {
                     //     tags: {
                     //         spine: true,
@@ -322,15 +319,19 @@ describe('Manifest', () =>
             entry: inputDir,
             output: outputDir,
             pipes: [
-                pixiTexturePacker({
+                texturePacker({
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
                 }),
                 audio(),
-                mipmap(),
                 spineAtlasMipmap(),
-                [compressWebp(), compressPng()],
+                mipmapCompress({
+                    compress: {
+                        webp: true,
+                        png: true,
+                    }
+                }),
                 pixiManifest({
                     createShortcuts: true,
                     trimExtensions: true,
@@ -376,8 +377,8 @@ describe('Manifest', () =>
                         'sprite'
                     ],
                     srcs: [
-                        'folder/sprite@1x.webp',
-                        'folder/sprite@1x.png',
+                        'folder/sprite.webp',
+                        'folder/sprite.png',
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@0.5x.png'
                     ]
@@ -425,8 +426,8 @@ describe('Manifest', () =>
                         'dragon'
                     ],
                     srcs: [
-                        'spine/dragon@1x.webp',
-                        'spine/dragon@1x.png',
+                        'spine/dragon.webp',
+                        'spine/dragon.png',
                         'spine/dragon@0.5x.webp',
                         'spine/dragon@0.5x.png'
                     ]
@@ -439,8 +440,8 @@ describe('Manifest', () =>
                         'dragon2'
                     ],
                     srcs: [
-                        'spine/dragon2@1x.webp',
-                        'spine/dragon2@1x.png',
+                        'spine/dragon2.webp',
+                        'spine/dragon2.png',
                         'spine/dragon2@0.5x.webp',
                         'spine/dragon2@0.5x.png'
                     ]
@@ -453,7 +454,7 @@ describe('Manifest', () =>
                         'dragon'
                     ],
                     srcs: [
-                        'spine/dragon@1x.atlas',
+                        'spine/dragon.atlas',
                         'spine/dragon@0.5x.atlas'
                     ]
                 }
@@ -539,15 +540,19 @@ describe('Manifest', () =>
             entry: inputDir,
             output: outputDir,
             pipes: [
-                pixiTexturePacker({
+                texturePacker({
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
                 }),
                 audio(),
-                mipmap(),
                 spineAtlasMipmap(),
-                [compressWebp(), compressPng()],
+                mipmapCompress({
+                    compress: {
+                        webp: true,
+                        png: true,
+                    }
+                }),
                 pixiManifest({
                     createShortcuts: true,
                     trimExtensions: false,
@@ -574,8 +579,8 @@ describe('Manifest', () =>
                 {
                     name: ['folder/sprite.png', 'sprite.png'],
                     srcs: [
-                        'folder/sprite@1x.webp',
-                        'folder/sprite@1x.png',
+                        'folder/sprite.webp',
+                        'folder/sprite.png',
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@0.5x.png'
                     ],
@@ -595,8 +600,8 @@ describe('Manifest', () =>
                 {
                     name: ['spine/dragon.png', 'dragon.png'],
                     srcs: [
-                        'spine/dragon@1x.webp',
-                        'spine/dragon@1x.png',
+                        'spine/dragon.webp',
+                        'spine/dragon.png',
                         'spine/dragon@0.5x.webp',
                         'spine/dragon@0.5x.png'
                     ],
@@ -604,15 +609,15 @@ describe('Manifest', () =>
                 {
                     name: ['spine/dragon2.png', 'dragon2.png'],
                     srcs: [
-                        'spine/dragon2@1x.webp',
-                        'spine/dragon2@1x.png',
+                        'spine/dragon2.webp',
+                        'spine/dragon2.png',
                         'spine/dragon2@0.5x.webp',
                         'spine/dragon2@0.5x.png'
                     ],
                 },
                 {
                     name: ['spine/dragon.atlas', 'dragon.atlas'],
-                    srcs: ['spine/dragon@1x.atlas', 'spine/dragon@0.5x.atlas'],
+                    srcs: ['spine/dragon.atlas', 'spine/dragon@0.5x.atlas'],
                 },
             ],
         });
@@ -696,15 +701,19 @@ describe('Manifest', () =>
             entry: inputDir,
             output: outputDir,
             pipes: [
-                pixiTexturePacker({
+                texturePacker({
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
                 }),
                 audio(),
-                mipmap(),
                 spineAtlasMipmap(),
-                [compressWebp(), compressPng()],
+                mipmapCompress({
+                    compress: {
+                        webp: true,
+                        png: true,
+                    }
+                }),
                 pixiManifest({
                     createShortcuts: false,
                     trimExtensions: true,
@@ -744,8 +753,8 @@ describe('Manifest', () =>
                         'folder/sprite'
                     ],
                     srcs: [
-                        'folder/sprite@1x.webp',
-                        'folder/sprite@1x.png',
+                        'folder/sprite.webp',
+                        'folder/sprite.png',
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@0.5x.png'
                     ]
@@ -785,8 +794,8 @@ describe('Manifest', () =>
                         'spine/dragon'
                     ],
                     srcs: [
-                        'spine/dragon@1x.webp',
-                        'spine/dragon@1x.png',
+                        'spine/dragon.webp',
+                        'spine/dragon.png',
                         'spine/dragon@0.5x.webp',
                         'spine/dragon@0.5x.png'
                     ]
@@ -797,8 +806,8 @@ describe('Manifest', () =>
                         'spine/dragon2'
                     ],
                     srcs: [
-                        'spine/dragon2@1x.webp',
-                        'spine/dragon2@1x.png',
+                        'spine/dragon2.webp',
+                        'spine/dragon2.png',
                         'spine/dragon2@0.5x.webp',
                         'spine/dragon2@0.5x.png'
                     ]
@@ -809,7 +818,7 @@ describe('Manifest', () =>
                         'spine/dragon'
                     ],
                     srcs: [
-                        'spine/dragon@1x.atlas',
+                        'spine/dragon.atlas',
                         'spine/dragon@0.5x.atlas'
                     ]
                 }

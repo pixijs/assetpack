@@ -37,6 +37,7 @@ export class Asset
     isFolder: boolean;
     path = '';
     state: 'deleted' | 'added' | 'modified' | 'normal' = 'added';
+    buffer?: Buffer | null = null;
 
     constructor(options: AssetOptions)
     {

@@ -23,7 +23,7 @@ export class AssetCache
 
         try
         {
-            this._assetCacheData = readJSONSync(`.asset-pack/${this._cacheName}.json`) as AssetCacheData;
+            this._assetCacheData = readJSONSync(`.assetpack/${this._cacheName}.json`) as AssetCacheData;
 
             return this._assetCacheData.assets;
         }
@@ -42,9 +42,9 @@ export class AssetCache
         this._serializeAsset(asset, schema.assets);
 
         // get root dir in node
-        ensureDirSync(joinSafe('.asset-pack'));
+        ensureDirSync(joinSafe('.assetpack'));
 
-        writeJSONSync(`.asset-pack/${this._cacheName}.json`, schema, { spaces: 4 });
+        writeJSONSync(`.assetpack/${this._cacheName}.json`, schema, { spaces: 4 });
     }
 
     private _serializeAsset(asset: Asset, schema: AssetCacheData['assets'])
