@@ -1,0 +1,246 @@
+[
+  {
+    "_dirty": 10,
+    "maxWidth": 1024,
+    "maxHeight": 1024,
+    "padding": 0,
+    "freeRects": [
+      {
+        "oversized": false,
+        "_rot": false,
+        "_dirty": 0,
+        "_width": 272,
+        "_height": 125,
+        "_x": 0,
+        "_y": 387,
+        "_data": {}
+      },
+      {
+        "oversized": false,
+        "_rot": false,
+        "_dirty": 0,
+        "_width": 136,
+        "_height": 131,
+        "_x": 136,
+        "_y": 381,
+        "_data": {}
+      },
+      {
+        "oversized": false,
+        "_rot": false,
+        "_dirty": 0,
+        "_width": 1024,
+        "_height": 18,
+        "_x": 0,
+        "_y": 494,
+        "_data": {}
+      },
+      {
+        "oversized": false,
+        "_rot": false,
+        "_dirty": 0,
+        "_width": 408,
+        "_height": 123,
+        "_x": 0,
+        "_y": 389,
+        "_data": {}
+      },
+      {
+        "oversized": false,
+        "_rot": false,
+        "_dirty": 0,
+        "_width": 480,
+        "_height": 360,
+        "_x": 544,
+        "_y": 152,
+        "_data": {}
+      },
+      {
+        "oversized": false,
+        "_rot": false,
+        "_dirty": 0,
+        "_width": 345,
+        "_height": 512,
+        "_x": 679,
+        "_y": 0,
+        "_data": {}
+      }
+    ],
+    "rects": [
+      {
+        "width": 136,
+        "height": 196,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite0.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 56,
+          "trimOffsetTop": 35
+        },
+        "trimmed": true,
+        "x": 0,
+        "y": 0,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 196,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite1.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 56,
+          "trimOffsetTop": 35
+        },
+        "trimmed": true,
+        "x": 136,
+        "y": 0,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 195,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite2.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 56,
+          "trimOffsetTop": 36
+        },
+        "trimmed": true,
+        "x": 272,
+        "y": 0,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 194,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite3.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 56,
+          "trimOffsetTop": 37
+        },
+        "trimmed": true,
+        "x": 272,
+        "y": 195,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 191,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite4.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 56,
+          "trimOffsetTop": 39
+        },
+        "trimmed": true,
+        "x": 0,
+        "y": 196,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 185,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite5.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 57,
+          "trimOffsetTop": 42
+        },
+        "trimmed": true,
+        "x": 136,
+        "y": 196,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 177,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite6.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 57,
+          "trimOffsetTop": 45
+        },
+        "trimmed": true,
+        "x": 408,
+        "y": 0,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 165,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite7.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 57,
+          "trimOffsetTop": 49
+        },
+        "trimmed": true,
+        "x": 408,
+        "y": 177,
+        "rot": false
+      },
+      {
+        "width": 136,
+        "height": 152,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite8.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 57,
+          "trimOffsetTop": 53
+        },
+        "trimmed": true,
+        "x": 408,
+        "y": 342,
+        "rot": false
+      },
+      {
+        "width": 135,
+        "height": 152,
+        "path": "/Users/matgroves/projects/playco/assetpack/packages/texture-packer/.testInput/tp-simple/sprites{tps}/sprite9.png",
+        "originalSize": {
+          "width": 256,
+          "height": 256,
+          "trimOffsetLeft": 58,
+          "trimOffsetTop": 58
+        },
+        "trimmed": true,
+        "x": 544,
+        "y": 0,
+        "rot": false
+      }
+    ],
+    "verticalExpand": true,
+    "options": {
+      "smart": true,
+      "pot": true,
+      "square": false,
+      "allowRotation": false,
+      "tag": false,
+      "exclusiveTag": true,
+      "border": 0,
+      "logic": 1
+    },
+    "width": 1024,
+    "height": 512,
+    "border": 0,
+    "stage": {
+      "oversized": false,
+      "_rot": false,
+      "_dirty": 5,
+      "_width": 1024,
+      "_height": 512,
+      "_x": 0,
+      "_y": 0,
+      "_data": {}
+    }
+  }
+]

@@ -1,0 +1,46 @@
+{
+    "assets": {
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify": {
+            "isFolder": true,
+            "lastModified": 0,
+            "children": [
+                "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json"
+            ],
+            "transformChildren": []
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json": {
+            "isFolder": true,
+            "lastModified": 1709228022954.1362,
+            "children": [
+                "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json/json.json"
+            ],
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify",
+            "transformChildren": []
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json/json.json": {
+            "isFolder": false,
+            "lastModified": 1709233729455.8352,
+            "children": [],
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json",
+            "transformChildren": [
+                ".asset-pack/json/json/json.json"
+            ]
+        },
+        ".asset-pack/json/json/json.json": {
+            "isFolder": false,
+            "lastModified": 0,
+            "children": [],
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-minify/json/json.json",
+            "transformChildren": [
+                "/Users/matgroves/projects/playco/assetpack/packages/json/.testOutput/json-minify/json/json.json"
+            ]
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testOutput/json-minify/json/json.json": {
+            "isFolder": false,
+            "lastModified": 0,
+            "children": [],
+            "transformParent": ".asset-pack/json/json/json.json",
+            "transformChildren": []
+        }
+    }
+}

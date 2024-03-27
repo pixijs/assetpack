@@ -1,14 +1,10 @@
-import type { Plugin, Processor, RootTree } from '@assetpack/core';
-import { checkExt, merge, path, SavableAssetCache } from '@assetpack/core';
+import type { AssetPipe, Asset } from '@assetpack/core';
+import { checkExt, createNewAssetAt, extname, dirname } from '@assetpack/core';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-import fs from 'fs-extra';
+import {  copyFileSync, ensureDir } from 'fs-extra';
 
 fluentFfmpeg.setFfmpegPath(ffmpegPath.path);
-
-type DeepRequired<T> = {
-    [K in keyof T]: Required<DeepRequired<T[K]>>
-};
 
 type FfmpegKeys =
 // options/input
@@ -56,68 +52,33 @@ export interface FfmpegData
 
 export interface FfmpegOptions
 {
+    name?: string;
     inputs: string[];
     outputs: FfmpegData[];
 }
 
-async function convert(output: FfmpegData, tree: RootTree, extname: string, processor: Processor, name: string)
+async function convert(ffmpegOptions: FfmpegData, input: string, output: string, extension: string)
 {
-    return new Promise<void>((resolve, reject) =>
+    return new Promise<void>(async (resolve, reject) =>
     {
         let hasOutput = false;
         const command = fluentFfmpeg();
 
-        const paths: string[] = [];
+        await ensureDir(dirname(output));
 
         // add each format to the command as an output
-        output.formats.forEach((format) =>
+        ffmpegOptions.formats.forEach((format) =>
         {
-            const outPath = processor.inputToOutput(tree.path, format);
-
-            fs.ensureDirSync(path.dirname(outPath));
-
-            processor.addToTree({
-                tree,
-                outputOptions: {
-                    outputPathOverride: outPath,
-                },
-                transformId: 'ffmpeg',
-            });
-
-            if (output.recompress || format !== extname)
+            if (ffmpegOptions.recompress || format !== extension)
             {
-                command.output(outPath);
+                command.output(output);
                 hasOutput = true;
             }
             else
             {
-                fs.copySync(tree.path, outPath);
+                copyFileSync(input, output);
             }
-
-            paths.push(processor.trimOutputPath(outPath));
         });
-
-        if (SavableAssetCache.has(tree.path))
-        {
-            const cache = SavableAssetCache.get(tree.path);
-
-            cache.transformData.files[0].paths.push(...paths);
-
-            SavableAssetCache.set(tree.path, cache);
-        }
-        else
-        {
-            SavableAssetCache.set(tree.path, {
-                tree,
-                transformData: {
-                    type: name,
-                    files: [{
-                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
-                        paths,
-                    }],
-                }
-            });
-        }
 
         if (!hasOutput)
         {
@@ -127,12 +88,12 @@ async function convert(output: FfmpegData, tree: RootTree, extname: string, proc
         }
 
         // add the input file
-        command.input(tree.path);
+        command.input(input);
 
         // add each option to the command
-        Object.keys(output.options).forEach((key) =>
+        Object.keys(ffmpegOptions.options).forEach((key) =>
         {
-            const value = output.options[key as FfmpegKeys];
+            const value = ffmpegOptions.options[key as FfmpegKeys];
 
             if (!command[key as FfmpegCommandKeys]) throw new Error(`[ffmpeg] Unknown option: ${key}`);
 
@@ -147,40 +108,47 @@ async function convert(output: FfmpegData, tree: RootTree, extname: string, proc
     });
 }
 
-export function ffmpeg(options?: FfmpegOptions): Plugin<FfmpegOptions>
-{
-    const defaultOptions = merge(true, {
-        inputs: [],
-        outputs: [],
-    } as DeepRequired<FfmpegOptions>, options);
+let nameIndex = 0;
 
+export function ffmpeg(defaultOptions: FfmpegOptions): AssetPipe<FfmpegOptions>
+{
     return {
         folder: false,
-        name: 'ffmpeg',
-        test(tree, _p, optionOverrides)
+        name: defaultOptions.name ?? `ffmpeg-${++nameIndex}`,
+        defaultOptions,
+        test(asset: Asset, options)
         {
-            const opts = merge(true, defaultOptions, optionOverrides) as DeepRequired<FfmpegOptions>;
-
-            if (!opts.inputs.length)
+            if (!options.inputs.length)
             {
                 throw new Error('[ffmpeg] No inputs defined');
             }
 
-            return checkExt(tree.path, ...opts.inputs);
+            return checkExt(asset.path, ...options.inputs);
         },
-        async transform(tree, processor, optionOverrides)
+        async transform(asset: Asset, options)
         {
             // merge options with defaults
-            const opts = merge(true, defaultOptions, optionOverrides) as DeepRequired<FfmpegOptions>;
-            const extname = path.extname(tree.path);
+            const extension = extname(asset.path);
+
+            const baseFileName = asset.filename.replace(extension, '');
+
             const promises: Promise<void>[] = [];
 
-            opts.outputs.forEach((output) =>
+            const assets: Asset[] = [];
+
+            options.outputs.forEach((output) =>
             {
-                promises.push(convert(output, tree, extname, processor, this.name!));
+                const newFileName = `${baseFileName}${output.formats[0]}`;
+                const newAsset = createNewAssetAt(asset, newFileName);
+
+                promises.push(convert(output, asset.path, newAsset.path, extension));
+
+                assets.push(newAsset);
             });
 
             await Promise.all(promises);
+
+            return assets;
         }
     };
 }

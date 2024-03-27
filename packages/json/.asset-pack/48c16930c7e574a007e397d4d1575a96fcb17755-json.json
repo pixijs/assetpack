@@ -1,0 +1,29 @@
+{
+    "assets": {
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-ignore": {
+            "isFolder": true,
+            "lastModified": 1710507347382.96,
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-ignore/json": {
+            "isFolder": true,
+            "lastModified": 1710507347382.96,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-ignore",
+            "metaData": {}
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-ignore/json/json{nc}.json": {
+            "isFolder": false,
+            "lastModified": 1710507347383.068,
+            "parent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-ignore/json",
+            "metaData": {
+                "nc": true
+            }
+        },
+        "/Users/matgroves/projects/playco/assetpack/packages/json/.testOutput/json-ignore/json/json.json": {
+            "isFolder": false,
+            "lastModified": 0,
+            "transformParent": "/Users/matgroves/projects/playco/assetpack/packages/json/.testInput/json-ignore/json/json{nc}.json",
+            "metaData": {}
+        }
+    }
+}

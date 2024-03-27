@@ -1,6 +1,6 @@
 {
   "name": "@assetpack/plugin-manifest",
-  "version": "0.8.0",
+  "version": "0.7.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/manifest/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -29,10 +29,11 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "fs-extra": "^11.1.0"
+    "fs-extra": "^11.1.0",
+    "upath": "^2.0.1"
   },
   "devDependencies": {
-    "@assetpack/core": "0.8.0"
+    "@assetpack/core": "0.7.0"
   },
   "peerDependencies": {
     "@assetpack/core": ">=0.0.0"
