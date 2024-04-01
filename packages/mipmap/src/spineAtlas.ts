@@ -101,6 +101,12 @@ function rescaleAtlas(raw: string, scale = 1, template = ''): string
     // Regex for xy values, like 'size: 2019,463', 'orig: 134, 240'
     const reXY = /(.*?:\s?)(\d+)(\s?,\s?)(\d+)$/;
 
+    // Regex for scale values, like 'scale: 0.75'
+    const regScale =  /(scale:\s?)(\d+(\.\d+)?)$/
+
+    // Regex for rect values, like 'bounds:2,270,804,737', 'offsets:0,0,110,113'
+    const regRect = /(.*?:\s?)(\d+)(\s?,\s?)(\d+)(\s?,\s?)(\d+)(\s?,\s?)(\d+)$/;
+
     // Regex for image names, like 'image.png', 'img.jpg'
     const reImg = /(.+)(.png|jpg|jpeg)$/;
 
@@ -109,6 +115,8 @@ function rescaleAtlas(raw: string, scale = 1, template = ''): string
     {
         let line = lines[i];
         const matchXY = reXY.exec(line);
+        const matchScale = regScale.exec(line)
+        const matchRect = regRect.exec(line)
 
         if (matchXY)
         {
@@ -118,6 +126,15 @@ function rescaleAtlas(raw: string, scale = 1, template = ''): string
 
             // Rewrite line with new values
             line = line.replace(reXY, `$1${x}$3${y}`);
+        } else if (matchScale) {
+            const newScale = Number(matchScale[2]) * scale
+            line = line.replace(regScale, `$1${newScale}`)
+        } else if (matchRect) {
+            const x1 = Math.floor(Number(matchRect[2]) * scale)
+            const y1 = Math.floor(Number(matchRect[4]) * scale)
+            const x2 = Math.floor(Number(matchRect[6]) * scale)
+            const y2 = Math.floor(Number(matchRect[8]) * scale)
+            line = line.replace(regRect, `$1${x1}$3${y1}$5${x2}$7${y2}`)
         }
 
         if (reImg.exec(line))

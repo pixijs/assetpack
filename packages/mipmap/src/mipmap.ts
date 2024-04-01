@@ -32,7 +32,7 @@ export function mipmap(options?: Partial<MipmapOptions>): Plugin<MipmapOptions>
         name: 'mipmap',
         test(tree)
         {
-            return checkExt(tree.path, '.png', '.jpg', ',jpeg');
+            return checkExt(tree.path, '.png', '.jpg', '.jpeg');
         },
         async transform(tree, processor, options)
         {
