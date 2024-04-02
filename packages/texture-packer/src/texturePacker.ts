@@ -39,6 +39,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             tps: 'tps',
             fix: 'fix',
             jpg: 'jpg',
+            nc: 'nc',
             ..._options.tags,
         }
     } as TexturePackerOptions;

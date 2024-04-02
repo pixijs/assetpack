@@ -12,7 +12,7 @@ export function compressSharp(image: MipmapCompressImageData, options: CompressO
         compressed.push({
             format: '.jpg',
             resolution: image.resolution,
-            sharpImage: sharpImage.jpeg(options.jpg as JpegOptions)
+            sharpImage: sharpImage.clone().jpeg(options.jpg as JpegOptions)
         });
     }
 
@@ -21,7 +21,7 @@ export function compressSharp(image: MipmapCompressImageData, options: CompressO
         compressed.push({
             format: '.avif',
             resolution: image.resolution,
-            sharpImage: sharpImage.avif(options.avif as AvifOptions)
+            sharpImage: sharpImage.clone().avif(options.avif as AvifOptions)
         });
     }
 
@@ -30,7 +30,7 @@ export function compressSharp(image: MipmapCompressImageData, options: CompressO
         compressed.push({
             format: '.webp',
             resolution: image.resolution,
-            sharpImage: sharpImage.webp(options.webp as WebpOptions)
+            sharpImage: sharpImage.clone().webp(options.webp as WebpOptions)
         });
     }
 
