@@ -145,10 +145,12 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
 
             try
             {
-                // then compress them if we want
-                processedImages = compress
-                    ? processedImages.map((image) => compressSharp(image, options.compress as CompressOptions)).flat()
-                    : processedImages;
+                if (compress)
+                {
+                    processedImages = (await Promise.all(
+                        processedImages.map((image) => compressSharp(image, options.compress as CompressOptions))
+                    )).flat();
+                }
             }
             catch (error)
             {
