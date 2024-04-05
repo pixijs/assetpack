@@ -45,15 +45,15 @@ This will generate two bundles called `preload` and `game` in the manifest file.
 - `createShortcuts` - Whether to create shortcuts for each bundle. Defaults to `false`. If enabled the manifest will try to create the shortest path for an asset. e.g.
 ```json
 {
-    "name": ["game/char.png", "game.png"],
-    "srcs": ["game/char.png"]
+    "alias": ["game/char.png", "game.png"],
+    "src": ["game/char.png"]
 }
 ```
 - `trimExtensions` - Whether to trim the extensions from the asset names. Defaults to `false`. If enabled the manifest will try to create the shortest path for an asset. e.g.
 ```json
 {
-    "name": ["game/char.png", "game/char"],
-    "srcs": ["game/char.png"]
+    "alias": ["game/char.png", "game/char"],
+    "src": ["game/char.png"]
 }
 ```
 - `defaultParser` - The default parser to use on a transformed asset

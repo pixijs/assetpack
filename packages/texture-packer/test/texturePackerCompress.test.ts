@@ -1,6 +1,6 @@
-import { AssetPack } from '@assetpack/core';
-import { mipmapCompress } from '@assetpack/plugin-mipmap-compress';
-import { texturePacker, texturePackerCompress } from '@assetpack/plugin-texture-packer';
+import { AssetPack } from '@play-co/assetpack-core';
+import { mipmapCompress } from '@play-co/assetpack-plugin-mipmap-compress';
+import { texturePacker, texturePackerCompress } from '@play-co/assetpack-plugin-texture-packer';
 import { readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test/index';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';

@@ -1,6 +1,6 @@
 {
-  "name": "@assetpack/plugin-json",
-  "version": "0.7.0",
+  "name": "@play-co/assetpack-plugin-json",
+  "version": "0.8.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/json/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -32,10 +32,10 @@
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
-    "@assetpack/core": "0.7.0"
+    "@play-co/assetpack-core": "0.7.0"
   },
   "peerDependencies": {
-    "@assetpack/core": ">=0.0.0"
+    "@play-co/assetpack-core": ">=0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

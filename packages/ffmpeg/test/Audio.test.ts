@@ -1,5 +1,5 @@
-import { AssetPack } from '@assetpack/core';
-import { audio } from '@assetpack/plugin-ffmpeg';
+import { AssetPack } from '@play-co/assetpack-core';
+import { audio } from '@play-co/assetpack-plugin-ffmpeg';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 

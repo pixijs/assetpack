@@ -1,7 +1,7 @@
 import fs, { unlinkSync } from 'fs-extra';
 import path from 'path';
 import { getRoot } from './find';
-import type { AssetPipe } from '@assetpack/core';
+import type { AssetPipe } from '@play-co/assetpack-core';
 
 export interface Folder
 {

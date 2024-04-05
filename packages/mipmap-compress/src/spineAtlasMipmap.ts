@@ -1,5 +1,5 @@
-import type { Asset, PluginOptions } from '@assetpack/core';
-import { checkExt, type AssetPipe, createNewAssetAt } from '@assetpack/core';
+import type { Asset, PluginOptions } from '@play-co/assetpack-core';
+import { checkExt, type AssetPipe, createNewAssetAt } from '@play-co/assetpack-core';
 import { readFile, writeFile } from 'fs-extra';
 import type { MipmapOptions } from './mipmapCompress';
 

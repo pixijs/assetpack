@@ -1,4 +1,4 @@
-import { AssetPack } from '@assetpack/core';
+import { AssetPack } from '@play-co/assetpack-core';
 import { existsSync, readJSONSync } from 'fs-extra';
 import sharp from 'sharp';
 import type { File } from '../../../shared/test/index';

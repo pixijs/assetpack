@@ -1,5 +1,5 @@
-import { merge } from '@assetpack/core';
-import type { AssetPipe } from '@assetpack/core';
+import { merge } from '@play-co/assetpack-core';
+import type { AssetPipe } from '@play-co/assetpack-core';
 import type { FfmpegOptions } from './ffmpeg';
 import { ffmpeg } from './ffmpeg';
 

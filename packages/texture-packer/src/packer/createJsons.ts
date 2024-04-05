@@ -1,4 +1,4 @@
-import { basename } from '@assetpack/core';
+import { basename } from '@play-co/assetpack-core';
 import { createName } from './createTextures';
 import type { PixiPacker } from './packTextures';
 

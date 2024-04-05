@@ -8,7 +8,7 @@ import {
     relative,
     trimExt,
     dirname
-} from '@assetpack/core';
+} from '@play-co/assetpack-core';
 
 import { writeJSON } from 'fs-extra';
 export interface PixiManifest
@@ -19,8 +19,8 @@ export interface PixiManifest
 
 export interface PixiManifestEntry
 {
-    name: string | string[];
-    srcs: string | string[];
+    alias: string | string[];
+    src: string | string[];
     data?: {
         // tags: Tags;
         [x: string]: any;
@@ -101,16 +101,16 @@ function collectAssets(
             {
                 //     console.log('PAGES', pages, pageIndex);
                 bundleAssets.push({
-                    name: getShortNames(stripTags(relative(entryPath, `${asset.path}-${pageIndex}`)), options),
-                    srcs: pages.map((finalAsset) => relative(outputPath, finalAsset.path))
+                    alias: getShortNames(stripTags(relative(entryPath, `${asset.path}-${pageIndex}`)), options),
+                    src: pages.map((finalAsset) => relative(outputPath, finalAsset.path))
                 });
             });
         }
         else
         {
             bundleAssets.push({
-                name: getShortNames(stripTags(relative(entryPath, asset.path)), options),
-                srcs: finalAssets.map((finalAsset) => relative(outputPath, finalAsset.path))
+                alias: getShortNames(stripTags(relative(entryPath, asset.path)), options),
+                src: finalAssets.map((finalAsset) => relative(outputPath, finalAsset.path))
             });
         }
     }

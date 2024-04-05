@@ -1,5 +1,5 @@
-import type { PluginOptions, Asset, AssetPipe } from '@assetpack/core';
-import { checkExt, createNewAssetAt  } from '@assetpack/core';
+import type { PluginOptions, Asset, AssetPipe } from '@play-co/assetpack-core';
+import { checkExt, createNewAssetAt  } from '@play-co/assetpack-core';
 import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 import sharp from 'sharp';
 import { resolveOptions } from './utils/resolveOptions';
