@@ -1,5 +1,5 @@
 {
-  "name": "@assetpack/plugin-texture-packer",
+  "name": "@play-co/assetpack-plugin-texture-packer",
   "version": "0.8.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/texture-packer/#readme",
@@ -29,17 +29,17 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "free-tex-packer-core": "0.3.4",
     "fs-extra": "^11.1.0",
     "glob": "^8.0.3",
     "glob-promise": "^6.0.0",
-    "sharp": "^0.32.0"
+    "maxrects-packer": "^2.7.3",
+    "sharp": "^0.33.3"
   },
   "devDependencies": {
-    "@assetpack/core": "0.8.0"
+    "@play-co/assetpack-core": "0.8.0"
   },
   "peerDependencies": {
-    "@assetpack/core": ">=0.0.0"
+    "@play-co/assetpack-core": ">=0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

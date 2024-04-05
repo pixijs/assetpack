@@ -1,5 +1,5 @@
 {
-  "name": "@assetpack/plugin-manifest",
+  "name": "@play-co/assetpack-plugin-manifest",
   "version": "0.8.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/manifest/#readme",
@@ -29,13 +29,14 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "fs-extra": "^11.1.0"
+    "fs-extra": "^11.1.0",
+    "upath": "^2.0.1"
   },
   "devDependencies": {
-    "@assetpack/core": "0.8.0"
+    "@play-co/assetpack-core": "0.8.0"
   },
   "peerDependencies": {
-    "@assetpack/core": ">=0.0.0"
+    "@play-co/assetpack-core": ">=0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

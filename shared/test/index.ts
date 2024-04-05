@@ -1,7 +1,7 @@
-import fs from 'fs-extra';
-import type { Plugin } from 'packages/core/src/Plugin';
+import fs, { unlinkSync } from 'fs-extra';
 import path from 'path';
 import { getRoot } from './find';
+import type { AssetPipe } from '@play-co/assetpack-core';
 
 export interface Folder
 {
@@ -31,6 +31,15 @@ export function createFolder(pkg: string, folder: Folder, base?: string)
     base = base || getInputDir(pkg, '');
     const baseFolder = path.join(base, folder.name);
 
+    try
+    {
+        unlinkSync(baseFolder);
+    }
+    catch (e)
+    {
+        // do nothing
+    }
+
     fs.ensureDirSync(baseFolder);
 
     folder.files.forEach((file) =>
@@ -51,32 +60,33 @@ export function assetPath(pkg: string, pth: string): string
     return path.join(path.join(getRoot(), `packages/${pkg}`), 'test/resources', pth);
 }
 
-export function createPlugin(
-    data: Partial<Record<keyof Plugin, boolean | ((...params: any[]) => Promise<any>)>>,
+export function createAssetPipe(
+    data: Partial<Record<keyof AssetPipe, boolean | ((...params: any[]) => Promise<any>)>>,
     name?: string,
-): Plugin
+): AssetPipe
 {
-    const convert = (key: keyof Plugin, isTest = false) =>
+    const convert = (key: keyof AssetPipe, _isTest = false) =>
     {
         const d = data[key];
 
         if (d === undefined) return undefined;
         if (typeof d === 'function') return jest.fn(d);
 
-        return isTest ? jest.fn(() => true) : jest.fn(async () => { /**/ });
+        if (key === 'test') return jest.fn(() => true);
+        if (key === 'transform') return jest.fn((a) => [a]);
+
+        return jest.fn(async () => { /**/ });
     };
 
     return {
         folder: data.folder || false,
         name: name ?? 'test',
-        cache: {},
-        test: convert('test', true),
+        defaultOptions: {},
+        test: convert('test'),
         transform: convert('transform'),
         start: convert('start'),
         finish: convert('finish'),
-        post: convert('post'),
-        delete: convert('delete'),
-    } as Plugin;
+    } as AssetPipe;
 }
 
-export type MockPlugin = Omit<Record<keyof Plugin, jest.Mock>, 'folder' | 'name'> & { folder: boolean, name: string };
+export type MockAssetPipe = Omit<Record<keyof AssetPipe, jest.Mock>, 'folder' | 'name'> & { folder: boolean, name: string };

@@ -13,13 +13,13 @@
         "target": "ESNext",
         "baseUrl": "./",
         "paths": {
-            "@assetpack/core": [
+            "@play-co/assetpack-core": [
                 "packages/core/src",
             ],
-            "@assetpack/cli": [
+            "@play-co/assetpack-cli": [
                 "packages/cli/src",
             ],
-            "@assetpack/plugin-*": [
+            "@play-co/assetpack-plugin-*": [
                 "packages/*/src",
             ]
         },

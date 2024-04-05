@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import type { AssetPackConfig } from '@assetpack/core';
+import type { AssetPackConfig } from '@play-co/assetpack-core';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import findUp from 'find-up';
@@ -44,14 +44,14 @@ async function main()
     }
 
     let config: AssetPackConfig;
-    let AssetPack: typeof import('@assetpack/core').AssetPack;
+    let AssetPack: typeof import('@play-co/assetpack-core').AssetPack;
 
     // We try to load cjs first, if that fails we try to load esm
     try
     {
         /* eslint-disable @typescript-eslint/no-var-requires, global-require */
         config = require(configPath) as AssetPackConfig;
-        AssetPack = require('@assetpack/core').AssetPack;
+        AssetPack = require('@play-co/assetpack-core').AssetPack;
         /* eslint-enable @typescript-eslint/no-var-requires, global-require */
     }
     catch (error: any)
@@ -62,7 +62,7 @@ async function main()
             const urlForConfig = pathToFileURL(configPath);
 
             config = (await esmLoader!(urlForConfig)).default;
-            AssetPack = (await esmLoader!('@assetpack/core')).AssetPack;
+            AssetPack = (await esmLoader!('@play-co/assetpack-core')).AssetPack;
         }
         else
         {

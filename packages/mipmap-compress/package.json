@@ -1,0 +1,47 @@
+{
+  "name": "@play-co/assetpack-plugin-mipmap-compress",
+  "version": "0.8.0",
+  "description": "",
+  "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/mipmap-compress/#readme",
+  "bugs": "https://github.com/pixijs/assetpack/issues",
+  "repository": {
+    "url": "pixijs/assetpack",
+    "directory": "packages/mipmap-compress"
+  },
+  "license": "MIT",
+  "author": "Zyie",
+  "exports": {
+    "import": "./dist/es/index.js",
+    "types": "./dist/types/index.d.ts",
+    "default": "./dist/cjs/index.js"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "rollup -c",
+    "test": "npx jest --config ./jest.config.js",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.0",
+    "sharp": "^0.33.3"
+  },
+  "devDependencies": {
+    "@play-co/assetpack-core": "0.8.0"
+  },
+  "peerDependencies": {
+    "@play-co/assetpack-core": ">=0.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
