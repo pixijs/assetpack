@@ -1,6 +1,6 @@
 {
   "name": "@play-co/assetpack-plugin-texture-packer",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/texture-packer/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",

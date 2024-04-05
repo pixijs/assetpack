@@ -1,6 +1,6 @@
 {
   "name": "@play-co/assetpack-plugin-ffmpeg",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/ffmpeg/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
