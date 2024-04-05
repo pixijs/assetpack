@@ -36,7 +36,7 @@
     "ttf2woff2": "^5.0.0"
   },
   "devDependencies": {
-    "@play-co/assetpack-core": "0.7.0",
+    "@play-co/assetpack-core": "0.8.0",
     "@types/svg2ttf": "^5.0.1",
     "@types/ttf2woff2": "^2.0.0"
   },

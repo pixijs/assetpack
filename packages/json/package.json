@@ -32,7 +32,7 @@
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
-    "@play-co/assetpack-core": "0.7.0"
+    "@play-co/assetpack-core": "0.8.0"
   },
   "peerDependencies": {
     "@play-co/assetpack-core": ">=0.0.0"
