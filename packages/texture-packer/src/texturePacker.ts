@@ -1,5 +1,5 @@
-import type { PluginOptions, Asset, AssetPipe } from '@assetpack/core';
-import { createNewAssetAt, stripTags, relative  } from '@assetpack/core';
+import type { PluginOptions, Asset, AssetPipe } from '@play-co/assetpack-core';
+import { createNewAssetAt, stripTags, relative  } from '@play-co/assetpack-core';
 import { readFile, writeFile, writeJson } from 'fs-extra';
 import glob from 'glob-promise';
 import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures';

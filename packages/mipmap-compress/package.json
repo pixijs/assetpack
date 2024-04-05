@@ -1,5 +1,5 @@
 {
-  "name": "@assetpack/plugin-mipmap-compress",
+  "name": "@play-co/assetpack-plugin-mipmap-compress",
   "version": "0.7.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/mipmap-compress/#readme",
@@ -33,10 +33,10 @@
     "sharp": "^0.33.3"
   },
   "devDependencies": {
-    "@assetpack/core": "0.7.0"
+    "@play-co/assetpack-core": "0.7.0"
   },
   "peerDependencies": {
-    "@assetpack/core": ">=0.0.0"
+    "@play-co/assetpack-core": ">=0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

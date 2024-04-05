@@ -1,5 +1,5 @@
 {
-  "name": "@assetpack/plugin-ffmpeg",
+  "name": "@play-co/assetpack-plugin-ffmpeg",
   "version": "0.7.0",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/ffmpeg/#readme",
@@ -35,12 +35,12 @@
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
-    "@assetpack/core": "0.7.0",
-    "@assetpack/plugin-manifest": "0.7.0"
+    "@play-co/assetpack-core": "0.7.0",
+    "@play-co/assetpack-plugin-manifest": "0.7.0"
   },
   "peerDependencies": {
-    "@assetpack/core": ">=0.0.0",
-    "@assetpack/plugin-manifest": ">=0.0.0"
+    "@play-co/assetpack-core": ">=0.0.0",
+    "@play-co/assetpack-plugin-manifest": ">=0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

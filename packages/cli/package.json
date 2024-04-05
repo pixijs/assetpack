@@ -1,5 +1,5 @@
 {
-  "name": "@assetpack/cli",
+  "name": "@play-co/assetpack-cli",
   "version": "0.7.0",
   "description": "A simple CLI to run AssetPack",
   "keywords": [
@@ -37,7 +37,7 @@
     "find-up": "^5.0.0"
   },
   "peerDependencies": {
-    "@assetpack/core": ">=0"
+    "@play-co/assetpack-core": ">=0"
   },
   "engines": {
     "node": ">=16.0.0"

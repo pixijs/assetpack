@@ -1,6 +1,6 @@
 // ////ts-nocheck
-import type { AssetPipe, Asset, PluginOptions } from '@assetpack/core';
-import { checkExt, createNewAssetAt, stripTags } from '@assetpack/core';
+import type { AssetPipe, Asset, PluginOptions } from '@play-co/assetpack-core';
+import { checkExt, createNewAssetAt, stripTags } from '@play-co/assetpack-core';
 import type { BitmapFontOptions } from 'msdf-bmfont-xml';
 import generateBMFont from 'msdf-bmfont-xml';
 import { readFile, writeFile } from 'fs-extra';

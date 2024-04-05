@@ -8,7 +8,7 @@ import {
     relative,
     trimExt,
     dirname
-} from '@assetpack/core';
+} from '@play-co/assetpack-core';
 
 import { writeJSON } from 'fs-extra';
 export interface PixiManifest

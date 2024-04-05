@@ -1,8 +1,8 @@
-import { AssetPack } from '@assetpack/core';
-import { audio } from '@assetpack/plugin-ffmpeg';
-import { pixiManifest } from '@assetpack/plugin-manifest';
-import { mipmapCompress, spineAtlasMipmap } from '@assetpack/plugin-mipmap-compress';
-import { texturePacker } from '@assetpack/plugin-texture-packer';
+import { AssetPack } from '@play-co/assetpack-core';
+import { audio } from '@play-co/assetpack-plugin-ffmpeg';
+import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
+import { mipmapCompress, spineAtlasMipmap } from '@play-co/assetpack-plugin-mipmap-compress';
+import { texturePacker } from '@play-co/assetpack-plugin-texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
 import {

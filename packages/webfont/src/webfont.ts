@@ -1,5 +1,5 @@
-import type { AssetPipe, Asset } from '@assetpack/core';
-import { checkExt, createNewAssetAt, extname } from '@assetpack/core';
+import type { AssetPipe, Asset } from '@play-co/assetpack-core';
+import { checkExt, createNewAssetAt, extname } from '@play-co/assetpack-core';
 import { fonts } from './fonts';
 import { writeFile } from 'fs-extra';
 

@@ -1,5 +1,5 @@
-import type { Asset, AssetPipe, PluginOptions } from '@assetpack/core';
-import { extname, removeExt  } from '@assetpack/core';
+import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
+import { extname, removeExt  } from '@play-co/assetpack-core';
 import { readJSON, writeJSON } from 'fs-extra';
 
 export interface TexturePackerCompressOptions extends PluginOptions<'tps'>

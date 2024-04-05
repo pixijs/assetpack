@@ -4,7 +4,7 @@ module.exports = {
     ...sharedConfig,
     rootDir: './',
     moduleNameMapper: {
-        '^@assetpack/plugin-(.*)$': '<rootDir>/../$1/src',
-        '^@assetpack/(.*)$': '<rootDir>/../$1/src',
+        '^@play-co/assetpack-plugin-(.*)$': '<rootDir>/../$1/src',
+        '^@play-co/assetpack-(.*)$': '<rootDir>/../$1/src',
     },
 };

@@ -1,5 +1,5 @@
-import type { AssetPipe, Asset } from '@assetpack/core';
-import { checkExt, createNewAssetAt, extname, dirname } from '@assetpack/core';
+import type { AssetPipe, Asset } from '@play-co/assetpack-core';
+import { checkExt, createNewAssetAt, extname, dirname } from '@play-co/assetpack-core';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
 import {  copyFileSync, ensureDir } from 'fs-extra';
