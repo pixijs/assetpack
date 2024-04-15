@@ -29,7 +29,7 @@ export async function compressSharp(
         compressed.push({
             format: '.webp',
             resolution: image.resolution,
-            sharpImage: sharpImage.webp(options.webp as WebpOptions)
+            sharpImage: sharpImage.clone().webp(options.webp as WebpOptions)
         });
     }
 

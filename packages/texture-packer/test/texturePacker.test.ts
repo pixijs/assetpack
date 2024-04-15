@@ -454,4 +454,129 @@ describe('Texture Packer', () =>
             expect(json.frames[`sprite${i}.png`]).toBeDefined();
         }
     });
+
+    it('should pack an empty texture if trim is true', async () =>
+    {
+        const testName = 'tp-empty';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'sprites{tps}',
+                        files: [{
+                            name: `empty-texture.png`,
+                            content: assetPath(pkg, `empty-texture.png`),
+                        }],
+                        folders: []
+                    },
+                ],
+            });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            cache: false,
+            pipes: [
+                texturePacker({
+                    resolutionOptions: {
+                        resolutions: { default: 1 },
+                    },
+                })
+            ]
+        });
+
+        await assetpack.run();
+
+        const sheet1 = readJSONSync(`${outputDir}/sprites.json`);
+
+        expect(sheet1.frames['empty-texture.png']).toEqual({
+            frame: {
+                x: 2,
+                y: 2,
+                w: 1,
+                h: 1
+            },
+            rotated: false,
+            trimmed: true,
+            spriteSourceSize: {
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1
+            },
+            sourceSize: {
+                w: 1,
+                h: 35
+            }
+        });
+    });
+
+    it('should throw warning if sprite sheet frames have the same name', async () =>
+    {
+        const testName = 'tp-short-names-clash';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        const sprites: File[] = [];
+
+        for (let i = 0; i < 10; i++)
+        {
+            sprites.push({
+                name: `sprite${i}.png`,
+                content: assetPath(pkg, `sp-${i + 1}.png`),
+            });
+        }
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'sprites{tps}',
+                        files: sprites,
+                        folders: [],
+                    },
+                    {
+                        name: 'sprites-copy{tps}',
+                        files: sprites,
+                        folders: [],
+                    },
+                ],
+            });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            cache: false,
+            pipes: [
+                texturePacker({
+                    resolutionOptions: { resolutions: { default: 1 } },
+                    texturePacker: {
+                        nameStyle: 'short',
+                    },
+                }),
+            ]
+        });
+
+        // Mock console.warn
+        const mockWarn = jest.spyOn(console, 'warn').mockImplementation();
+
+        await assetpack.run();
+
+        // Check if console.warn was called
+        expect(mockWarn).toHaveBeenCalled();
+        // eslint-disable-next-line max-len
+        expect(mockWarn).toHaveBeenCalledWith(`[Assetpack][texturePacker] Texture Packer Shortcut clash detected for between sprite0.png, sprite1.png, sprite2.png, sprite3.png, sprite4.png, sprite5.png, sprite6.png, sprite7.png, sprite8.png, sprite9.png. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`); // Adjust this line based on expected message
+
+        // Restore console.warn
+        mockWarn.mockRestore();
+    });
 });

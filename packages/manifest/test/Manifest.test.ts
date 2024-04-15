@@ -137,7 +137,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest = await readJSONSync(`${outputDir}/manifest.json`);
+        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[1]).toEqual({
             name: 'bundle',
@@ -153,10 +153,10 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/sprite.png'],
                     src: [
-                        'bundle/sprite.webp',
                         'bundle/sprite.png',
-                        'bundle/sprite@0.5x.webp',
+                        'bundle/sprite.webp',
                         'bundle/sprite@0.5x.png',
+                        'bundle/sprite@0.5x.webp',
                     ],
                     // data: {
                     //     tags: {
@@ -167,8 +167,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps-0'],
                     src: [
-                        'bundle/tps-0.json',
                         'bundle/tps-0@0.5x.json',
+                        'bundle/tps-0.json',
                     ],
                     // data: {
                     //     tags: {
@@ -180,8 +180,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps-1'],
                     src: [
-                        'bundle/tps-1.json',
                         'bundle/tps-1@0.5x.json',
+                        'bundle/tps-1.json',
                     ],
                     // data: {
                     //     tags: {
@@ -210,19 +210,19 @@ describe('Manifest', () =>
                 {
                     alias: ['spine/dragon.png'],
                     src: [
-                        'spine/dragon.webp',
                         'spine/dragon.png',
-                        'spine/dragon@0.5x.webp',
+                        'spine/dragon.webp',
                         'spine/dragon@0.5x.png',
+                        'spine/dragon@0.5x.webp',
                     ],
                 },
                 {
                     alias: ['spine/dragon2.png'],
                     src: [
-                        'spine/dragon2.webp',
                         'spine/dragon2.png',
-                        'spine/dragon2@0.5x.webp',
+                        'spine/dragon2.webp',
                         'spine/dragon2@0.5x.png',
+                        'spine/dragon2@0.5x.webp',
                     ],
                 },
                 {
@@ -342,7 +342,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest = await readJSONSync(`${outputDir}/manifest.json`);
+        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',
@@ -377,10 +377,10 @@ describe('Manifest', () =>
                         'sprite'
                     ],
                     src: [
-                        'folder/sprite.webp',
                         'folder/sprite.png',
+                        'folder/sprite.webp',
+                        'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
-                        'folder/sprite@0.5x.png'
                     ]
                 },
                 {
@@ -426,10 +426,10 @@ describe('Manifest', () =>
                         'dragon'
                     ],
                     src: [
-                        'spine/dragon.webp',
                         'spine/dragon.png',
+                        'spine/dragon.webp',
+                        'spine/dragon@0.5x.png',
                         'spine/dragon@0.5x.webp',
-                        'spine/dragon@0.5x.png'
                     ]
                 },
                 {
@@ -440,10 +440,10 @@ describe('Manifest', () =>
                         'dragon2'
                     ],
                     src: [
-                        'spine/dragon2.webp',
                         'spine/dragon2.png',
+                        'spine/dragon2.webp',
+                        'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
-                        'spine/dragon2@0.5x.png'
                     ]
                 },
                 {
@@ -563,7 +563,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest = await readJSONSync(`${outputDir}/manifest.json`);
+        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',
@@ -579,10 +579,10 @@ describe('Manifest', () =>
                 {
                     alias: ['folder/sprite.png', 'sprite.png'],
                     src: [
-                        'folder/sprite.webp',
                         'folder/sprite.png',
+                        'folder/sprite.webp',
+                        'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
-                        'folder/sprite@0.5x.png'
                     ],
                 },
                 {
@@ -600,19 +600,19 @@ describe('Manifest', () =>
                 {
                     alias: ['spine/dragon.png', 'dragon.png'],
                     src: [
-                        'spine/dragon.webp',
                         'spine/dragon.png',
+                        'spine/dragon.webp',
+                        'spine/dragon@0.5x.png',
                         'spine/dragon@0.5x.webp',
-                        'spine/dragon@0.5x.png'
                     ],
                 },
                 {
                     alias: ['spine/dragon2.png', 'dragon2.png'],
                     src: [
-                        'spine/dragon2.webp',
                         'spine/dragon2.png',
+                        'spine/dragon2.webp',
+                        'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
-                        'spine/dragon2@0.5x.png'
                     ],
                 },
                 {
@@ -724,7 +724,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest = await readJSONSync(`${outputDir}/manifest.json`);
+        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',
@@ -753,10 +753,10 @@ describe('Manifest', () =>
                         'folder/sprite'
                     ],
                     src: [
-                        'folder/sprite.webp',
                         'folder/sprite.png',
+                        'folder/sprite.webp',
+                        'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
-                        'folder/sprite@0.5x.png'
                     ]
                 },
                 {
@@ -794,10 +794,10 @@ describe('Manifest', () =>
                         'spine/dragon'
                     ],
                     src: [
-                        'spine/dragon.webp',
                         'spine/dragon.png',
+                        'spine/dragon.webp',
+                        'spine/dragon@0.5x.png',
                         'spine/dragon@0.5x.webp',
-                        'spine/dragon@0.5x.png'
                     ]
                 },
                 {
@@ -806,10 +806,10 @@ describe('Manifest', () =>
                         'spine/dragon2'
                     ],
                     src: [
-                        'spine/dragon2.webp',
                         'spine/dragon2.png',
+                        'spine/dragon2.webp',
+                        'spine/dragon2@0.5x.png',
                         'spine/dragon2@0.5x.webp',
-                        'spine/dragon2@0.5x.png'
                     ]
                 },
                 {
@@ -866,4 +866,102 @@ describe('Manifest', () =>
         expect(existsSync(`${outputDir}/manifest.json`)).toBe(false);
         expect(existsSync(`${outputDir}/manifest2.json`)).toBe(true);
     });
+
+    it('should ensure sub-manifests are created correctly', async () =>
+    {
+        const testName = 'manifest-sub-manifest';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sound{m}',
+                    files: [
+                        {
+                            name: '1.mp3',
+                            content: assetPath(pkg, 'audio/1.mp3'),
+                        },
+                    ],
+                    folders: [],
+                },
+                {
+                    name: 'sound2{m}',
+                    files: [
+                        {
+                            name: '2.mp3',
+                            content: assetPath(pkg, 'audio/1.mp3'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            pipes: [
+                pixiManifest(),
+            ],
+        });
+
+        await assetpack.run();
+
+        expect(readJSONSync(`${outputDir}/manifest.json`)).toEqual({
+            bundles: [
+                {
+                    name: 'default',
+                    assets: []
+                },
+                {
+                    name: 'sound2',
+                    assets: [
+                        {
+                            alias: [
+                                'sound2/2.mp3'
+                            ],
+                            src: [
+                                'sound2/2.mp3'
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'sound',
+                    assets: [
+                        {
+                            alias: [
+                                'sound/1.mp3'
+                            ],
+                            src: [
+                                'sound/1.mp3'
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
+    });
 });
+
+function sortObjectProperties(obj: any)
+{
+    return Object.keys(obj).sort().reduce((acc: any, key: string) =>
+    {
+        const value = obj[key];
+
+        if (typeof value === 'object' && !Array.isArray(value) && value !== null)
+        {
+            acc[key] = sortObjectProperties(value);
+        }
+        else
+        {
+            acc[key] = value;
+        }
+
+        return acc;
+    }, {});
+}

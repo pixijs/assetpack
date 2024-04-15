@@ -6,6 +6,7 @@ module.exports = {
             diagnostics: false,
         }
     },
+    maxWorkers: 1,
     testPathIgnorePatterns: ['/node_modules/', '/src/', '/dist/'],
     testTimeout: 300000,
     moduleNameMapper: {

@@ -5,13 +5,19 @@ import { writeFile } from 'fs-extra';
 
 export function webfont(): AssetPipe
 {
+    const defaultOptions = {
+        tags: {
+            wf: 'wf',
+        }
+    };
+
     return {
         folder: false,
         name: 'webfont',
-        defaultOptions: {},
-        test(asset: Asset)
+        defaultOptions,
+        test(asset: Asset, options)
         {
-            return checkExt(asset.path, '.otf', '.ttf', '.svg');
+            return asset.metaData[options.tags.wf as any] && checkExt(asset.path, '.otf', '.ttf', '.svg');
         },
         async transform(asset: Asset)
         {

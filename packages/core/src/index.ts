@@ -16,4 +16,5 @@ export * from './utils/createNewAssetAt';
 export * from './utils/stripTags';
 export * from './utils/merge';
 export * from './utils/path';
+export * from './utils/swapExt';
 

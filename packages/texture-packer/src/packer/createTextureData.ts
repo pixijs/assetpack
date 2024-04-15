@@ -21,7 +21,7 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
 
         if (!metaData.width || !metaData.height)
         {
-            throw new Error(`[packTextures] Could not get metadata for ${texture.path}`);
+            throw new Error(`[Assetpack][packTextures] Could not get metadata for ${texture.path}`);
         }
 
         const newWidth = Math.ceil(metaData.width * scale);
@@ -35,9 +35,6 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
                     height: newHeight,
                 });
 
-            // this is a bug work around for sharp
-            // it should be able to chain together resize and trim
-            // but it doesn't work
             if (options.allowTrim)
             {
                 sharpImage = sharp(await sharpImage.toBuffer());
@@ -53,14 +50,30 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
                 });
         }
 
-        const { buffer, info } = await new Promise<{ buffer: Buffer; info: sharp.OutputInfo; }>((resolve) =>
+        let result = await sharpImage.toBuffer({ resolveWithObject: true }).catch((error) =>
         {
-            sharpImage
-                .toBuffer((_error, buffer, info) =>
-                {
-                    resolve({ buffer, info });
-                });
+            // eslint-disable-next-line max-len
+            console.warn(`[Assetpack][packTextures] Failed to process texture: ${texture.path} - ${error}, using empty pixel texture instead.`);
+
+            return { data: null, info: null };
         });
+
+        if (!result.data || !result.info)
+        {
+            const buffer = Buffer.alloc(4);
+
+            const emptyPixelTexture = sharp(buffer, {
+                raw: {
+                    width: 1,
+                    height: 1,
+                    channels: 4
+                }
+            });
+
+            result = await emptyPixelTexture.png().toBuffer({ resolveWithObject: true });
+        }
+
+        const { data: buffer, info } = result;
 
         const trimmed = (info.width < newWidth || info.height < newHeight);
 
