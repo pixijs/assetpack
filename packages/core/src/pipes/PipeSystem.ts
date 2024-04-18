@@ -99,7 +99,7 @@ export class PipeSystem
         }
         else
         {
-            await this.transform(asset, pipeIndex);
+            await this._transform(asset, pipeIndex);
         }
     }
 
