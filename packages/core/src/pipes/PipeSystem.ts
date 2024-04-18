@@ -55,9 +55,9 @@ export class PipeSystem
         this.entryPath = options.entryPath;
     }
 
-    async transform(asset: Asset, pipeIndex = 0): Promise<void>
+    async transform(asset: Asset): Promise<void>
     {
-        await this._transform(asset, pipeIndex);
+        await this._transform(asset, 0);
 
         // clean up any buffers still held for gc!
         asset.releaseBuffers();
@@ -92,7 +92,7 @@ export class PipeSystem
                     asset.addTransformChild(transformAsset);
                 }
 
-                promises.push(this.transform(transformAsset, pipeIndex)); // Await the recursive transform call
+                promises.push(this._transform(transformAsset, pipeIndex)); // Await the recursive transform call
             }
 
             await Promise.all(promises);
