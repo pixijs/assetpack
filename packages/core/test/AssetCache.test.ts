@@ -22,6 +22,8 @@ describe('AssetCache', () =>
             path: 'test/test.json',
         });
 
+        assetChild['_hash'] = '12345';
+
         asset.addChild(assetChild);
 
         await assetCacheWrite.write(asset);
@@ -35,12 +37,11 @@ describe('AssetCache', () =>
         expect(cachedAssetData).toEqual({
             test: {
                 isFolder: true,
-                lastModified: 0,
                 metaData: {}
             },
             'test/test.json': {
                 isFolder: false,
-                lastModified: 0,
+                hash: '12345',
                 parent: 'test',
                 metaData: {}
             }

@@ -1,6 +1,5 @@
 import type { Asset, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, type AssetPipe, createNewAssetAt } from '@play-co/assetpack-core';
-import { readFile, writeFile } from 'fs-extra';
 import type { MipmapOptions } from './mipmapCompress';
 
 export type SpineOptions = PluginOptions<'fix' | 'nc'> & MipmapOptions;
@@ -35,9 +34,7 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
             const largestResolution = Math.max(...Object.values(options.resolutions));
             const resolutionHash = asset.allMetaData[options.tags.fix as any] ? fixedResolutions : options.resolutions;
 
-            const rawAtlas = await readFile(asset.path, { encoding: 'utf8' });
-
-            const promises: Promise<void>[] = [];
+            const rawAtlas = asset.buffer.toString();
 
             // loop through each resolution and pack the images
             const assets = Object.values(resolutionHash).map((resolution) =>
@@ -53,14 +50,10 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
 
                 const scaledAtlasData = rescaleAtlas(rawAtlas, scale, resolutionLabel);
 
-                const promise = writeFile(scaleAsset.path, scaledAtlasData);
-
-                promises.push(promise);
+                scaleAsset.buffer = Buffer.from(scaledAtlasData);
 
                 return scaleAsset;
             });
-
-            await Promise.all(promises);
 
             return assets;
         }

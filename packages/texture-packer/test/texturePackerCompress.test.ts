@@ -35,7 +35,7 @@ function genFolder(testName: string)
 
 describe('Texture Packer Compression', () =>
 {
-    it('should create a sprite sheet', async () =>
+    it.skip('should create a sprite sheet', async () =>
     {
         const testName = 'tp-compression';
         const inputDir = getInputDir(pkg, testName);

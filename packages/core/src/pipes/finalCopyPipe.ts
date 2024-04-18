@@ -1,4 +1,4 @@
-import { copyFileSync, writeFileSync } from 'fs-extra';
+import { ensureDirSync, writeFileSync } from 'fs-extra';
 import type { Asset } from '../Asset';
 import { createNewAssetAt } from '../utils/createNewAssetAt';
 import type { AssetPipe } from './AssetPipe';
@@ -12,14 +12,10 @@ export const finalCopyPipe: AssetPipe<object> = {
     {
         const copiedAsset = createNewAssetAt(asset, asset.filename, pipeSystem.outputPath, true);
 
-        if (asset.buffer)
-        {
-            writeFileSync(copiedAsset.path, asset.buffer);
-        }
-        else
-        {
-            copyFileSync(asset.path, copiedAsset.path);
-        }
+        copiedAsset.buffer = asset.buffer;
+
+        ensureDirSync(copiedAsset.directory);
+        writeFileSync(copiedAsset.path, copiedAsset.buffer);
 
         return [copiedAsset];
     }

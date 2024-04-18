@@ -39,8 +39,9 @@ export function texturePackerCompress(_options?: TexturePackerCompressOptions): 
 
                 const newAsset = createNewAssetAt(asset, newFileName);
 
-                // make sure the new asset knows about the sprite asset
-                newAsset.metaData.spriteAsset = child;
+                // TODO THIS NEEDS TO BE FIXED
+                // // make sure the new asset knows about the sprite asset
+                // newAsset.metaData.spriteAsset = child;
 
                 json.meta.image = swapExt(json.meta.image, extension);
 

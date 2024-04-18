@@ -167,8 +167,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps-0'],
                     src: [
-                        'bundle/tps-0@0.5x.json',
                         'bundle/tps-0.json',
+                        'bundle/tps-0@0.5x.json',
                     ],
                     // data: {
                     //     tags: {
@@ -180,8 +180,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps-1'],
                     src: [
-                        'bundle/tps-1@0.5x.json',
                         'bundle/tps-1.json',
+                        'bundle/tps-1@0.5x.json',
                     ],
                     // data: {
                     //     tags: {
@@ -959,6 +959,11 @@ function sortObjectProperties(obj: any)
         }
         else
         {
+            if (Array.isArray(value))
+            {
+                value.sort();
+            }
+
             acc[key] = value;
         }
 

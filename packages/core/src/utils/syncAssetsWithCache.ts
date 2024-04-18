@@ -66,7 +66,7 @@ function syncAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Recor
             // TODO - move this into the asset!
             asset.markParentAsModified(asset);
         }
-        else if (cachedData[i].lastModified < asset.lastModified)
+        else if (!asset.isFolder && (cachedData[i].hash !== asset.hash))
         {
             asset.state = 'modified';
             asset.markParentAsModified(asset);

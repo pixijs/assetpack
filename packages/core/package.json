@@ -29,6 +29,7 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
+    "@node-rs/crc32": "^1.10.0",
     "@pixi/runner": "^7.0.0",
     "chalk": "^4.1.2",
     "chokidar": "^3.5.2",

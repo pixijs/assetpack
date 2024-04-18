@@ -1,6 +1,6 @@
 import type { PluginOptions, Asset, AssetPipe } from '@play-co/assetpack-core';
 import { createNewAssetAt, stripTags, relative  } from '@play-co/assetpack-core';
-import { readFile, writeFile, writeJson } from 'fs-extra';
+import { readFile } from 'fs-extra';
 import glob from 'glob-promise';
 import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures';
 import { packTextures } from './packer/packTextures';
@@ -157,7 +157,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
                         const textureAsset = createNewAssetAt(asset, name);
 
-                        outPromises.push(writeFile(textureAsset.path, buffer));
+                        textureAsset.buffer = buffer;
 
                         const { json, name: jsonName } = out.jsons[i];
 
@@ -170,13 +170,11 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                             checkForTexturePackerShortcutClashes(json.frames, shortcutClash);
                         }
 
-                        outPromises.push(writeJson(jsonAsset.path, json, { spaces: 2 }));
+                        jsonAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
 
                         textureAsset.metaData[tags.fix] = true;
                         jsonAsset.metaData[tags.nc] = true;
 
-                        // useful to know what the json and texture use
-                        jsonAsset.metaData.spriteAsset = textureAsset;
                         jsonAsset.metaData.page = i;
 
                         assets.push(textureAsset, jsonAsset);

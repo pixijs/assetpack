@@ -1,7 +1,6 @@
 import type { AssetPipe, Asset } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, extname } from '@play-co/assetpack-core';
 import { fonts } from './fonts';
-import { writeFile } from 'fs-extra';
 
 export function webfont(): AssetPipe
 {
@@ -36,13 +35,16 @@ export function webfont(): AssetPipe
                 case '.svg':
                     buffer = fonts.svg.to.woff2(asset.path);
                     break;
+                default:
+                    throw new Error(`{Assetpack] Unsupported font type: ${ext}`);
+                    break;
             }
 
             const newFileName = asset.filename.replace(/\.(otf|ttf|svg)$/i, '.woff2');
 
             const newAsset = createNewAssetAt(asset, newFileName);
 
-            await writeFile(newAsset.path, buffer as Buffer);
+            newAsset.buffer = buffer;
 
             return [newAsset];
         }

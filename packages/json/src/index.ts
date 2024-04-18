@@ -1,6 +1,5 @@
 import type { AssetPipe, Asset, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt } from '@play-co/assetpack-core';
-import { readJson, writeJSON } from 'fs-extra';
 
 export type JsonOptions = PluginOptions<'nc'>;
 
@@ -26,13 +25,13 @@ export function json(_options: JsonOptions = {}): AssetPipe
         {
             try
             {
-                let json = await readJson(asset.path);
+                let json = JSON.parse(asset.buffer.toString());
 
                 json = JSON.stringify(json);
 
                 const compressedJsonAsset = createNewAssetAt(asset, asset.filename);
 
-                await writeJSON(compressedJsonAsset.path, json);
+                compressedJsonAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
 
                 return [compressedJsonAsset];
             }

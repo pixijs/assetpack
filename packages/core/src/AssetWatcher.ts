@@ -22,7 +22,6 @@ interface ChangeData
 {
     type: string;
     file: string;
-    lastModified: number;
 }
 
 export class AssetWatcher
@@ -120,7 +119,6 @@ export class AssetWatcher
                 this._changes.push({
                     type,
                     file,
-                    lastModified: Date.now()
                 });
 
                 if (this._timeoutId)
@@ -189,7 +187,7 @@ export class AssetWatcher
 
     private _applyChangeToAssets(changes: ChangeData[])
     {
-        changes.forEach(({ type, file, lastModified }) =>
+        changes.forEach(({ type, file }) =>
         {
             let asset = this._assetHash[file];
 
@@ -227,8 +225,6 @@ export class AssetWatcher
             {
                 asset.state = 'modified';
             }
-
-            asset.lastModified = lastModified;
 
             // flag all folders as modified..
             asset.markParentAsModified(asset);
@@ -284,7 +280,6 @@ export class AssetWatcher
 
             const childAsset = new Asset({
                 path: fullPath,
-                lastModified: stat.mtimeMs,
                 isFolder: stat.isDirectory()
             });
 
