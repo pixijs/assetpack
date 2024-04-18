@@ -3,6 +3,7 @@ import type { AssetPipe, Asset, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, stripTags } from '@play-co/assetpack-core';
 import type { BitmapFontOptions } from 'msdf-bmfont-xml';
 import generateBMFont from 'msdf-bmfont-xml';
+import { readFile } from 'fs-extra';
 
 export interface SDFFontOptions extends PluginOptions<'sdf'>
 {
