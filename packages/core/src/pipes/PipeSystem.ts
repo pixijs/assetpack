@@ -63,7 +63,7 @@ export class PipeSystem
         asset.releaseBuffers();
     }
 
-    async _transform(asset: Asset, pipeIndex = 0): Promise<void>
+    private async _transform(asset: Asset, pipeIndex = 0): Promise<void>
     {
         if (pipeIndex >= this.pipes.length)
         {
