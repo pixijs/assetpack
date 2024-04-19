@@ -44,17 +44,13 @@ export interface MipmapCompressImageData
 
 const defaultMipmapOptions: Required<MipmapOptions> = {
     template: '@%%x',
-    resolutions: { default: 1 },
+    resolutions: { default: 1, low: 0.5 },
     fixedResolution: 'default'
 };
 
 export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<MipmapCompressOptions>
 {
-    const mipmap = resolveOptions(_options.mipmap, {
-        template: '@%%x',
-        resolutions: { default: 1, low: 0.5 },
-        fixedResolution: 'default'
-    });
+    const mipmap = resolveOptions(_options.mipmap, defaultMipmapOptions);
 
     const compress = resolveOptions<CompressOptions>(_options.compress, {
         png: true,
@@ -91,7 +87,7 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
 
     return {
         folder: true,
-        name: 'mipmap-compress',
+        name: 'mip-compress',
         defaultOptions,
         test(asset: Asset, options)
         {
@@ -99,9 +95,8 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
         },
         async transform(asset: Asset, options)
         {
-            const mip =  options.mipmap && !asset.metaData[options.tags.fix as any];
-
-            const compress = options.compress && !asset.metaData[options.tags.nc as any];
+            const shouldMipmap =  mipmap && !asset.metaData[options.tags.fix as any];
+            const shouldCompress = compress && !asset.metaData[options.tags.nc as any];
 
             let processedImages: MipmapCompressImageData[];
 
@@ -114,10 +109,10 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
             // first mipmap if we want..
             try
             {
-                if (mip)
+                if (shouldMipmap)
                 {
                     const { resolutions, fixedResolution } = options.mipmap as Required<MipmapOptions>
-                        || defaultMipmapOptions;
+                        || defaultOptions.mipmap;
 
                     const fixedResolutions: {[x: string]: number} = {};
 
@@ -131,7 +126,7 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
 
                     image.resolution = largestResolution;
 
-                    processedImages = mip ? await mipmapSharp(image, resolutionHash, largestResolution) : [image];
+                    processedImages = shouldMipmap ? await mipmapSharp(image, resolutionHash, largestResolution) : [image];
                 }
                 else
                 {
@@ -145,7 +140,7 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
 
             try
             {
-                if (compress)
+                if (shouldCompress)
                 {
                     processedImages = (await Promise.all(
                         processedImages.map((image) => compressSharp(image, options.compress as CompressOptions))
