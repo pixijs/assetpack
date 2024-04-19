@@ -3,7 +3,7 @@ import type { AssetPipe, Asset, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, stripTags } from '@play-co/assetpack-core';
 import type { BitmapFontOptions } from 'msdf-bmfont-xml';
 import generateBMFont from 'msdf-bmfont-xml';
-import { readFile } from 'fs-extra';
+import fs from 'fs-extra';
 
 export interface SDFFontOptions extends PluginOptions<'sdf'>
 {
@@ -91,7 +91,7 @@ async function GenerateFont(input: string, params: BitmapFontOptions): Promise<{
 {
     return new Promise(async (resolve, reject) =>
     {
-        const fontBuffer = await readFile(input);
+        const fontBuffer = await fs.readFile(input);
 
         generateBMFont(fontBuffer, params, (err, textures, font) =>
         {

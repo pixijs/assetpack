@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from 'fs-extra';
+import fs from 'fs-extra';
 import { Asset } from './Asset';
 import chokidar from 'chokidar';
 import type { CachedAsset } from './AssetCache';
@@ -268,7 +268,7 @@ export class AssetWatcher
     private _collectAssets(asset: Asset)
     {
         // loop through and turn each file and folder into an asset
-        const files = readdirSync(asset.path);
+        const files = fs.readdirSync(asset.path);
 
         files.forEach((file) =>
         {
@@ -276,7 +276,7 @@ export class AssetWatcher
 
             if (fullPath.includes('DS_Store')) return;
 
-            const stat = statSync(fullPath);
+            const stat = fs.statSync(fullPath);
 
             const childAsset = new Asset({
                 path: fullPath,

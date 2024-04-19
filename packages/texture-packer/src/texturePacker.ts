@@ -1,6 +1,6 @@
 import type { PluginOptions, Asset, AssetPipe } from '@play-co/assetpack-core';
 import { createNewAssetAt, stripTags, path, Logger  } from '@play-co/assetpack-core';
-import { readFile } from 'fs-extra';
+import fs from 'fs-extra';
 import glob from 'glob-promise';
 import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures';
 import { packTextures } from './packer/packTextures';
@@ -111,7 +111,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
             const texturesToPack = await Promise.all(files.map(async (f) =>
             {
-                const contents = await readFile(f);
+                const contents = await fs.readFile(f);
 
                 return { path: stripTags(path.relative(asset.path, f)), contents };
             }));

@@ -1,4 +1,4 @@
-import { ensureDirSync, removeSync } from 'fs-extra';
+import fs from 'fs-extra';
 import type { Asset } from './Asset';
 import type { AssetPipe } from './pipes/AssetPipe';
 import { AssetCache } from './AssetCache';
@@ -54,8 +54,8 @@ export class AssetPack
         // and the cached info folder
         if (!cache)
         {
-            removeSync(this._outputPath);
-            removeSync('.assetpack');
+            fs.removeSync(this._outputPath);
+            fs.removeSync('.assetpack');
         }
         else
         {
@@ -76,8 +76,8 @@ export class AssetPack
         }
 
         // make sure the output folders exists
-        ensureDirSync(this._outputPath);
-        ensureDirSync('.assetpack');
+        fs.ensureDirSync(this._outputPath);
+        fs.ensureDirSync('.assetpack');
 
         // create the pipe system, this is used to transform the assets
         // we add the finalCopyPipe to the end of the pipes array. This is a pipe
@@ -228,7 +228,7 @@ function _deleteAsset(asset: Asset)
 
     if (!asset.isFolder)
     {
-        removeSync(asset.path);
+        fs.removeSync(asset.path);
     }
 }
 

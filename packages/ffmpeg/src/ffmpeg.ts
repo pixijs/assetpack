@@ -2,7 +2,7 @@ import type { AssetPipe, Asset } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, path } from '@play-co/assetpack-core';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-import {  copyFileSync, ensureDir } from 'fs-extra';
+import fs from 'fs-extra';
 
 fluentFfmpeg.setFfmpegPath(ffmpegPath.path);
 
@@ -64,7 +64,7 @@ async function convert(ffmpegOptions: FfmpegData, input: string, output: string,
         let hasOutput = false;
         const command = fluentFfmpeg();
 
-        await ensureDir(path.dirname(output));
+        await fs.ensureDir(path.dirname(output));
 
         // add each format to the command as an output
         ffmpegOptions.formats.forEach((format) =>
@@ -76,7 +76,7 @@ async function convert(ffmpegOptions: FfmpegData, input: string, output: string,
             }
             else
             {
-                copyFileSync(input, output);
+                fs.copyFileSync(input, output);
             }
         });
 

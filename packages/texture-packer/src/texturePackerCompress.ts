@@ -1,6 +1,6 @@
 import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, swapExt  } from '@play-co/assetpack-core';
-import { readJSONSync } from 'fs-extra';
+import fs from 'fs-extra';
 
 export type TexturePackerCompressOptions = PluginOptions<'tps'>;
 
@@ -24,7 +24,7 @@ export function texturePackerCompress(_options?: TexturePackerCompressOptions): 
         {
             const originalSprite: Asset = asset.allMetaData.spriteAsset;
 
-            const json = readJSONSync(asset.path);
+            const json = fs.readJSONSync(asset.path);
 
             if (!originalSprite.transformChildren.length)
             {

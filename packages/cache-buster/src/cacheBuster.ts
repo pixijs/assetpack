@@ -1,8 +1,8 @@
 import type { AssetPipe, Asset } from '@play-co/assetpack-core';
 import { createNewAssetAt, swapExt } from '@play-co/assetpack-core';
-import { readFileSync } from 'fs-extra';
+import fs from 'fs-extra';
 
-import { crc32 as calculateCrc32 } from '@node-rs/crc32';
+import nodeCrc32 from '@node-rs/crc32';
 
 /**
  * Cache buster asset pipe. This pipe will add a hash to the end of the filename
@@ -28,7 +28,7 @@ export function cacheBuster(): AssetPipe
         },
         async transform(asset: Asset)
         {
-            const buffer = asset.buffer ?? readFileSync(asset.path);
+            const buffer = asset.buffer ?? fs.readFileSync(asset.path);
 
             const hash = crc32(buffer);
             const newFileName = swapExt(asset.filename, `-${hash}${asset.extension}`);
@@ -47,7 +47,7 @@ export function cacheBuster(): AssetPipe
 /** Calculate a CRC32 checksum. */
 export function crc32(input: string | Buffer): string
 {
-    const checksumHex = calculateCrc32(input).toString(16);
+    const checksumHex = nodeCrc32.crc32(input).toString(16);
 
     return Buffer.from(checksumHex, 'hex').toString('base64url');
 }

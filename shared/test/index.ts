@@ -1,4 +1,4 @@
-import fs, { unlinkSync } from 'fs-extra';
+import fs from 'fs-extra';
 import path from 'path';
 import { getRoot } from './find';
 import type { AssetPipe } from '@play-co/assetpack-core';
@@ -33,7 +33,7 @@ export function createFolder(pkg: string, folder: Folder, base?: string)
 
     try
     {
-        unlinkSync(baseFolder);
+        fs.unlinkSync(baseFolder);
     }
     catch (e)
     {

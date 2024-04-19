@@ -6,7 +6,8 @@ import {
     path
 } from '@play-co/assetpack-core';
 
-import { writeJSON } from 'fs-extra';
+import fs from 'fs-extra';
+
 export interface PixiManifest
 {
     name: string;
@@ -58,7 +59,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
 
             collectAssets(asset, options, pipeSystem.outputPath, pipeSystem.entryPath, manifest.bundles, defaultBundle);
 
-            await writeJSON(newFileName, manifest, { spaces: 2 });
+            await fs.writeJSON(newFileName, manifest, { spaces: 2 });
         }
     };
 }
