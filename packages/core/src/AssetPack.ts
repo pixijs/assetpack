@@ -1,4 +1,4 @@
-import { ensureDirSync, remove, removeSync } from 'fs-extra';
+import { ensureDirSync, removeSync } from 'fs-extra';
 import type { Asset } from './Asset';
 import type { AssetPipe } from './pipes/AssetPipe';
 import { AssetCache } from './AssetCache';
@@ -10,12 +10,7 @@ import { finalCopyPipe } from './pipes/finalCopyPipe';
 import type { AssetPackConfig } from './config';
 import objectHash from 'object-hash';
 import { Logger } from './logger/Logger';
-
-interface AssetPackProgress
-{
-    progress: number;
-    progressTotal: number;
-}
+import { promiseAllConcurrent } from './utils/promiseAllConcurrent';
 
 export class AssetPack
 {
@@ -166,77 +161,74 @@ export class AssetPack
     {
         await this._pipeSystem.start(asset);
 
-        const promises: Promise<void>[] = [];
+        const assetsToTransform: Asset[] = [];
 
-        this._recursiveTransform(asset, promises, {
-            progress: 0,
-            progressTotal: 0
-        });
+        this.deleteAndCollectAssetsToTransform(asset, assetsToTransform);
 
-        await Promise.all(promises);
+        let index = 0;
+
+        const all = assetsToTransform.map((asset) =>
+            (async () =>
+            {
+                await this._pipeSystem.transform(asset);
+                index++;
+
+                const percent = Math.round((index / assetsToTransform.length) * 100);
+
+                Logger.report({
+                    type: 'buildProgress',
+                    phase: 'transform',
+                    message: percent.toString()
+                });
+            }));
+
+        await promiseAllConcurrent(all, 5);
 
         await this._pipeSystem.finish(asset);
     }
 
-    private async _recursiveTransform(asset: Asset, promises: Promise<void>[] = [], progressData: AssetPackProgress)
+    private deleteAndCollectAssetsToTransform(asset: Asset, output: Asset[])
     {
         if (asset.state !== 'normal')
         {
             if (asset.state === 'deleted')
             {
-                deleteAsset(asset, promises);
+                deleteAsset(asset);
             }
             else
             {
-                progressData.progressTotal++;
-
-                promises.push(
-                    this._pipeSystem
-                        .transform(asset)
-                        .then(() =>
-                        {
-                            progressData.progress++;
-
-                            const percent = Math.round((progressData.progress / progressData.progressTotal) * 100);
-
-                            Logger.report({
-                                type: 'buildProgress',
-                                phase: 'transform',
-                                message: percent.toString()
-                            });
-                        })
-                );
+                output.push(asset);
             }
 
             if (!asset.ignoreChildren)
             {
                 for (let i = 0; i < asset.children.length; i++)
                 {
-                    this._recursiveTransform(asset.children[i], promises, progressData);
+                    this.deleteAndCollectAssetsToTransform(asset.children[i], output);
                 }
             }
         }
     }
 }
 
-async function deleteAsset(asset: Asset, promises: Promise<void>[])
+async function deleteAsset(asset: Asset)
 {
     asset.transformChildren.forEach((child) =>
     {
-        _deleteAsset(child, promises);
+        _deleteAsset(child);
     });
 }
 
-function _deleteAsset(asset: Asset, promises: Promise<void>[])
+function _deleteAsset(asset: Asset)
 {
     asset.transformChildren.forEach((child) =>
     {
-        _deleteAsset(child, promises);
+        _deleteAsset(child);
     });
 
     if (!asset.isFolder)
     {
-        promises.push(remove(asset.path));
+        removeSync(asset.path);
     }
 }
 
