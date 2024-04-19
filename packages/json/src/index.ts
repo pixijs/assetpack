@@ -28,7 +28,7 @@ export function json(_options: JsonOptions = {}): AssetPipe
                 const json = JSON.parse(asset.buffer.toString());
                 const compressedJsonAsset = createNewAssetAt(asset, asset.filename);
 
-                compressedJsonAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
+                compressedJsonAsset.buffer = Buffer.from(JSON.stringify(json));
 
                 return [compressedJsonAsset];
             }

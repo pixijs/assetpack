@@ -21,7 +21,6 @@ export class Asset
     // file based..
     parent: Asset | null = null;
     children: Asset[] = [];
-    ignoreChildren = false;
 
     // transform based..
     transformParent: Asset | null = null;
@@ -37,6 +36,7 @@ export class Asset
 
     isFolder: boolean;
     path = '';
+    skip = false;
 
     private _state: 'deleted' | 'added' | 'modified' | 'normal' = 'added';
     private _buffer?: Buffer | null = null;
@@ -176,6 +176,17 @@ export class Asset
         }
 
         return asset;
+    }
+
+    skipChildren()
+    {
+        for (let i = 0; i < this.children.length; i++)
+        {
+            const child = this.children[i];
+
+            child.skip = true;
+            child.skipChildren();
+        }
     }
 
     getFinalTransformedChildren(asset: Asset = this, finalChildren: Asset[] = []): Asset[]

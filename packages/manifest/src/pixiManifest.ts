@@ -73,6 +73,8 @@ function collectAssets(
     bundle: PixiManifest,
 )
 {
+    if (asset.skip) return;
+
     let localBundle = bundle;
 
     if (asset.metaData.m || asset.metaData.manifest)
@@ -111,13 +113,10 @@ function collectAssets(
         }
     }
 
-    if (!asset.ignoreChildren)
+    asset.children.forEach((child) =>
     {
-        asset.children.forEach((child) =>
-        {
-            collectAssets(child, options, outputPath, entryPath, bundles, localBundle);
-        });
-    }
+        collectAssets(child, options, outputPath, entryPath, bundles, localBundle);
+    });
 }
 
 function getTexturePackedAssets(assets: Asset[])
