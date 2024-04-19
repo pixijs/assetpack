@@ -1,5 +1,5 @@
 import type { AssetPipe, Asset } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt, extname } from '@play-co/assetpack-core';
+import { checkExt, createNewAssetAt, path } from '@play-co/assetpack-core';
 import { fonts } from './fonts';
 
 export function webfont(): AssetPipe
@@ -20,7 +20,7 @@ export function webfont(): AssetPipe
         },
         async transform(asset: Asset)
         {
-            const ext = extname(asset.path);
+            const ext = path.extname(asset.path);
 
             let buffer: Buffer | null = null;
 

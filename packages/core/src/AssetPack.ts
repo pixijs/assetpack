@@ -5,12 +5,12 @@ import { AssetCache } from './AssetCache';
 import { AssetWatcher } from './AssetWatcher';
 import type { AssetSettings } from './pipes/PipeSystem';
 import { PipeSystem } from './pipes/PipeSystem';
-import { isAbsolute, join, normalizeSafe } from 'upath';
 import { finalCopyPipe } from './pipes/finalCopyPipe';
 import type { AssetPackConfig } from './config';
 import objectHash from 'object-hash';
 import { Logger } from './logger/Logger';
 import { promiseAllConcurrent } from './utils/promiseAllConcurrent';
+import { path } from './utils/path';
 
 export class AssetPack
 {
@@ -232,14 +232,14 @@ function _deleteAsset(asset: Asset)
     }
 }
 
-function normalizePath(path: string)
+function normalizePath(pth: string)
 {
-    path = normalizeSafe(path);
+    pth = path.normalizeSafe(pth);
 
-    if (!isAbsolute(path))
+    if (!path.isAbsolute(pth))
     {
-        path = normalizeSafe(join(process.cwd(), path));
+        pth = path.normalizeSafe(path.join(process.cwd(), pth));
     }
 
-    return path;
+    return pth;
 }

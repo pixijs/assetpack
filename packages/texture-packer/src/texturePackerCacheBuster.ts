@@ -1,5 +1,5 @@
 import type { AssetPipe, Asset } from '@play-co/assetpack-core';
-import { checkExt, dirname, joinSafe } from '@play-co/assetpack-core';
+import { checkExt, path } from '@play-co/assetpack-core';
 
 /**
  * Use this pipe in conjunction with the texture packer pipe and the cache buster pipe.
@@ -33,7 +33,7 @@ export function texturePackerCacheBuster(): AssetPipe
             // TODO this could be found from the transform type perhaps?
             const cacheBustedFileName = spriteAsset.transformChildren[0].filename;
 
-            json.meta.image = joinSafe(dirname(json.meta.image), cacheBustedFileName);
+            json.meta.image = path.joinSafe(path.dirname(json.meta.image), cacheBustedFileName);
 
             asset.buffer = Buffer.from(JSON.stringify(json, null, 2));
 

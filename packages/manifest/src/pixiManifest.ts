@@ -3,11 +3,7 @@ import {
     type Asset,
     type AssetPipe,
     type PipeSystem,
-    basename,
-    joinSafe,
-    relative,
-    trimExt,
-    dirname
+    path
 } from '@play-co/assetpack-core';
 
 import { writeJSON } from 'fs-extra';
@@ -44,13 +40,12 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
     };
 
     return {
-
         name: 'pixi-manifest',
         defaultOptions,
         finish: async (asset: Asset, options, pipeSystem: PipeSystem) =>
         {
-            const newFileName = dirname(options.output) === '.'
-                ? joinSafe(pipeSystem.outputPath, options.output) : options.output;
+            const newFileName = path.dirname(options.output) === '.'
+                ? path.joinSafe(pipeSystem.outputPath, options.output) : options.output;
 
             const defaultBundle =  {
                 name: 'default',
@@ -101,16 +96,16 @@ function collectAssets(
             getTexturePackedAssets(finalAssets).forEach((pages, pageIndex) =>
             {
                 bundleAssets.push({
-                    alias: getShortNames(stripTags(relative(entryPath, `${asset.path}-${pageIndex}`)), options),
-                    src: pages.map((finalAsset) => relative(outputPath, finalAsset.path))
+                    alias: getShortNames(stripTags(path.relative(entryPath, `${asset.path}-${pageIndex}`)), options),
+                    src: pages.map((finalAsset) => path.relative(outputPath, finalAsset.path))
                 });
             });
         }
         else
         {
             bundleAssets.push({
-                alias: getShortNames(stripTags(relative(entryPath, asset.path)), options),
-                src: finalAssets.map((finalAsset) => relative(outputPath, finalAsset.path))
+                alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
+                src: finalAssets.map((finalAsset) => path.relative(outputPath, finalAsset.path))
             });
         }
     }
@@ -152,9 +147,9 @@ function getShortNames(name: string, options: PixiManifestOptions)
 
     allNames.push(name);
     /* eslint-disable @typescript-eslint/no-unused-expressions */
-    trimExtensions && allNames.push(trimExt(name));
-    createShortcuts && allNames.push(basename(name));
-    createShortcuts && trimExtensions && allNames.push(trimExt(basename(name)));
+    trimExtensions && allNames.push(path.trimExt(name));
+    createShortcuts && allNames.push(path.basename(name));
+    createShortcuts && trimExtensions && allNames.push(path.trimExt(path.basename(name)));
     /* eslint-enable @typescript-eslint/no-unused-expressions */
 
     return allNames;

@@ -1,6 +1,6 @@
-import { joinSafe } from 'upath';
 import type { Asset } from './Asset';
 import { ensureDirSync, readJSONSync, writeJSONSync } from 'fs-extra';
+import { path } from './utils/path';
 
 export interface AssetCacheOptions
 {
@@ -42,7 +42,7 @@ export class AssetCache
         this._serializeAsset(asset, schema.assets, true);
 
         // get root dir in node
-        ensureDirSync(joinSafe('.assetpack'));
+        ensureDirSync(path.joinSafe('.assetpack'));
 
         writeJSONSync(`.assetpack/${this._cacheName}.json`, schema, { spaces: 4 });
     }

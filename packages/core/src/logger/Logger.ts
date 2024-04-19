@@ -32,7 +32,6 @@ class LoggerClass
 
     public info(message: string)
     {
-        return;
         this.report({
             type: 'log',
             level: 'info',

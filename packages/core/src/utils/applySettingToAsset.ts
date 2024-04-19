@@ -1,12 +1,12 @@
 import type { Asset } from '../Asset';
 import type { AssetSettings } from '../pipes/PipeSystem';
-import { relative } from './path';
 import minimatch from 'minimatch';
 import { merge } from './merge';
+import { path } from './path';
 
 export function applySettingToAsset(asset: Asset, settings: AssetSettings[], entryPath: string)
 {
-    const relativePath = relative(entryPath, asset.path);
+    const relativePath = path.relative(entryPath, asset.path);
 
     let assetOptions;
     let metaData;

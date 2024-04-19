@@ -1,4 +1,4 @@
-import { AssetPack, joinSafe } from '@play-co/assetpack-core';
+import { AssetPack, path } from '@play-co/assetpack-core';
 import { existsSync, readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 import { cacheBuster, crc32 } from '../src';
@@ -38,12 +38,12 @@ describe('CacheBuster', () =>
 
         await assetpack.run();
 
-        const originalPath = joinSafe('.testInput', testName, 'ttf.ttf');
+        const originalPath = path.joinSafe('.testInput', testName, 'ttf.ttf');
 
         const buffer = readFileSync(originalPath);
 
         const hash = crc32(buffer);
 
-        expect(existsSync(joinSafe('.testOutput', testName, `ttf-${hash}.ttf`))).toBe(true);
+        expect(existsSync(path.joinSafe('.testOutput', testName, `ttf-${hash}.ttf`))).toBe(true);
     });
 });

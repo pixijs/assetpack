@@ -1,13 +1,13 @@
-import { extname } from 'upath';
+import { path } from './path';
 
-export function checkExt(path: string, ...ext: string[])
+export function checkExt(pth: string, ...ext: string[])
 {
-    if (typeof path !== 'string')
+    if (typeof pth !== 'string')
     {
         return false;
     }
 
-    if (path.length === 0)
+    if (pth.length === 0)
     {
         return false;
     }
@@ -17,7 +17,7 @@ export function checkExt(path: string, ...ext: string[])
         return true;
     }
 
-    const pathExtname = extname(path).toLowerCase();
+    const pathExtname = path.extname(pth).toLowerCase();
 
     return ext.some((e) => e.toLowerCase() === pathExtname);
 }

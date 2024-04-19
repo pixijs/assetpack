@@ -1,10 +1,10 @@
-import { basename } from '@play-co/assetpack-core';
+import { path } from '@play-co/assetpack-core';
 import { createName } from './createTextures';
 import type { PixiPacker } from './packTextures';
 
-function convertName(path: string, nameStyle: 'short' | 'relative')
+function convertName(pth: string, nameStyle: 'short' | 'relative')
 {
-    return nameStyle === 'short' ? basename(path) : path;
+    return nameStyle === 'short' ? path.basename(pth) : pth;
 }
 
 export function createJsons(

@@ -1,5 +1,5 @@
-import { joinSafe, relative } from 'upath';
 import { Asset } from '../Asset';
+import { path } from './path';
 import { stripTags } from './stripTags';
 
 export function createNewAssetAt(asset: Asset, newFileName: string, outputBase?: string, shouldStripTags?: boolean)
@@ -29,17 +29,17 @@ function createNewFilePath(asset: Asset, newFileName: string, outputBase?: strin
 
     const originalDir = original.directory;
 
-    const relativePath = relative(original.rootAsset.path, originalDir);
+    const relativePath = path.relative(original.rootAsset.path, originalDir);
 
     let outputDir: string;
 
     if (outputBase)
     {
-        outputDir = joinSafe(outputBase, relativePath);
+        outputDir = path.joinSafe(outputBase, relativePath);
     }
     else
     {
-        outputDir = joinSafe('.assetpack', asset.transformName, relativePath);
+        outputDir = path.joinSafe('.assetpack', asset.transformName, relativePath);
     }
 
     if (shouldStripTags)
@@ -49,5 +49,5 @@ function createNewFilePath(asset: Asset, newFileName: string, outputBase?: strin
         newFileName = stripTags(newFileName);
     }
 
-    return joinSafe(outputDir, newFileName);
+    return path.joinSafe(outputDir, newFileName);
 }

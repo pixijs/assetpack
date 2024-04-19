@@ -91,7 +91,7 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
 
     return {
         folder: true,
-        name: 'mip-compress',
+        name: 'mipmap-compress',
         defaultOptions,
         test(asset: Asset, options)
         {

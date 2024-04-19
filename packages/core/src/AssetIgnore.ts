@@ -1,5 +1,5 @@
 import minimatch from 'minimatch';
-import { relative } from 'upath';
+import { path } from './utils/path';
 
 export interface AssetIgnoreOptions
 {
@@ -28,7 +28,7 @@ export class AssetIgnore
             _ignoreHash[fullPath] = false;
             if (_ignore.length > 0)
             {
-                const relativePath = relative(this._basePath, fullPath);
+                const relativePath = path.relative(this._basePath, fullPath);
 
                 for (let i = 0; i < _ignore.length; i++)
                 {

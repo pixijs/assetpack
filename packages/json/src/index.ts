@@ -1,5 +1,5 @@
 import type { AssetPipe, Asset, PluginOptions } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt } from '@play-co/assetpack-core';
+import { checkExt, createNewAssetAt, Logger } from '@play-co/assetpack-core';
 
 export type JsonOptions = PluginOptions<'nc'>;
 
@@ -37,7 +37,8 @@ export function json(_options: JsonOptions = {}): AssetPipe
             }
             catch (e)
             {
-                // Logger.warn(`[json] Failed to parse json file: ${asset.path}`);
+                Logger.warn(`[json] Failed to compress json file: ${asset.path}`);
+
                 return [asset];
             }
         }

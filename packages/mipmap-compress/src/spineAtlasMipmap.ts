@@ -19,7 +19,7 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
 
     return {
         folder: false,
-        name: 'mipmap',
+        name: 'mipmap-spine-atlas',
         defaultOptions,
         test(asset: Asset, options)
         {

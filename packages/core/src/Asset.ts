@@ -1,7 +1,8 @@
-import { basename, dirname, extname } from 'upath';
 import { extractTagsFromFileName } from './utils/extractTagsFromFileName';
 import { getHash } from './utils/getHash';
 import { readFileSync } from 'fs-extra';
+import { Logger } from './logger/Logger';
+import { path } from './utils/path';
 
 export interface AssetOptions
 {
@@ -106,7 +107,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            console.warn('[Assetpack] folders should not have buffers!');
+            Logger.warn('[Assetpack] folders should not have buffers!. Contact the developer of Assetpack');
         }
 
         if (!this._buffer)
@@ -128,7 +129,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            console.warn('[Assetpack] folders should not have hashes');
+            Logger.warn('[Assetpack] folders should not have hashes. Contact the developer of the Assetpack');
         }
 
         this._hash ??= getHash(this.buffer ?? this.path);
@@ -138,17 +139,17 @@ export class Asset
 
     get filename()
     {
-        return basename(this.path);
+        return path.basename(this.path);
     }
 
     get directory()
     {
-        return dirname(this.path);
+        return path.dirname(this.path);
     }
 
     get extension()
     {
-        return extname(this.path);
+        return path.extname(this.path);
     }
 
     get rootAsset()

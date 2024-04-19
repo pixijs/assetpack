@@ -1,1 +1,2 @@
-export * from 'upath';
+import upath from 'upath';
+export const path = upath;

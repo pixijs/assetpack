@@ -1,5 +1,5 @@
-import { basename } from 'upath';
 import type { Asset } from '../Asset';
+import { path } from './path';
 
 const stateColorMap = {
     normal: 'white',
@@ -22,7 +22,7 @@ const colors = {
 export function logAssetGraph(asset: Asset, indent = '')
 {
     // get file name..
-    const baseName = basename(asset.path);
+    const baseName = path.basename(asset.path);
 
     log(`${indent}|- ${baseName}: ${asset.state}`, stateColorMap[asset.state] as keyof typeof colors);
 

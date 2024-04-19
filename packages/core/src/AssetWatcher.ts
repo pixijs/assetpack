@@ -3,10 +3,10 @@ import { Asset } from './Asset';
 import chokidar from 'chokidar';
 import type { CachedAsset } from './AssetCache';
 import { syncAssetsWithCache } from './utils/syncAssetsWithCache';
-import { dirname, joinSafe } from 'upath';
 import { AssetIgnore } from './AssetIgnore';
 import type { AssetSettings } from './pipes/PipeSystem';
 import { applySettingToAsset } from './utils/applySettingToAsset';
+import { path } from './utils/path';
 
 export interface AssetWatcherOptions
 {
@@ -217,7 +217,7 @@ export class AssetWatcher
 
                 this._assetHash[file] = asset;
 
-                const parentAsset = this._assetHash[dirname(file)];
+                const parentAsset = this._assetHash[path.dirname(file)];
 
                 parentAsset.addChild(asset);
             }
@@ -272,7 +272,7 @@ export class AssetWatcher
 
         files.forEach((file) =>
         {
-            const fullPath = joinSafe(asset.path, file);
+            const fullPath = path.joinSafe(asset.path, file);
 
             if (fullPath.includes('DS_Store')) return;
 
@@ -302,7 +302,7 @@ export class AssetWatcher
 
     private _ensureDirectory(dirPath: string)
     {
-        const parentPath = dirname(dirPath);
+        const parentPath = path.dirname(dirPath);
 
         if (parentPath === this._entryPath || parentPath === '.')
         {
@@ -323,7 +323,7 @@ export class AssetWatcher
 
         asset.state = 'added';
 
-        const parentAsset = this._assetHash[dirname(parentPath)];
+        const parentAsset = this._assetHash[path.dirname(parentPath)];
 
         parentAsset.addChild(asset);
 
