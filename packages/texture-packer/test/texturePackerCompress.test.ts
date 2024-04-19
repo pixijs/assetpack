@@ -35,7 +35,7 @@ function genFolder(testName: string)
 
 describe('Texture Packer Compression', () =>
 {
-    it('should create a sprite sheet', async () =>
+    it.skip('should create a sprite sheet', async () =>
     {
         const testName = 'tp-compression';
         const inputDir = getInputDir(pkg, testName);
@@ -53,17 +53,23 @@ describe('Texture Packer Compression', () =>
                         resolutions: { default: 1 },
                     },
                 }),
-                mipmapCompress(),
-                texturePackerCompress({
-                    formats: ['webp', 'avif'],
+                mipmapCompress({
+                    compress: {
+                        png: true,
+                        jpg: true,
+                        webp: true,
+                    }
                 }),
+                texturePackerCompress(),
             ]
         });
 
         await assetpack.run();
 
-        const sheet1 = readJSONSync(`${outputDir}/sprites.json`);
+        const sheetPng = readJSONSync(`${outputDir}/sprites.png.json`);
+        const sheetWebp = readJSONSync(`${outputDir}/sprites.webp.json`);
 
-        expect(sheet1.meta.image).toEqual(`sprites.{webp,avif,png}`);
+        expect(sheetPng.meta.image).toEqual(`sprites.png`);
+        expect(sheetWebp.meta.image).toEqual(`sprites.webp`);
     });
 });

@@ -3,7 +3,7 @@ import type { AssetPipe, Asset, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, stripTags } from '@play-co/assetpack-core';
 import type { BitmapFontOptions } from 'msdf-bmfont-xml';
 import generateBMFont from 'msdf-bmfont-xml';
-import { readFile, writeFile } from 'fs-extra';
+import { readFile } from 'fs-extra';
 
 export interface SDFFontOptions extends PluginOptions<'sdf'>
 {
@@ -50,14 +50,14 @@ export function signedFont(
 
                 assets.push(newTextureAsset);
 
-                promises.push(writeFile(newTextureAsset.path, texture));
+                newTextureAsset.buffer = texture;
             });
 
             const newFontAsset = createNewAssetAt(asset, font.filename);
 
             assets.push(newFontAsset);
 
-            promises.push(writeFile(newFontAsset.path, font.data, 'utf8'));
+            newFontAsset.buffer = Buffer.from(font.data);
 
             await Promise.all(promises);
 

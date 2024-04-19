@@ -1,11 +1,12 @@
 import { basename, dirname, extname } from 'upath';
 import { extractTagsFromFileName } from './utils/extractTagsFromFileName';
+import { getHash } from './utils/getHash';
+import { readFileSync } from 'fs-extra';
 
 export interface AssetOptions
 {
     path: string;
     transformName?: string;
-    lastModified?: number;
     isFolder?: boolean;
 }
 
@@ -20,7 +21,6 @@ export class Asset
     parent: Asset | null = null;
     children: Asset[] = [];
     ignoreChildren = false;
-    lastModified = 0;
 
     // transform based..
     transformParent: Asset | null = null;
@@ -36,8 +36,11 @@ export class Asset
 
     isFolder: boolean;
     path = '';
-    state: 'deleted' | 'added' | 'modified' | 'normal' = 'added';
-    buffer?: Buffer | null = null;
+
+    private _state: 'deleted' | 'added' | 'modified' | 'normal' = 'added';
+    private _buffer?: Buffer | null = null;
+
+    private _hash?: string;
 
     constructor(options: AssetOptions)
     {
@@ -46,7 +49,6 @@ export class Asset
         this.path = options.path;
         this.isFolder = options.isFolder as boolean;
         this.transformName = options.transformName || null;
-        this.lastModified = options.lastModified || 0;
 
         // extract tags from the path
         extractTagsFromFileName(this.filename, this.metaData);
@@ -85,6 +87,53 @@ export class Asset
         asset.allMetaData = { ...asset.inheritedMetaData, ...asset.metaData };
 
         asset.settings = this.settings;
+    }
+
+    get state()
+    {
+        return this._state;
+    }
+
+    set state(value)
+    {
+        if (this._state === value) return;
+        this._state = value;
+
+        this._hash = undefined;
+    }
+
+    get buffer(): Buffer
+    {
+        if (this.isFolder)
+        {
+            console.warn('[Assetpack] folders should not have buffers!');
+        }
+
+        if (!this._buffer)
+        {
+            this._buffer = readFileSync(this.path);
+        }
+
+        return this._buffer;
+    }
+
+    set buffer(value: Buffer | null)
+    {
+        this._buffer = value;
+
+        this._hash = undefined;
+    }
+
+    get hash()
+    {
+        if (this.isFolder)
+        {
+            console.warn('[Assetpack] folders should not have hashes');
+        }
+
+        this._hash ??= getHash(this.buffer ?? this.path);
+
+        return this._hash;
     }
 
     get filename()
@@ -156,10 +205,23 @@ export class Asset
             if (parent.state === 'normal')
             {
                 parent.state = 'modified';
-                parent.lastModified = asset.lastModified;
             }
 
             this.markParentAsModified(parent);
+        }
+    }
+
+    /**
+     * Release all buffers from this asset and its transformed children
+     * this is to make sure we don't hold onto buffers that are no longer needed!
+     */
+    releaseBuffers()
+    {
+        this.buffer = null;
+
+        for (let i = 0; i < this.transformChildren.length; i++)
+        {
+            this.transformChildren[i].releaseBuffers();
         }
     }
 }

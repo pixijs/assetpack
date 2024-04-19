@@ -1,16 +1,12 @@
 import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
-import { extname, removeExt  } from '@play-co/assetpack-core';
-import { readJSON, writeJSON } from 'fs-extra';
+import { checkExt, createNewAssetAt, swapExt  } from '@play-co/assetpack-core';
+import { readJSONSync } from 'fs-extra';
 
-export interface TexturePackerCompressOptions extends PluginOptions<'tps'>
-{
-    formats: string[];
-}
+export type TexturePackerCompressOptions = PluginOptions<'tps'>;
 
-export function texturePackerCompress(_options: TexturePackerCompressOptions): AssetPipe<TexturePackerCompressOptions>
+export function texturePackerCompress(_options?: TexturePackerCompressOptions): AssetPipe<TexturePackerCompressOptions>
 {
     const defaultOptions = {
-        formats: _options.formats,
         tags: {
             tps: 'tps',
             ..._options?.tags
@@ -22,26 +18,39 @@ export function texturePackerCompress(_options: TexturePackerCompressOptions): A
         defaultOptions,
         test(asset: Asset, options)
         {
-            return (asset.allMetaData[options.tags.tps] && asset.extension === '.json');// && !asset.allMetaData.nc);
+            return (asset.allMetaData[options.tags.tps] && checkExt(asset.path, '.json'));
         },
-        async transform(asset: Asset, options)
+        async transform(asset: Asset)
         {
-            // create a json based on the image
-            const json = await readJSON(asset.path);
+            const originalSprite: Asset = asset.allMetaData.spriteAsset;
 
-            // remove dot..
-            const imageExtension = extname(json.meta.image).slice(1);
+            const json = readJSONSync(asset.path);
 
-            const imagePath = removeExt(json.meta.image, imageExtension);
+            if (!originalSprite.transformChildren.length)
+            {
+                return [asset];
+            }
 
-            // TODO - just pull from the compression plugin?
-            const formats = [...options.formats, imageExtension].join(',');
+            const assets = originalSprite.transformChildren.map((child) =>
+            {
+                const extension = child.extension;
 
-            json.meta.image = `${imagePath}.{${formats}}`;
+                const newFileName = swapExt(child.filename, `${extension}.json`);
 
-            await writeJSON(asset.path, json, { spaces: 2 });
+                const newAsset = createNewAssetAt(asset, newFileName);
 
-            return [asset];
+                // TODO THIS NEEDS TO BE FIXED
+                // // make sure the new asset knows about the sprite asset
+                // newAsset.metaData.spriteAsset = child;
+
+                json.meta.image = swapExt(json.meta.image, extension);
+
+                newAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
+
+                return newAsset;
+            });
+
+            return assets;
         },
     };
 }

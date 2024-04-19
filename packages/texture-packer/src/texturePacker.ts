@@ -1,6 +1,6 @@
 import type { PluginOptions, Asset, AssetPipe } from '@play-co/assetpack-core';
 import { createNewAssetAt, stripTags, relative  } from '@play-co/assetpack-core';
-import { readFile, writeFile, writeJson } from 'fs-extra';
+import { readFile } from 'fs-extra';
 import glob from 'glob-promise';
 import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures';
 import { packTextures } from './packer/packTextures';
@@ -17,6 +17,32 @@ export interface TexturePackerOptions extends PluginOptions<'tps' | 'fix' | 'jpg
         fixedResolution?: string;
         /** The maximum size a sprite sheet can be before its split out */
         maximumTextureSize?: number;
+    }
+}
+
+function checkForTexturePackerShortcutClashes(
+    frames: Record<string, unknown>,
+    shortcutClash: Record<string, boolean>
+)
+{
+    const clashes: string[] = [];
+
+    for (const i in frames)
+    {
+        if (!shortcutClash[i])
+        {
+            shortcutClash[i] = true;
+        }
+        else
+        {
+            clashes.push(i);
+        }
+    }
+
+    if (clashes.length > 0)
+    {
+        // eslint-disable-next-line max-len
+        console.warn(`[Assetpack][texturePacker] Texture Packer Shortcut clash detected for between ${clashes.join(', ')}. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`);
     }
 }
 
@@ -44,6 +70,8 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
         }
     } as TexturePackerOptions;
 
+    let shortcutClash: Record<string, boolean> = {};
+
     return {
         folder: true,
         name: 'texture-packer-pixi',
@@ -52,6 +80,13 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
         {
             return asset.isFolder && asset.metaData[options.tags.tps as any];
         },
+
+        start()
+        {
+            // restart the clashes!
+            shortcutClash = {};
+        },
+
         async transform(asset: Asset, options)
         {
             const { resolutionOptions, texturePacker, tags } = options;
@@ -96,6 +131,8 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
             const assets: Asset[] = [];
 
+            let checkedForClashes = false;
+
             Object.values(resolutionHash).sort((a, b) => b - a).forEach((resolution) =>
             {
                 const scale = resolution / largestResolution;
@@ -120,18 +157,25 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
                         const textureAsset = createNewAssetAt(asset, name);
 
-                        outPromises.push(writeFile(textureAsset.path, buffer));
+                        textureAsset.buffer = buffer;
 
                         const { json, name: jsonName } = out.jsons[i];
 
                         const jsonAsset = createNewAssetAt(asset, jsonName);
 
-                        jsonAsset.metaData.page = i;
+                        if (!checkedForClashes)
+                        {
+                            checkedForClashes = true;
+                            // check for shortcut clashes..
+                            checkForTexturePackerShortcutClashes(json.frames, shortcutClash);
+                        }
 
-                        outPromises.push(writeJson(jsonAsset.path, json, { spaces: 2 }));
+                        jsonAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
 
                         textureAsset.metaData[tags.fix] = true;
                         jsonAsset.metaData[tags.nc] = true;
+
+                        jsonAsset.metaData.page = i;
 
                         assets.push(textureAsset, jsonAsset);
                     }

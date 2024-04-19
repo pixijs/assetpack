@@ -108,7 +108,7 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
             const image: MipmapCompressImageData = {
                 format: asset.extension as MipmapCompressImageData['format'],
                 resolution: 1,
-                sharpImage: sharp(asset.path),
+                sharpImage: sharp(asset.buffer),
             };
 
             // first mipmap if we want..
@@ -180,7 +180,6 @@ export function mipmapCompress(_options: MipmapCompressOptions = {}): AssetPipe<
                 return newAsset;
             });
 
-            // and finally write them to disk
             const promises = processedImages.map((image, i) => image.sharpImage.toBuffer().then((buffer) =>
             {
                 newAssets[i].buffer = buffer;

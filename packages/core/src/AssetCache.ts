@@ -39,7 +39,7 @@ export class AssetCache
             assets: {}
         };
 
-        this._serializeAsset(asset, schema.assets);
+        this._serializeAsset(asset, schema.assets, true);
 
         // get root dir in node
         ensureDirSync(joinSafe('.assetpack'));
@@ -47,25 +47,30 @@ export class AssetCache
         writeJSONSync(`.assetpack/${this._cacheName}.json`, schema, { spaces: 4 });
     }
 
-    private _serializeAsset(asset: Asset, schema: AssetCacheData['assets'])
+    private _serializeAsset(asset: Asset, schema: AssetCacheData['assets'], saveHash = false)
     {
         const serializeAsset: CachedAsset = {
             isFolder: asset.isFolder,
-            lastModified: asset.lastModified,
             parent: asset.parent?.path,
             transformParent: asset.transformParent?.path,
             metaData: asset.metaData
         };
 
+        if (!asset.isFolder && saveHash)
+        {
+            serializeAsset.hash = asset.hash;
+        }
+
         schema[asset.path] = serializeAsset;
 
         asset.children.forEach((child) =>
         {
-            this._serializeAsset(child, schema);
+            this._serializeAsset(child, schema, true);
         });
 
         asset.transformChildren.forEach((child) =>
         {
+            // we don't care about hashes for transformed children!
             this._serializeAsset(child, schema);
         });
     }
@@ -74,7 +79,7 @@ export class AssetCache
 export interface CachedAsset
 {
     isFolder: boolean;
-    lastModified: number;
+    hash?: string;
     parent: string | undefined;
     metaData: Record<string, any>;
     transformParent: string | undefined;

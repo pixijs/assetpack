@@ -1,6 +1,5 @@
 import { joinSafe, relative } from 'upath';
 import { Asset } from '../Asset';
-import { ensureDirSync } from 'fs-extra';
 import { stripTags } from './stripTags';
 
 export function createNewAssetAt(asset: Asset, newFileName: string, outputBase?: string, shouldStripTags?: boolean)
@@ -41,8 +40,6 @@ function createNewFilePath(asset: Asset, newFileName: string, outputBase?: strin
     else
     {
         outputDir = joinSafe('.assetpack', asset.transformName, relativePath);
-
-        //        outputDir = joinSafe(`.assetpack/${asset.transformName}`, assetDir);
     }
 
     if (shouldStripTags)
@@ -51,8 +48,6 @@ function createNewFilePath(asset: Asset, newFileName: string, outputBase?: strin
         outputDir = stripTags(outputDir);
         newFileName = stripTags(newFileName);
     }
-
-    ensureDirSync(outputDir);
 
     return joinSafe(outputDir, newFileName);
 }

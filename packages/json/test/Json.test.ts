@@ -30,6 +30,7 @@ describe('Json', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
+            cache: false,
             pipes: [
                 json()
             ]
@@ -68,6 +69,7 @@ describe('Json', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
+            cache: false,
             pipes: [
                 json()
             ]
@@ -109,6 +111,7 @@ describe('Json', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
+            cache: false,
             pipes: [
                 json()
             ]
