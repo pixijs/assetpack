@@ -1,5 +1,5 @@
 {
-  "name": "assetpack",
+  "name": "@play-co/assetpack",
   "private": true,
   "license": "MIT",
   "workspaces": [
