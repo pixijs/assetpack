@@ -10,6 +10,7 @@ export function texturePackerCompress(_options?: TexturePackerCompressOptions): 
         ..._options,
         tags: {
             tps: 'tps',
+            nc: 'nc',
             ..._options?.tags
         }
     };

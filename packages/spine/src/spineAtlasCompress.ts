@@ -3,14 +3,14 @@ import { checkExt, createNewAssetAt, swapExt  } from '@play-co/assetpack-core';
 import type { CompressOptions } from '@play-co/assetpack-plugin-mipmap-compress';
 import { AtlasView } from './AtlasView';
 
-export type SpineAtlasCompressOptions = PluginOptions<'tps' | 'nc'> & CompressOptions;
+export type SpineAtlasCompressOptions = PluginOptions<'nc'> & CompressOptions;
 
 export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetPipe<SpineAtlasCompressOptions>
 {
     const defaultOptions = {
         ..._options,
         tags: {
-            tps: 'tps',
+            tps: 'nc',
             ..._options?.tags
         }
     };
