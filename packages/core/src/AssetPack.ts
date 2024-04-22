@@ -75,6 +75,8 @@ export class AssetPack
             }
             else
             {
+                Logger.warn('cache not found, clearing output folder');
+
                 // to be safe - lets nuke the folder as the cache is empty
                 fs.removeSync(this._outputPath);
             }
