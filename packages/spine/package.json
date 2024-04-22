@@ -32,8 +32,8 @@
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
-    "@play-co/assetpack-core": "1.0.0",
-    "@play-co/assetpack-plugin-mipmap-compress": "1.0.0"
+    "@play-co/assetpack-core": "1.1.3",
+    "@play-co/assetpack-plugin-mipmap-compress": "1.1.3"
   },
   "peerDependencies": {
     "@play-co/assetpack-core": ">=0.0.0",
