@@ -146,10 +146,20 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/json.json'],
                     src: ['bundle/json.json'],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
                 },
                 {
                     alias: ['bundle/json.json5'],
                     src: ['bundle/json.json5'],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
                 },
                 {
                     alias: ['bundle/sprite.png'],
@@ -159,11 +169,11 @@ describe('Manifest', () =>
                         'bundle/sprite.webp',
                         'bundle/sprite.png',
                     ],
-                    // data: {
-                    //     tags: {
-                    //         m: true,
-                    //     },
-                    // },
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
                 },
                 {
                     alias: ['bundle/tps-0'],
@@ -171,12 +181,12 @@ describe('Manifest', () =>
                         'bundle/tps-0@0.5x.json',
                         'bundle/tps-0.json',
                     ],
-                    // data: {
-                    //     tags: {
-                    //         tps: true,
-                    //         m: true,
-                    //     },
-                    // },
+                    data: {
+                        tags: {
+                            tps: true,
+                            m: true,
+                        },
+                    },
                 },
                 {
                     alias: ['bundle/tps-1'],
@@ -184,12 +194,12 @@ describe('Manifest', () =>
                         'bundle/tps-1@0.5x.json',
                         'bundle/tps-1.json',
                     ],
-                    // data: {
-                    //     tags: {
-                    //         tps: true,
-                    //         m: true,
-                    //     },
-                    // },
+                    data: {
+                        tags: {
+                            tps: true,
+                            m: true,
+                        },
+                    },
                 },
             ],
         });
@@ -199,14 +209,23 @@ describe('Manifest', () =>
                 {
                     alias: ['defaultFolder/1.mp3'],
                     src: ['defaultFolder/1.ogg', 'defaultFolder/1.mp3'],
+                    data: {
+                        tags: {},
+                    },
                 },
                 {
                     alias: ['defaultFolder/3.wav'],
                     src: ['defaultFolder/3.ogg', 'defaultFolder/3.mp3'],
+                    data: {
+                        tags: {},
+                    },
                 },
                 {
                     alias: ['spine/dragon.json'],
                     src: ['spine/dragon.json'],
+                    data: {
+                        tags: {}
+                    },
                 },
                 {
                     alias: ['spine/dragon.atlas'],
@@ -214,11 +233,11 @@ describe('Manifest', () =>
                         'spine/dragon@0.5x.atlas',
                         'spine/dragon.atlas',
                     ],
-                    // data: {
-                    //     tags: {
-                    //         spine: true,
-                    //     },
-                    // },
+                    data: {
+                        tags: {
+                            spine: true,
+                        },
+                    },
                 },
             ],
         });
@@ -319,6 +338,7 @@ describe('Manifest', () =>
                 pixiManifest({
                     createShortcuts: true,
                     trimExtensions: true,
+                    includeMetaData: false
                 }),
             ],
         });
@@ -463,6 +483,7 @@ describe('Manifest', () =>
                 pixiManifest({
                     createShortcuts: true,
                     trimExtensions: false,
+                    includeMetaData: false
                 }),
             ],
         });
@@ -585,6 +606,7 @@ describe('Manifest', () =>
                 pixiManifest({
                     createShortcuts: true,
                     trimExtensions: false,
+                    includeMetaData: false
                 }),
             ],
         });
@@ -729,6 +751,7 @@ describe('Manifest', () =>
                 pixiManifest({
                     createShortcuts: false,
                     trimExtensions: true,
+                    includeMetaData: false
                 }),
             ],
         });
@@ -894,7 +917,9 @@ describe('Manifest', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                pixiManifest(),
+                pixiManifest({
+                    includeMetaData: false
+                }),
             ],
         });
 
