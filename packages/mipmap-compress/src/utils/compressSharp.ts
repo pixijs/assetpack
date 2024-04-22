@@ -15,12 +15,12 @@ export async function compressSharp(
     {
         // optimising the PNG image and using that as the source of the WebP and AVIF images
         // will result in a smaller file size and increase the speed of the compression.
-        sharpImage = sharp(await image.sharpImage.png(options.png as PngOptions).toBuffer());
+        sharpImage = sharp(await image.sharpImage.png({ ...options.png as PngOptions, force: true }).toBuffer());
 
         compressed.push({
             format: '.png',
             resolution: image.resolution,
-            sharpImage
+            sharpImage: sharpImage.clone(),
         });
     }
 

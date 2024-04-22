@@ -1,4 +1,4 @@
-import { AssetPack } from '@play-co/assetpack-core';
+import { AssetPack, Logger } from '@play-co/assetpack-core';
 import { existsSync, readJSONSync } from 'fs-extra';
 import sharp from 'sharp';
 import type { File } from '../../../shared/test/index';
@@ -70,6 +70,8 @@ describe('Texture Packer', () =>
         const sheet2Exists = existsSync(`${outputDir}/sprites-1.json`);
 
         expect(sheet2Exists).toBe(false);
+
+        expect(existsSync(`${outputDir}/sprites`)).toBe(false);
     });
 
     it('should adjust the size of the textures outputted based on maximumTextureSize', async () =>
@@ -567,7 +569,7 @@ describe('Texture Packer', () =>
         });
 
         // Mock console.warn
-        const mockWarn = jest.spyOn(console, 'warn').mockImplementation();
+        const mockWarn = jest.spyOn(Logger, 'warn').mockImplementation();
 
         await assetpack.run();
 

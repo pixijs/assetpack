@@ -96,7 +96,8 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             // eslint-disable-next-line max-len
             fixedResolutions[resolutionOptions.fixedResolution as any] = resolutionOptions.resolutions[resolutionOptions.fixedResolution];
 
-            asset.ignoreChildren = true;
+            // skip the children so that they do not get processed!
+            asset.skipChildren();
 
             const largestResolution = Math.max(...Object.values(resolutionOptions.resolutions));
             const resolutionHash = asset.allMetaData[tags.fix as any] ? fixedResolutions : resolutionOptions.resolutions;

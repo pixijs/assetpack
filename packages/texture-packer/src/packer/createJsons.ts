@@ -42,7 +42,7 @@ export function createJsons(
                     w: rect.width,
                     h: rect.height
                 },
-                rotated: false,
+                rotated: rect.rot,
                 trimmed: rect.textureData.trimmed,
                 spriteSourceSize: {
                     x: rect.textureData.trimOffsetLeft,

@@ -121,6 +121,6 @@ describe('Json', () =>
 
         const data = readFileSync(`${outputDir}/json/json.json`, 'utf8');
 
-        expect(data.replace(/\\/g, '').trim()).toEqual(`"{"hello":"world","Im":"not broken"}"`);
+        expect(data.replace(/\\/g, '').trim()).toEqual(`{"hello":"world","Im":"not broken"}`);
     });
 });
