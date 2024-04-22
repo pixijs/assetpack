@@ -29,7 +29,6 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@node-rs/crc32": "^1.10.0",
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {

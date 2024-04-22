@@ -3,7 +3,8 @@ import {
     type Asset,
     type AssetPipe,
     type PipeSystem,
-    path
+    path,
+    findAssetsWithFileName
 } from '@play-co/assetpack-core';
 
 import fs from 'fs-extra';
@@ -31,6 +32,36 @@ export interface PixiManifestOptions
     trimExtensions?: boolean;
 }
 
+// TODO EXPORT this out! But don't want to create a dependency on the atlas plugin just yet..
+export class AtlasView
+{
+    public rawAtlas: string;
+
+    constructor(buffer: Buffer)
+    {
+        this.rawAtlas = buffer.toString();
+    }
+
+    getTextures(): string[]
+    {
+        const regex = /^.+?(?:\.png|\.jpg|\.jpeg|\.webp|\.avif)$/gm;
+
+        const matches = this.rawAtlas.match(regex);
+
+        return matches as string[];
+    }
+
+    replaceTexture(filename: string, newFilename: string)
+    {
+        this.rawAtlas = this.rawAtlas.replace(filename, newFilename);
+    }
+
+    get buffer()
+    {
+        return Buffer.from(this.rawAtlas);
+    }
+}
+
 export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<PixiManifestOptions>
 {
     const defaultOptions = {
@@ -45,6 +76,8 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
         defaultOptions,
         finish: async (asset: Asset, options, pipeSystem: PipeSystem) =>
         {
+            removeAtlasTextures(asset);
+
             const newFileName = path.dirname(options.output) === '.'
                 ? path.joinSafe(pipeSystem.outputPath, options.output) : options.output;
 
@@ -100,7 +133,9 @@ function collectAssets(
             {
                 bundleAssets.push({
                     alias: getShortNames(stripTags(path.relative(entryPath, `${asset.path}-${pageIndex}`)), options),
-                    src: pages.map((finalAsset) => path.relative(outputPath, finalAsset.path))
+                    src: pages
+                        .map((finalAsset) => path.relative(outputPath, finalAsset.path))
+                        .sort((a, b) => b.localeCompare(a))
                 });
             });
         }
@@ -108,7 +143,9 @@ function collectAssets(
         {
             bundleAssets.push({
                 alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
-                src: finalAssets.map((finalAsset) => path.relative(outputPath, finalAsset.path))
+                src: finalAssets
+                    .map((finalAsset) => path.relative(outputPath, finalAsset.path))
+                    .sort((a, b) => b.localeCompare(a))
             });
         }
     }
@@ -116,6 +153,34 @@ function collectAssets(
     asset.children.forEach((child) =>
     {
         collectAssets(child, options, outputPath, entryPath, bundles, localBundle);
+    });
+
+    // for all assets.. check for atlas and remove them from the bundle..
+}
+
+function removeAtlasTextures(asset: Asset)
+{
+    // do a pass to remove what we don't want..
+
+    const atlasAssets = findAssetsWithFileName((asset) =>
+        asset.extension === '.atlas' && asset.transformChildren.length === 0, asset, true);
+
+    atlasAssets.forEach((atlasAsset) =>
+    {
+        const view = new AtlasView(atlasAsset.buffer);
+
+        const textureNames = view.getTextures();
+
+        textureNames.forEach((texture) =>
+        {
+            const textureAssets = findAssetsWithFileName((asset) =>
+                asset.filename === texture, asset, true);
+
+            textureAssets.forEach((textureAsset) =>
+            {
+                textureAsset.skip = true;
+            });
+        });
     });
 }
 

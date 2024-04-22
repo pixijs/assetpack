@@ -1,28 +1,27 @@
 import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, swapExt  } from '@play-co/assetpack-core';
 import type { CompressOptions } from '@play-co/assetpack-plugin-mipmap-compress';
+import { AtlasView } from './AtlasView';
 
-export type TexturePackerCompressOptions = PluginOptions<'tps' | 'nc'> & CompressOptions;
+export type SpineAtlasCompressOptions = PluginOptions<'nc'> & CompressOptions;
 
-export function texturePackerCompress(_options?: TexturePackerCompressOptions): AssetPipe<TexturePackerCompressOptions>
+export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetPipe<SpineAtlasCompressOptions>
 {
     const defaultOptions = {
         ..._options,
         tags: {
-            tps: 'tps',
-            nc: 'nc',
+            tps: 'nc',
             ..._options?.tags
         }
     };
 
     return {
-        name: 'texture-packer-compress',
+        name: 'spine-atlas-compress',
         defaultOptions,
         test(asset: Asset, options)
         {
-            return (asset.allMetaData[options.tags.tps]
-                && !asset.allMetaData[options.tags.nc]
-                && checkExt(asset.path, '.json'));
+            return !asset.allMetaData[options.tags.nc]
+                && checkExt(asset.path, '.atlas');
         },
         async transform(asset: Asset, options)
         {
@@ -32,19 +31,26 @@ export function texturePackerCompress(_options?: TexturePackerCompressOptions): 
             if (options.png)formats.push('png');
             if (options.webp)formats.push('webp');
 
-            const json = JSON.parse(asset.buffer.toString());
+            const atlas = new AtlasView(asset.buffer);
+
+            const textures = atlas.getTextures();
 
             const assets = formats.map((format) =>
             {
                 const extension = `.${format}`;
 
-                const newFileName = swapExt(asset.filename, `${extension}.json`);
+                const newAtlas = new AtlasView(asset.buffer);
 
-                json.meta.image = swapExt(json.meta.image, extension);
+                const newFileName = swapExt(asset.filename, `${extension}.atlas`);
+
+                textures.forEach((texture) =>
+                {
+                    newAtlas.replaceTexture(texture, swapExt(texture, extension));
+                });
 
                 const newAsset = createNewAssetAt(asset, newFileName);
 
-                newAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
+                newAsset.buffer = newAtlas.buffer;
 
                 return newAsset;
             });

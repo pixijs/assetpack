@@ -132,7 +132,7 @@ export class Asset
             Logger.warn('[Assetpack] folders should not have hashes. Contact the developer of the Assetpack');
         }
 
-        this._hash ??= getHash(this.buffer ?? this.path);
+        this._hash ??= getHash(this.buffer);
 
         return this._hash;
     }

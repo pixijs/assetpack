@@ -20,7 +20,7 @@ export async function compressSharp(
         compressed.push({
             format: '.png',
             resolution: image.resolution,
-            sharpImage: sharpImage.clone(),
+            sharpImage: sharpImage.clone().png({ ...options.png as PngOptions, force: true }),
         });
     }
 
