@@ -1,6 +1,5 @@
 import type { AvifOptions, WebpOptions, JpegOptions, PngOptions } from 'sharp';
 import type { MipmapCompressImageData, CompressOptions } from '../mipmapCompress';
-import sharp from 'sharp';
 
 export async function compressSharp(
     image: MipmapCompressImageData,
@@ -9,14 +8,10 @@ export async function compressSharp(
 {
     const compressed: MipmapCompressImageData[] = [];
 
-    let sharpImage = image.sharpImage;
+    const sharpImage = image.sharpImage;
 
     if (image.format === '.png' && options.png)
     {
-        // optimising the PNG image and using that as the source of the WebP and AVIF images
-        // will result in a smaller file size and increase the speed of the compression.
-        sharpImage = sharp(await image.sharpImage.png({ ...options.png as PngOptions, force: true }).toBuffer());
-
         compressed.push({
             format: '.png',
             resolution: image.resolution,
