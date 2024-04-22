@@ -154,10 +154,10 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/sprite.png'],
                     src: [
-                        'bundle/sprite.png',
-                        'bundle/sprite.webp',
-                        'bundle/sprite@0.5x.png',
                         'bundle/sprite@0.5x.webp',
+                        'bundle/sprite@0.5x.png',
+                        'bundle/sprite.webp',
+                        'bundle/sprite.png',
                     ],
                     // data: {
                     //     tags: {
@@ -168,8 +168,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps-0'],
                     src: [
-                        'bundle/tps-0.json',
                         'bundle/tps-0@0.5x.json',
+                        'bundle/tps-0.json',
                     ],
                     // data: {
                     //     tags: {
@@ -181,8 +181,8 @@ describe('Manifest', () =>
                 {
                     alias: ['bundle/tps-1'],
                     src: [
-                        'bundle/tps-1.json',
                         'bundle/tps-1@0.5x.json',
+                        'bundle/tps-1.json',
                     ],
                     // data: {
                     //     tags: {
@@ -198,39 +198,21 @@ describe('Manifest', () =>
             assets: [
                 {
                     alias: ['defaultFolder/1.mp3'],
-                    src: ['defaultFolder/1.mp3', 'defaultFolder/1.ogg'],
+                    src: ['defaultFolder/1.ogg', 'defaultFolder/1.mp3'],
                 },
                 {
                     alias: ['defaultFolder/3.wav'],
-                    src: ['defaultFolder/3.mp3', 'defaultFolder/3.ogg'],
+                    src: ['defaultFolder/3.ogg', 'defaultFolder/3.mp3'],
                 },
                 {
                     alias: ['spine/dragon.json'],
                     src: ['spine/dragon.json'],
                 },
                 {
-                    alias: ['spine/dragon.png'],
-                    src: [
-                        'spine/dragon.png',
-                        'spine/dragon.webp',
-                        'spine/dragon@0.5x.png',
-                        'spine/dragon@0.5x.webp',
-                    ],
-                },
-                {
-                    alias: ['spine/dragon2.png'],
-                    src: [
-                        'spine/dragon2.png',
-                        'spine/dragon2.webp',
-                        'spine/dragon2@0.5x.png',
-                        'spine/dragon2@0.5x.webp',
-                    ],
-                },
-                {
                     alias: ['spine/dragon.atlas'],
                     src: [
-                        'spine/dragon.atlas',
                         'spine/dragon@0.5x.atlas',
+                        'spine/dragon.atlas',
                     ],
                     // data: {
                     //     tags: {
@@ -344,7 +326,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest =  await readJSONSync(`${outputDir}/manifest.json`);
+        const manifest =  sortObjectProperties(await readJSONSync(`${outputDir}/manifest.json`));
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',
@@ -379,10 +361,10 @@ describe('Manifest', () =>
                         'sprite'
                     ],
                     src: [
-                        'folder/sprite.png',
-                        'folder/sprite.webp',
-                        'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
+                        'folder/sprite@0.5x.png',
+                        'folder/sprite.webp',
+                        'folder/sprite.png',
                     ]
                 },
                 {
@@ -393,8 +375,8 @@ describe('Manifest', () =>
                         '1'
                     ],
                     src: [
+                        'folder2/1.ogg',
                         'folder2/1.mp3',
-                        'folder2/1.ogg'
                     ]
                 },
                 {
@@ -405,8 +387,8 @@ describe('Manifest', () =>
                         '1'
                     ],
                     src: [
+                        'folder2/folder3/1.ogg',
                         'folder2/folder3/1.mp3',
-                        'folder2/folder3/1.ogg'
                     ]
                 },
                 {
@@ -422,42 +404,14 @@ describe('Manifest', () =>
                 },
                 {
                     alias: [
-                        'spine/dragon.png',
-                        'spine/dragon',
-                        'dragon.png',
-                        'dragon'
-                    ],
-                    src: [
-                        'spine/dragon.png',
-                        'spine/dragon.webp',
-                        'spine/dragon@0.5x.png',
-                        'spine/dragon@0.5x.webp',
-                    ]
-                },
-                {
-                    alias: [
-                        'spine/dragon2.png',
-                        'spine/dragon2',
-                        'dragon2.png',
-                        'dragon2'
-                    ],
-                    src: [
-                        'spine/dragon2.png',
-                        'spine/dragon2.webp',
-                        'spine/dragon2@0.5x.png',
-                        'spine/dragon2@0.5x.webp',
-                    ]
-                },
-                {
-                    alias: [
                         'spine/dragon.atlas',
                         'spine/dragon',
                         'dragon.atlas',
                         'dragon'
                     ],
                     src: [
+                        'spine/dragon@0.5x.atlas',
                         'spine/dragon.atlas',
-                        'spine/dragon@0.5x.atlas'
                     ]
                 }
             ]
@@ -654,19 +608,19 @@ describe('Manifest', () =>
                 {
                     alias: ['folder/sprite.png', 'sprite.png'],
                     src: [
-                        'folder/sprite.png',
-                        'folder/sprite.webp',
-                        'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
+                        'folder/sprite@0.5x.png',
+                        'folder/sprite.webp',
+                        'folder/sprite.png',
                     ],
                 },
                 {
                     alias: ['folder2/1.mp3', '1.mp3'],
-                    src: ['folder2/1.mp3', 'folder2/1.ogg'],
+                    src: ['folder2/1.ogg', 'folder2/1.mp3'],
                 },
                 {
                     alias: ['folder2/folder3/1.mp3', '1.mp3'],
-                    src: ['folder2/folder3/1.mp3', 'folder2/folder3/1.ogg'],
+                    src: ['folder2/folder3/1.ogg', 'folder2/folder3/1.mp3'],
                 },
                 {
                     alias: ['spine/dragon.json', 'dragon.json'],
@@ -674,7 +628,7 @@ describe('Manifest', () =>
                 },
                 {
                     alias: ['spine/dragon.atlas', 'dragon.atlas'],
-                    src: ['spine/dragon.atlas', 'spine/dragon@0.5x.atlas'],
+                    src: ['spine/dragon@0.5x.atlas', 'spine/dragon.atlas'],
                 },
             ],
         });
@@ -811,10 +765,10 @@ describe('Manifest', () =>
                         'folder/sprite'
                     ],
                     src: [
-                        'folder/sprite.png',
-                        'folder/sprite.webp',
-                        'folder/sprite@0.5x.png',
                         'folder/sprite@0.5x.webp',
+                        'folder/sprite@0.5x.png',
+                        'folder/sprite.webp',
+                        'folder/sprite.png',
                     ]
                 },
                 {
@@ -823,18 +777,18 @@ describe('Manifest', () =>
                         'folder2/1'
                     ],
                     src: [
+                        'folder2/1.ogg',
                         'folder2/1.mp3',
-                        'folder2/1.ogg'
                     ]
                 },
                 {
                     alias: [
                         'folder2/folder3/1.mp3',
-                        'folder2/folder3/1'
+                        'folder2/folder3/1',
                     ],
                     src: [
+                        'folder2/folder3/1.ogg',
                         'folder2/folder3/1.mp3',
-                        'folder2/folder3/1.ogg'
                     ]
                 },
                 {
@@ -848,36 +802,12 @@ describe('Manifest', () =>
                 },
                 {
                     alias: [
-                        'spine/dragon.png',
-                        'spine/dragon'
-                    ],
-                    src: [
-                        'spine/dragon.png',
-                        'spine/dragon.webp',
-                        'spine/dragon@0.5x.png',
-                        'spine/dragon@0.5x.webp',
-                    ]
-                },
-                {
-                    alias: [
-                        'spine/dragon2.png',
-                        'spine/dragon2'
-                    ],
-                    src: [
-                        'spine/dragon2.png',
-                        'spine/dragon2.webp',
-                        'spine/dragon2@0.5x.png',
-                        'spine/dragon2@0.5x.webp',
-                    ]
-                },
-                {
-                    alias: [
                         'spine/dragon.atlas',
                         'spine/dragon'
                     ],
                     src: [
+                        'spine/dragon@0.5x.atlas',
                         'spine/dragon.atlas',
-                        'spine/dragon@0.5x.atlas'
                     ]
                 }
             ]
