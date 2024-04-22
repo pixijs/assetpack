@@ -1,6 +1,6 @@
 import { extractTagsFromFileName } from './utils/extractTagsFromFileName';
 import { getHash } from './utils/getHash';
-import fs from 'fs-extra';
+import { readFileSync } from 'fs-extra';
 import { Logger } from './logger/Logger';
 import { path } from './utils/path';
 
@@ -112,7 +112,7 @@ export class Asset
 
         if (!this._buffer)
         {
-            this._buffer = fs.readFileSync(this.path);
+            this._buffer = readFileSync(this.path);
         }
 
         return this._buffer;
@@ -132,7 +132,7 @@ export class Asset
             Logger.warn('[Assetpack] folders should not have hashes. Contact the developer of the Assetpack');
         }
 
-        this._hash ??= getHash(this.buffer ?? this.path);
+        this._hash ??= getHash(this.buffer);
 
         return this._hash;
     }

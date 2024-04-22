@@ -1,7 +1,8 @@
 import { AssetPack } from '@play-co/assetpack-core';
 import { audio } from '@play-co/assetpack-plugin-ffmpeg';
 import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
-import { mipmapCompress, spineAtlasMipmap } from '@play-co/assetpack-plugin-mipmap-compress';
+import { mipmapCompress } from '@play-co/assetpack-plugin-mipmap-compress';
+import { spineAtlasMipmap } from '@play-co/assetpack-plugin-spine';
 import { texturePacker } from '@play-co/assetpack-plugin-texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
@@ -318,6 +319,7 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
+            cache: false,
             pipes: [
                 texturePacker({
                     resolutionOptions: {
@@ -342,7 +344,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
+        const manifest =  await readJSONSync(`${outputDir}/manifest.json`);
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',
@@ -462,6 +464,78 @@ describe('Manifest', () =>
         });
     });
 
+    it('should not include spine atlas textures', async () =>
+    {
+        const testName = 'manifest-shortcut-atlas-textures';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'spine',
+                    files: [
+                        {
+                            name: 'dragon{spine}.atlas',
+                            content: assetPath(pkg, 'spine/dragon.atlas'),
+                        },
+                        {
+                            name: 'dragon.png',
+                            content: assetPath(pkg, 'spine/dragon.png'),
+                        },
+                        {
+                            name: 'dragon2.png',
+                            content: assetPath(pkg, 'spine/dragon2.png'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            output: outputDir,
+            cache: false,
+            pipes: [
+                texturePacker({
+                    resolutionOptions: {
+                        maximumTextureSize: 512,
+                    },
+                }),
+                audio(),
+                pixiManifest({
+                    createShortcuts: true,
+                    trimExtensions: false,
+                }),
+            ],
+        });
+
+        await assetpack.run();
+
+        // load the manifest json
+        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
+
+        expect(manifest.bundles[0]).toEqual({
+
+            name: 'default',
+            assets: [
+                {
+                    alias: [
+                        'spine/dragon.atlas',
+                        'dragon.atlas'
+                    ],
+                    src: [
+                        'spine/dragon.atlas'
+                    ]
+                }
+            ]
+
+        });
+    });
+
     it('should not trim extensions in manifest names', async () =>
     {
         const testName = 'manifest-shortcut-no-trim';
@@ -538,6 +612,7 @@ describe('Manifest', () =>
 
         const assetpack = new AssetPack({
             entry: inputDir,
+            cache: false,
             output: outputDir,
             pipes: [
                 texturePacker({
@@ -596,24 +671,6 @@ describe('Manifest', () =>
                 {
                     alias: ['spine/dragon.json', 'dragon.json'],
                     src: ['spine/dragon.json'],
-                },
-                {
-                    alias: ['spine/dragon.png', 'dragon.png'],
-                    src: [
-                        'spine/dragon.png',
-                        'spine/dragon.webp',
-                        'spine/dragon@0.5x.png',
-                        'spine/dragon@0.5x.webp',
-                    ],
-                },
-                {
-                    alias: ['spine/dragon2.png', 'dragon2.png'],
-                    src: [
-                        'spine/dragon2.png',
-                        'spine/dragon2.webp',
-                        'spine/dragon2@0.5x.png',
-                        'spine/dragon2@0.5x.webp',
-                    ],
                 },
                 {
                     alias: ['spine/dragon.atlas', 'dragon.atlas'],
@@ -700,6 +757,7 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
+            cache: false,
             pipes: [
                 texturePacker({
                     resolutionOptions: {
@@ -853,6 +911,7 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
+            cache: false,
             pipes: [
                 pixiManifest({
                     output: `${outputDir}/manifest2.json`,
@@ -903,6 +962,7 @@ describe('Manifest', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
+            cache: false,
             pipes: [
                 pixiManifest(),
             ],

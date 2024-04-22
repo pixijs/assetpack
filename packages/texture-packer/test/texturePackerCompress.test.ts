@@ -35,13 +35,19 @@ function genFolder(testName: string)
 
 describe('Texture Packer Compression', () =>
 {
-    it.skip('should create a sprite sheet', async () =>
+    it('should create a sprite sheet', async () =>
     {
         const testName = 'tp-compression';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         genFolder(testName);
+
+        const compress = {
+            png: true,
+            jpg: true,
+            webp: true,
+        };
 
         const assetpack = new AssetPack({
             entry: inputDir,
@@ -60,7 +66,7 @@ describe('Texture Packer Compression', () =>
                         webp: true,
                     }
                 }),
-                texturePackerCompress(),
+                texturePackerCompress(compress),
             ]
         });
 
