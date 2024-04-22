@@ -30,6 +30,7 @@ export interface PixiManifestOptions
     output?: string;
     createShortcuts?: boolean;
     trimExtensions?: boolean;
+    includeMetaData?: boolean;
 }
 
 // TODO EXPORT this out! But don't want to create a dependency on the atlas plugin just yet..
@@ -68,6 +69,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
         output: 'manifest.json',
         createShortcuts: false,
         trimExtensions: false,
+        includeMetaData: true,
         ..._options
     };
 
@@ -135,7 +137,10 @@ function collectAssets(
                     alias: getShortNames(stripTags(path.relative(entryPath, `${asset.path}-${pageIndex}`)), options),
                     src: pages
                         .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                        .sort((a, b) => b.localeCompare(a))
+                        .sort((a, b) => b.localeCompare(a)),
+                    data:  options.includeMetaData ? {
+                        tags: asset.allMetaData
+                    } : undefined
                 });
             });
         }
@@ -145,7 +150,10 @@ function collectAssets(
                 alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
                 src: finalAssets
                     .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                    .sort((a, b) => b.localeCompare(a))
+                    .sort((a, b) => b.localeCompare(a)),
+                data:  options.includeMetaData ? {
+                    tags: asset.allMetaData
+                } : undefined
             });
         }
     }
