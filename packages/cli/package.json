@@ -1,6 +1,6 @@
 {
   "name": "@play-co/assetpack-cli",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A simple CLI to run AssetPack",
   "keywords": [
     "assetpack",
