@@ -32,7 +32,7 @@ export interface PixiManifestOptions
     trimExtensions?: boolean;
 }
 
-// TODO EXPORT this out!
+// TODO EXPORT this out! But don't want to create a dependency on the atlas plugin just yet..
 export class AtlasView
 {
     public rawAtlas: string;
