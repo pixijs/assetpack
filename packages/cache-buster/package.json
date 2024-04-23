@@ -1,6 +1,6 @@
 {
   "name": "@play-co/assetpack-plugin-cache-buster",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "",
   "homepage": "https://github.com/pixijs/assetpack/tree/master/packages/cache-buster/#readme",
   "bugs": "https://github.com/pixijs/assetpack/issues",
@@ -32,7 +32,7 @@
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
-    "@play-co/assetpack-core": "1.2.1"
+    "@play-co/assetpack-core": "1.2.2"
   },
   "peerDependencies": {
     "@play-co/assetpack-core": ">=0.0.0"
