@@ -1,7 +1,7 @@
 import { AssetPack } from '@play-co/assetpack-core';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
-import { mipmapCompress } from '@play-co/assetpack-plugin-mipmap-compress';
+import { mipmap } from '@play-co/assetpack-plugin-image';
 import { spineAtlasMipmap } from '../src/spineAtlasMipmap';
 
 const pkg = 'spine';
@@ -55,7 +55,7 @@ describe('Atlas Mipmap', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                mipmapCompress(opts),
+                mipmap(opts.mipmap),
                 spineAtlasMipmap(opts.mipmap),
             ]
         });
@@ -101,7 +101,7 @@ describe('Atlas Mipmap', () =>
                 folders: [],
             });
 
-        const mipmap = {
+        const mipmapOpts = {
             resolutions: { low: 0.5 },
             fixedResolution: 'low'
         };
@@ -111,8 +111,8 @@ describe('Atlas Mipmap', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                spineAtlasMipmap(mipmap),
-                mipmapCompress({ compress: { png: true }, mipmap }),
+                spineAtlasMipmap(mipmapOpts),
+                mipmap(mipmapOpts),
             ]
         });
 
@@ -155,7 +155,7 @@ describe('Atlas Mipmap', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                mipmapCompress({ compress: false }),
+                mipmap(),
                 spineAtlasMipmap(),
             ]
         });
@@ -200,7 +200,7 @@ describe('Atlas Mipmap', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                mipmapCompress({ compress: false }),
+                mipmap(),
                 spineAtlasMipmap(),
             ]
         });

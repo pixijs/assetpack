@@ -1,6 +1,6 @@
 import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 import { checkExt, createNewAssetAt, swapExt  } from '@play-co/assetpack-core';
-import type { CompressOptions } from '@play-co/assetpack-plugin-mipmap-compress';
+import type { CompressOptions } from '@play-co/assetpack-plugin-image';
 import { AtlasView } from './AtlasView';
 
 export type SpineAtlasCompressOptions = PluginOptions<'nc'> & CompressOptions;

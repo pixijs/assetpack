@@ -1,11 +1,11 @@
-import type { MipmapCompressImageData } from '../mipmapCompress';
+import type { CompressImageData } from '../compress';
 
 export async function mipmapSharp(
-    image: MipmapCompressImageData,
+    image: CompressImageData,
     resolutionHash: {[x: string]: number},
     largestResolution: number
 
-): Promise<MipmapCompressImageData[]>
+): Promise<CompressImageData[]>
 {
     const sharpImage = image.sharpImage;
 
@@ -13,7 +13,7 @@ export async function mipmapSharp(
 
     const { width, height } = metadata;
 
-    const output: MipmapCompressImageData[] = [];
+    const output: CompressImageData[] = [];
 
     if (width && height)
     {

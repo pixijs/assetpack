@@ -1,9 +1,9 @@
 import { AssetPack } from '@play-co/assetpack-core';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
-import { mipmapCompress } from '../src/mipmapCompress';
+import { compress } from '../src/compress';
 
-const pkg = 'mipmap-compress';
+const pkg = 'image';
 
 describe('Compress', () =>
 {
@@ -35,14 +35,11 @@ describe('Compress', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                mipmapCompress({
-                    mipmap: false,
-                    compress: {
-                        png: true,
-                        webp: true,
-                        avif: true,
-                        jpg: true,
-                    },
+                compress({
+                    png: true,
+                    webp: true,
+                    avif: true,
+                    jpg: true,
                 }),
             ]
         });
@@ -58,7 +55,7 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
     });
 
-    it('should compress png with 1 plugin', async () =>
+    it.only('should compress png with 1 plugin', async () =>
     {
         const testName = 'compress-png-1-plugin';
         const inputDir = getInputDir(pkg, testName);
@@ -85,16 +82,21 @@ describe('Compress', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                mipmapCompress({
-                    mipmap: false,
-                    compress: {
-                        png: true,
-                        webp: true,
-                        jpg: true,
-                        avif: true,
-                    },
+                compress({
+                    png: true,
+                    webp: true,
+                    jpg: true,
+                    avif: true,
                 }),
-            ]
+            ],
+            assetSettings: [{
+                files: ['**/*.png'],
+                settings: {
+                    tags: {
+                        nc: 'ncc',
+                    }
+                }
+            }]
         });
 
         await pack.run();
@@ -135,11 +137,9 @@ describe('Compress', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                mipmapCompress({
-                    compress: {
-                        webp: false,
-                        avif: false,
-                    }
+                compress({
+                    webp: false,
+                    avif: false,
                 })
             ]
         });

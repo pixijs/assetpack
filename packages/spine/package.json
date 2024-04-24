@@ -33,11 +33,11 @@
   },
   "devDependencies": {
     "@play-co/assetpack-core": "1.2.2",
-    "@play-co/assetpack-plugin-mipmap-compress": "1.2.2"
+    "@play-co/assetpack-plugin-image": "1.2.2"
   },
   "peerDependencies": {
     "@play-co/assetpack-core": ">=0.0.0",
-    "@play-co/assetpack-plugin-mipmap-compress": ">=0.0.0"
+    "@play-co/assetpack-plugin-image": ">=0.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

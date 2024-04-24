@@ -1,4 +1,4 @@
-import type { LogLevel } from './logger/logLevel';
+import type { LogLevelKeys } from './logger/logLevel';
 import type { AssetPipe } from './pipes/AssetPipe';
 import type { AssetSettings } from './pipes/PipeSystem';
 
@@ -17,7 +17,7 @@ export interface AssetPackConfig
       * If true cached tree will be used
       */
     cache?: boolean;
-    logLevel?: LogLevel;
+    logLevel?: LogLevelKeys;
     pipes?: (AssetPipe | AssetPipe[])[];
     assetSettings?: AssetSettings[];
 }

@@ -4,19 +4,19 @@ import { path } from './utils/path';
 export interface AssetIgnoreOptions
 {
     ignore: string | string[];
-    basePath: string;
+    entryPath: string;
 }
 
 export class AssetIgnore
 {
     private _ignore: string[];
     private _ignoreHash: Record<string, boolean> = {};
-    private _basePath: string;
+    private _entryPath: string;
 
     constructor(options: AssetIgnoreOptions)
     {
         this._ignore = (Array.isArray(options.ignore) ? options.ignore : [options.ignore]) as string[];
-        this._basePath = options.basePath;
+        this._entryPath = options.entryPath;
     }
 
     public shouldIgnore(fullPath: string): boolean
@@ -28,7 +28,7 @@ export class AssetIgnore
             _ignoreHash[fullPath] = false;
             if (_ignore.length > 0)
             {
-                const relativePath = path.relative(this._basePath, fullPath);
+                const relativePath = path.relative(this._entryPath, fullPath);
 
                 for (let i = 0; i < _ignore.length; i++)
                 {

@@ -1,5 +1,5 @@
 import { AssetPack } from '@play-co/assetpack-core';
-import { mipmapCompress } from '@play-co/assetpack-plugin-mipmap-compress';
+import { compress } from '@play-co/assetpack-plugin-image';
 import { texturePacker, texturePackerCompress } from '@play-co/assetpack-plugin-texture-packer';
 import { readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test/index';
@@ -43,7 +43,7 @@ describe('Texture Packer Compression', () =>
 
         genFolder(testName);
 
-        const compress = {
+        const compressOpt = {
             png: true,
             jpg: true,
             webp: true,
@@ -59,14 +59,8 @@ describe('Texture Packer Compression', () =>
                         resolutions: { default: 1 },
                     },
                 }),
-                mipmapCompress({
-                    compress: {
-                        png: true,
-                        jpg: true,
-                        webp: true,
-                    }
-                }),
-                texturePackerCompress(compress),
+                compress(compressOpt),
+                texturePackerCompress(compressOpt),
             ]
         });
 

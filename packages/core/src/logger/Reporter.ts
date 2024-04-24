@@ -1,13 +1,13 @@
 import chalk from 'chalk';
-import type { LogLevel } from './logLevel';
-import { LogLevelEnum } from './logLevel';
-import { persistMessage, resetWindow, setSpinnerStatus, updateSpinner } from './render';
+import type { LogLevelKeys } from './logLevel';
+import { LogLevel } from './logLevel';
+import { persistMessage, resetWindow, startProgress, stopProgress, updateProgress } from './render';
 import { prettifyTime } from './utils';
 
 export interface LogEvent
 {
     type: 'log';
-    level: LogLevel;
+    level: LogLevelKeys;
     message: string;
 }
 
@@ -20,96 +20,69 @@ export interface BuildEvent
 
 export type ReporterEvent = LogEvent | BuildEvent;
 
-function getProgressBar(ratio: number)
-{
-    const size = 40;
-    const prog = [];
-
-    for (let i = 0; i < size; i++)
-    {
-        if (ratio > (i / size))
-        {
-            prog.push('█');
-        }
-        else
-        {
-            prog.push('░');
-        }
-    }
-
-    return prog.join('');
-}
 export class Reporter
 {
-    public level: LogLevel = 'info';
+    public level: LogLevelKeys = 'info';
     private _buildTime = 0;
 
     // Exported only for test
     public report(event: ReporterEvent): void
     {
-        const logLevelFilter = LogLevelEnum[this.level || 'info'];
+        const logLevelFilter = LogLevel[this.level || 'info'];
 
         switch (event.type)
         {
             case 'buildStart': {
-                if (logLevelFilter < LogLevelEnum.info)
+                if (logLevelFilter < LogLevel.info)
                 {
                     break;
                 }
 
                 this._buildTime = Date.now();
-                updateSpinner('Starting Plugins...');
                 // Clear any previous output
                 resetWindow();
-
-                /// / persistMessage(`${chalk.blue.bold('›')} ${chalk.blue.bold(`Building: ${event.message}`)}`);
-
-                setSpinnerStatus('success', `AssetPack Initialized`);
+                persistMessage(chalk.green.bold(`✔ AssetPack Initialized`));
                 persistMessage(`${chalk.blue.bold('›')} ${chalk.blue.bold(`Building: ${event.message}`)}`);
+                startProgress();
 
                 break;
             }
             case 'buildProgress': {
-                if (logLevelFilter < LogLevelEnum.info)
+                if (logLevelFilter < LogLevel.info)
                 {
                     break;
                 }
 
                 // render a bar..
-                const progress = parseInt(event.message || '0', 10) / 100;
+                const progress = parseInt(event.message || '0', 10);
 
-                const progressBar = getProgressBar(progress);
-
-                const message = `${progressBar} ${event.message}%`;
-
-                updateSpinner(`${chalk.green(message)}`);
+                updateProgress(progress);
 
                 break;
             }
             case 'buildSuccess':
-                if (logLevelFilter < LogLevelEnum.info)
+                if (logLevelFilter < LogLevel.info)
                 {
                     break;
                 }
 
-                setSpinnerStatus('success', 'Build Complete');
+                stopProgress();
                 resetWindow();
-
                 persistMessage(chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Date.now() - this._buildTime)}`));
                 break;
             case 'buildFailure':
-                if (logLevelFilter < LogLevelEnum.error)
+                if (logLevelFilter < LogLevel.error)
                 {
                     break;
                 }
 
+                stopProgress();
                 resetWindow();
-
-                setSpinnerStatus('error', chalk.red.bold('Build failed.'));
+                persistMessage(chalk.green.bold(`✖ AssetPack Build Failed`));
 
                 break;
             case 'log': {
-                if (logLevelFilter < LogLevelEnum[event.level])
+                if (logLevelFilter < LogLevel[event.level])
                 {
                     break;
                 }

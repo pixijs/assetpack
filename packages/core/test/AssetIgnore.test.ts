@@ -6,7 +6,7 @@ describe('AssetIgnore', () =>
     {
         const assetIgnore = new AssetIgnore({
             ignore: '**/*.png',
-            basePath: 'test',
+            entryPath: 'test',
         });
 
         expect(assetIgnore.shouldIgnore('test/test.png')).toBe(true);
@@ -17,7 +17,7 @@ describe('AssetIgnore', () =>
     {
         const assetIgnore = new AssetIgnore({
             ignore: ['**/*.png', '**/*.json'],
-            basePath: 'test',
+            entryPath: 'test',
         });
 
         expect(assetIgnore.shouldIgnore('test/test.png')).toBe(true);

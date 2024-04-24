@@ -1,10 +1,10 @@
 import type { ReporterEvent } from './Reporter';
 import { Reporter } from './Reporter';
-import type { LogLevel } from './logLevel';
+import type { LogLevelKeys } from './logLevel';
 
 export interface LoggerOptions
 {
-    level: LogLevel;
+    level: LogLevelKeys;
 }
 
 class LoggerClass

@@ -7,6 +7,7 @@ import { AssetIgnore } from './AssetIgnore';
 import type { AssetSettings } from './pipes/PipeSystem';
 import { applySettingToAsset } from './utils/applySettingToAsset';
 import { path } from './utils/path';
+import { Logger } from './logger/Logger';
 
 export interface AssetWatcherOptions
 {
@@ -26,18 +27,13 @@ interface ChangeData
 
 export class AssetWatcher
 {
-    static defaultOptions: Omit<AssetWatcherOptions, 'onUpdate' | 'onComplete'> = {
-        entryPath: './src/assets',
-        ignore: [],
-    };
-
     private _watcher: chokidar.FSWatcher | undefined;
     private _assetHash: Record<string, Asset> = {};
 
     private _changes: ChangeData[] = [];
 
     private _entryPath = '';
-    private _root: Asset = new Asset({ path: 'noob', isFolder: true });
+    private _root: Asset = new Asset({ path: 'noop', isFolder: true });
     private _timeoutId: NodeJS.Timeout | undefined;
     private _onUpdate: (root: Asset) => Promise<void>;
     private _updatingPromise: Promise<void> = Promise.resolve();
@@ -45,12 +41,10 @@ export class AssetWatcher
     private _ignore: AssetIgnore;
     private _assetSettingsData: AssetSettings[];
     private _assetCacheData: Record<string, CachedAsset> | undefined | null;
-    private _inited = false;
+    private _initialised = false;
 
     constructor(options: AssetWatcherOptions)
     {
-        options = { ...AssetWatcher.defaultOptions, ...options };
-
         const entryPath = options.entryPath;
 
         this._onUpdate = options.onUpdate;
@@ -58,8 +52,8 @@ export class AssetWatcher
         this._entryPath = entryPath;
 
         this._ignore = new AssetIgnore({
-            ignore: options.ignore as string[],
-            basePath: entryPath
+            ignore: options.ignore as string[] ?? [],
+            entryPath
         });
 
         this._assetCacheData = options.assetCacheData;
@@ -68,8 +62,13 @@ export class AssetWatcher
 
     private _init()
     {
-        if (this._inited) return;
-        this._inited = true;
+        if (this._initialised) return;
+        this._initialised = true;
+
+        Logger.report({
+            type: 'buildStart',
+            message: this._entryPath,
+        });
 
         const asset = new Asset({
             path: this._entryPath,
@@ -93,14 +92,12 @@ export class AssetWatcher
     {
         this._init();
 
-        // logAssetGraph(this._root);
-
         return this._runUpdate();
     }
 
     async watch()
     {
-        let firstRun = !this._inited;
+        let firstRun = !this._initialised;
 
         this._init();
 
@@ -162,7 +159,7 @@ export class AssetWatcher
         await this._updatingPromise;
     }
 
-    private _runUpdate()
+    private async _runUpdate()
     {
         return this._onUpdate(this._root).then(() =>
         {

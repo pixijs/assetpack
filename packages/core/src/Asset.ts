@@ -13,7 +13,7 @@ export interface AssetOptions
 
 export class Asset
 {
-    static defaultOptions: AssetOptions = {
+    private _defaultOptions: AssetOptions = {
         path: '',
         isFolder: false,
     };
@@ -45,7 +45,7 @@ export class Asset
 
     constructor(options: AssetOptions)
     {
-        options = { ...Asset.defaultOptions, ...options };
+        options = { ...this._defaultOptions, ...options };
 
         this.path = options.path;
         this.isFolder = options.isFolder as boolean;

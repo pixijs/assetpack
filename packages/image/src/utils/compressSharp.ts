@@ -1,12 +1,12 @@
 import type { AvifOptions, WebpOptions, JpegOptions, PngOptions } from 'sharp';
-import type { MipmapCompressImageData, CompressOptions } from '../mipmapCompress';
+import type { CompressImageData, CompressOptions } from '../compress';
 
 export async function compressSharp(
-    image: MipmapCompressImageData,
+    image: CompressImageData,
     options: CompressOptions
-): Promise<MipmapCompressImageData[]>
+): Promise<CompressImageData[]>
 {
-    const compressed: MipmapCompressImageData[] = [];
+    const compressed: CompressImageData[] = [];
 
     const sharpImage = image.sharpImage;
 
