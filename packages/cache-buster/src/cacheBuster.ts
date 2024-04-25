@@ -33,6 +33,6 @@ export function cacheBuster(): AssetPipe
             newAsset.buffer = asset.buffer;
 
             return [newAsset];
-        }
+        },
     };
 }

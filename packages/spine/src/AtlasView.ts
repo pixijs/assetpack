@@ -10,7 +10,7 @@ export class AtlasView
 
     getTextures(): string[]
     {
-        const regex = /^.+?(?:\.png|\.jpg|\.jpeg)$/gm;
+        const regex = /^.+?(?:\.png|\.jpg|\.jpeg|\.webp|\.avif)$/gm;
 
         const matches = this.rawAtlas.match(regex);
 
