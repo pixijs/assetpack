@@ -1,9 +1,10 @@
-import type { PluginOptions, Asset, AssetPipe } from '@play-co/assetpack-core';
-import { createNewAssetAt, stripTags, path, Logger  } from '@play-co/assetpack-core';
 import fs from 'fs-extra';
 import glob from 'glob-promise';
-import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures';
 import { packTextures } from './packer/packTextures';
+import { createNewAssetAt, Logger, path, stripTags } from '@play-co/assetpack-core';
+
+import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures';
+import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 
 export interface TexturePackerOptions extends PluginOptions<'tps' | 'fix' | 'jpg' | 'nc' >
 {

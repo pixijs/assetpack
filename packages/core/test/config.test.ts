@@ -1,5 +1,6 @@
 import { createAssetPipe } from '../../../shared/test';
 import { AssetPack } from '../src';
+
 import type { AssetPackConfig } from '../src/config';
 
 describe('AssetPack Config', () =>

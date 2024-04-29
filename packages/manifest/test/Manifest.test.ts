@@ -1,17 +1,18 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { audio } from '@play-co/assetpack-plugin-ffmpeg';
-import { compress, mipmap } from '@play-co/assetpack-plugin-image';
-import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
-import { spineAtlasManifestMod, spineAtlasMipmap } from '@play-co/assetpack-plugin-spine';
-import { texturePacker, texturePackerManifestMod } from '@play-co/assetpack-plugin-texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
-import type { File } from '../../../shared/test';
 import {
     assetPath,
     createFolder,
     getInputDir,
     getOutputDir,
 } from '../../../shared/test';
+import { AssetPack } from '@play-co/assetpack-core';
+import { audio } from '@play-co/assetpack-plugin-ffmpeg';
+import { compress, mipmap } from '@play-co/assetpack-plugin-image';
+import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
+import { spineAtlasManifestMod, spineAtlasMipmap } from '@play-co/assetpack-plugin-spine';
+import { texturePacker, texturePackerManifestMod } from '@play-co/assetpack-plugin-texture-packer';
+
+import type { File } from '../../../shared/test';
 
 const pkg = 'manifest';
 
@@ -139,7 +140,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
+        const manifest = sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[1]).toEqual({
             name: 'bundle',
@@ -348,7 +349,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest =  sortObjectProperties(await readJSONSync(`${outputDir}/manifest.json`));
+        const manifest = sortObjectProperties(await readJSONSync(`${outputDir}/manifest.json`));
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',
@@ -495,7 +496,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
+        const manifest = sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[0]).toEqual({
 
@@ -619,7 +620,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
+        const manifest = sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',
@@ -765,7 +766,7 @@ describe('Manifest', () =>
         await assetpack.run();
 
         // load the manifest json
-        const manifest =  sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
+        const manifest = sortObjectProperties((await readJSONSync(`${outputDir}/manifest.json`))) as any;
 
         expect(manifest.bundles[0]).toEqual({
             name: 'default',

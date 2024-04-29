@@ -1,6 +1,7 @@
 import { Asset } from '../src/Asset';
-import type { AssetPipe } from '../src/pipes/AssetPipe';
 import { PipeSystem } from '../src/pipes/PipeSystem';
+
+import type { AssetPipe } from '../src/pipes/AssetPipe';
 
 describe('PipeSystem', () =>
 {

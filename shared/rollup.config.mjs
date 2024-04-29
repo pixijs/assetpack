@@ -1,6 +1,6 @@
 import { builtinModules } from 'module';
-import typescript from '@rollup/plugin-typescript';
 import dts from 'rollup-plugin-dts';
+import typescript from '@rollup/plugin-typescript';
 
 /**
  * Create a base rollup config

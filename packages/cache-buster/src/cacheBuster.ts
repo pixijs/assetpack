@@ -1,5 +1,6 @@
-import type { AssetPipe, Asset } from '@play-co/assetpack-core';
 import { createNewAssetAt, swapExt } from '@play-co/assetpack-core';
+
+import type { Asset, AssetPipe } from '@play-co/assetpack-core';
 
 /**
  * Cache buster asset pipe. This pipe will add a hash to the end of the filename

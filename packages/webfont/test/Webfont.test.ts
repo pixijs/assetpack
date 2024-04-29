@@ -1,7 +1,7 @@
-import { AssetPack } from '@play-co/assetpack-core';
 import { existsSync, readJSONSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 import { msdfFont, sdfFont, webfont } from '../src';
+import { AssetPack } from '@play-co/assetpack-core';
 import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
 
 const pkg = 'webfont';

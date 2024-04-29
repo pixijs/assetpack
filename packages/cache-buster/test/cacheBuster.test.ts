@@ -1,7 +1,7 @@
-import { Asset, AssetPack, path } from '@play-co/assetpack-core';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 import { cacheBuster } from '../src';
+import { Asset, AssetPack, path } from '@play-co/assetpack-core';
 
 const pkg = 'cache-buster';
 

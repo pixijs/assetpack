@@ -1,7 +1,7 @@
-import { extractTagsFromFileName } from './utils/extractTagsFromFileName';
-import { getHash } from './utils/getHash';
 import fs from 'fs-extra';
 import { Logger } from './logger/Logger';
+import { extractTagsFromFileName } from './utils/extractTagsFromFileName';
+import { getHash } from './utils/getHash';
 import { path } from './utils/path';
 
 export interface AssetOptions

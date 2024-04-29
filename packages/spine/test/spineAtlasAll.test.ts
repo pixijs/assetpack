@@ -1,11 +1,11 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { compress, mipmap } from '@play-co/assetpack-plugin-image';
 import { existsSync, readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
+import { spineAtlasCacheBuster } from '../src/spineAtlasCacheBuster';
 import { spineAtlasCompress } from '../src/spineAtlasCompress';
 import { spineAtlasMipmap } from '../src/spineAtlasMipmap';
+import { AssetPack } from '@play-co/assetpack-core';
 import { cacheBuster } from '@play-co/assetpack-plugin-cache-buster';
-import { spineAtlasCacheBuster } from '../src/spineAtlasCacheBuster';
+import { compress, mipmap } from '@play-co/assetpack-plugin-image';
 
 const pkg = 'spine';
 

@@ -1,13 +1,14 @@
+import chokidar from 'chokidar';
 import fs from 'fs-extra';
 import { Asset } from './Asset';
-import chokidar from 'chokidar';
-import type { CachedAsset } from './AssetCache';
-import { syncAssetsWithCache } from './utils/syncAssetsWithCache';
 import { AssetIgnore } from './AssetIgnore';
-import type { AssetSettings } from './pipes/PipeSystem';
+import { Logger } from './logger/Logger';
 import { applySettingToAsset } from './utils/applySettingToAsset';
 import { path } from './utils/path';
-import { Logger } from './logger/Logger';
+import { syncAssetsWithCache } from './utils/syncAssetsWithCache';
+
+import type { CachedAsset } from './AssetCache';
+import type { AssetSettings } from './pipes/PipeSystem';
 
 export interface AssetWatcherOptions
 {

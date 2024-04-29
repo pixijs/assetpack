@@ -1,8 +1,9 @@
-import type { MaxRectsPacker, Rectangle } from 'maxrects-packer';
 import { createJsons } from './createJsons';
-import { createTextures } from './createTextures';
 import { createTextureData } from './createTextureData';
+import { createTextures } from './createTextures';
 import { fitTextureToPacker } from './fitTextureToPacker';
+
+import type { MaxRectsPacker, Rectangle } from 'maxrects-packer';
 
 export interface PixiRectData extends Rectangle
 {

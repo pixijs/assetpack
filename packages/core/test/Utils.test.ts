@@ -1,9 +1,10 @@
-import type { MockAssetPipe } from '../../../shared/test/index';
-import { createFolder, createAssetPipe, getInputDir, getOutputDir } from '../../../shared/test/index';
-import type { Asset } from '../src/Asset';
+import { createAssetPipe, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
 import { AssetPack } from '../src/AssetPack';
 import { extractTagsFromFileName } from '../src/utils/extractTagsFromFileName';
 import { generateCacheName } from '../src/utils/generateCacheName';
+
+import type { MockAssetPipe } from '../../../shared/test/index';
+import type { Asset } from '../src/Asset';
 
 describe('Utils', () =>
 {

@@ -1,8 +1,8 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { cacheBuster } from '@play-co/assetpack-plugin-cache-buster';
 import { readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 import { spineAtlasCacheBuster } from '../src/spineAtlasCacheBuster';
+import { AssetPack } from '@play-co/assetpack-core';
+import { cacheBuster } from '@play-co/assetpack-plugin-cache-buster';
 
 const pkg = 'spine';
 

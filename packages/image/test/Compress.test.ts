@@ -1,7 +1,7 @@
-import { AssetPack } from '@play-co/assetpack-core';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 import { compress } from '../src/compress';
+import { AssetPack } from '@play-co/assetpack-core';
 
 const pkg = 'image';
 

@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
-import type { AssetPackConfig } from '@play-co/assetpack-core';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import findUp from 'find-up';
+import { createRequire } from 'module';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import { createRequire } from 'module';
+
+import type { AssetPackConfig } from '@play-co/assetpack-core';
 
 const require = createRequire(import.meta.url);
 

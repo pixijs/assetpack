@@ -1,9 +1,10 @@
-import type { PluginOptions, Asset, AssetPipe } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt  } from '@play-co/assetpack-core';
-import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 import sharp from 'sharp';
-import { resolveOptions } from './utils/resolveOptions';
 import { compressSharp } from './utils/compressSharp';
+import { resolveOptions } from './utils/resolveOptions';
+import { checkExt, createNewAssetAt } from '@play-co/assetpack-core';
+
+import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
+import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 
 type CompressJpgOptions = Omit<JpegOptions, 'force'>;
 type CompressWebpOptions = Omit<WebpOptions, 'force'>;

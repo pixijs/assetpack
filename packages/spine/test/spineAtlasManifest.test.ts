@@ -1,8 +1,8 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
 import { readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
 import { spineAtlasManifestMod } from '../src/spineAtlasManifestMod';
+import { AssetPack } from '@play-co/assetpack-core';
+import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
 
 const pkg = 'spine';
 

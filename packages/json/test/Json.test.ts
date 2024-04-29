@@ -1,7 +1,7 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { json } from '../src';
 import { existsSync, readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
+import { json } from '../src';
+import { AssetPack } from '@play-co/assetpack-core';
 
 const pkg = 'json';
 

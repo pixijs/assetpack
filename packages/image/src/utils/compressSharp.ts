@@ -1,4 +1,4 @@
-import type { AvifOptions, WebpOptions, JpegOptions, PngOptions } from 'sharp';
+import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 import type { CompressImageData, CompressOptions } from '../compress';
 
 export async function compressSharp(

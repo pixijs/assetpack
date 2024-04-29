@@ -1,5 +1,6 @@
-import { path } from '@play-co/assetpack-core';
 import { createName } from './createTextures';
+import { path } from '@play-co/assetpack-core';
+
 import type { PixiPacker } from './packTextures';
 
 function convertName(pth: string, nameStyle: 'short' | 'relative')

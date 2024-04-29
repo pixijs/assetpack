@@ -1,9 +1,9 @@
-import type { Writable } from 'stream';
+import chalk from 'chalk';
 import cliProgress from 'cli-progress';
-
 import readline from 'readline';
 import { countLines } from './utils';
-import chalk from 'chalk';
+
+import type { Writable } from 'stream';
 
 const stdout = process.stdout;
 const stderr = process.stderr;

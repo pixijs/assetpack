@@ -1,9 +1,10 @@
-import { AssetPack, Logger } from '@play-co/assetpack-core';
 import { existsSync, readJSONSync } from 'fs-extra';
 import sharp from 'sharp';
-import type { File } from '../../../shared/test/index';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
 import { texturePacker } from '../src/texturePacker';
+import { AssetPack, Logger } from '@play-co/assetpack-core';
+
+import type { File } from '../../../shared/test/index';
 
 const pkg = 'texture-packer';
 
@@ -60,7 +61,7 @@ describe('Texture Packer', () =>
 
         const sheet1 = readJSONSync(`${outputDir}/sprites.json`);
 
-        const expectedSize =  {
+        const expectedSize = {
             w: 554,
             h: 476,
         };
@@ -252,7 +253,7 @@ describe('Texture Packer', () =>
 
         const sheet1 = readJSONSync(`${outputDir}/sprites.json`);
 
-        const expectedSize =  {
+        const expectedSize = {
             w: 554,
             h: 476,
         };
@@ -290,7 +291,7 @@ describe('Texture Packer', () =>
         expect(sheet2).toBe(true);
 
         // check to see if the size of the 0.5 asset is half the size of the 1x asset
-        const expectedSize =  {
+        const expectedSize = {
             w: 291,
             h: 249,
         };

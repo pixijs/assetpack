@@ -1,10 +1,11 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { texturePackerCacheBuster } from '../src/texturePackerCacheBuster';
-import { texturePacker } from '../src/texturePacker';
-import { cacheBuster } from '@play-co/assetpack-plugin-cache-buster';
 import { readJSONSync } from 'fs-extra';
-import type { File } from 'shared/test';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
+import { texturePacker } from '../src/texturePacker';
+import { texturePackerCacheBuster } from '../src/texturePackerCacheBuster';
+import { AssetPack } from '@play-co/assetpack-core';
+import { cacheBuster } from '@play-co/assetpack-plugin-cache-buster';
+
+import type { File } from 'shared/test';
 
 const pkg = 'texture-packer';
 

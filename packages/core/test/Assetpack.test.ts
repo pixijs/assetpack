@@ -1,9 +1,10 @@
 import { existsSync, removeSync, writeJSONSync } from 'fs-extra';
 import { join } from 'path';
-import type { MockAssetPipe } from '../../../shared/test/index';
-import { assetPath, createFolder, createAssetPipe, getInputDir, getOutputDir } from '../../../shared/test/index';
+import { assetPath, createAssetPipe, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
 import { AssetPack } from '../src/AssetPack';
 import { logAssetGraph } from '../src/utils/logAssetGraph';
+
+import type { MockAssetPipe } from '../../../shared/test/index';
 import type { AssetPipe } from '../src/pipes/AssetPipe';
 
 const pkg = 'core';

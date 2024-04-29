@@ -1,8 +1,9 @@
 import chalk from 'chalk';
-import type { LogLevelKeys } from './logLevel';
 import { LogLevel } from './logLevel';
 import { persistMessage, resetWindow, startProgress, stopProgress, updateProgress } from './render';
 import { prettifyTime } from './utils';
+
+import type { LogLevelKeys } from './logLevel';
 
 export interface LogEvent
 {

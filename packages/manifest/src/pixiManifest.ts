@@ -1,12 +1,11 @@
+import fs from 'fs-extra';
 import {
-    stripTags,
     type Asset,
     type AssetPipe,
     type PipeSystem,
-    path
+    path,
+    stripTags
 } from '@play-co/assetpack-core';
-
-import fs from 'fs-extra';
 
 export interface PixiManifest
 {
@@ -80,7 +79,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
             const newFileName = path.dirname(options.output) === '.'
                 ? path.joinSafe(pipeSystem.outputPath, options.output) : options.output;
 
-            const defaultBundle =  {
+            const defaultBundle = {
                 name: 'default',
                 assets: []
             };

@@ -1,5 +1,6 @@
+import { checkExt, createNewAssetAt, swapExt } from '@play-co/assetpack-core';
+
 import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt, swapExt  } from '@play-co/assetpack-core';
 import type { CompressOptions } from '@play-co/assetpack-plugin-image';
 
 export type TexturePackerCompressOptions = PluginOptions<'tps' | 'nc'> & CompressOptions;

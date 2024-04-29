@@ -1,8 +1,9 @@
-import type { AssetPipe, Asset } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt, path } from '@play-co/assetpack-core';
 import fluentFfmpeg from 'fluent-ffmpeg';
-import ffmpegPath from '@ffmpeg-installer/ffmpeg';
 import fs from 'fs-extra';
+import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+import { checkExt, createNewAssetAt, path } from '@play-co/assetpack-core';
+
+import type { Asset, AssetPipe } from '@play-co/assetpack-core';
 
 fluentFfmpeg.setFfmpegPath(ffmpegPath.path);
 

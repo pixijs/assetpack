@@ -1,7 +1,7 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { audio } from '@play-co/assetpack-plugin-ffmpeg';
 import { existsSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
+import { AssetPack } from '@play-co/assetpack-core';
+import { audio } from '@play-co/assetpack-plugin-ffmpeg';
 
 const pkg = 'ffmpeg';
 

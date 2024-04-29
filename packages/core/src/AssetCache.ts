@@ -1,6 +1,7 @@
-import type { Asset } from './Asset';
 import fs from 'fs-extra';
 import { path } from './utils/path';
+
+import type { Asset } from './Asset';
 
 export interface AssetCacheOptions
 {

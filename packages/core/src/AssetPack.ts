@@ -1,17 +1,18 @@
 import fs from 'fs-extra';
-import type { Asset } from './Asset';
-import type { AssetPipe } from './pipes/AssetPipe';
+import merge from 'merge';
 import { AssetCache } from './AssetCache';
 import { AssetWatcher } from './AssetWatcher';
-import type { AssetSettings } from './pipes/PipeSystem';
-import { PipeSystem } from './pipes/PipeSystem';
-import { finalCopyPipe } from './pipes/finalCopyPipe';
-import type { AssetPackConfig } from './config';
 import { Logger } from './logger/Logger';
-import { promiseAllConcurrent } from './utils/promiseAllConcurrent';
-import { path } from './utils/path';
-import merge from 'merge';
+import { finalCopyPipe } from './pipes/finalCopyPipe';
+import { PipeSystem } from './pipes/PipeSystem';
 import { generateCacheName } from './utils/generateCacheName';
+import { path } from './utils/path';
+import { promiseAllConcurrent } from './utils/promiseAllConcurrent';
+
+import type { Asset } from './Asset';
+import type { AssetPackConfig } from './config';
+import type { AssetPipe } from './pipes/AssetPipe';
+import type { AssetSettings } from './pipes/PipeSystem';
 
 export class AssetPack
 {

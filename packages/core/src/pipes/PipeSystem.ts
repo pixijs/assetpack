@@ -1,7 +1,8 @@
-import type { Asset } from '../Asset';
-import type { AssetPipe } from './AssetPipe';
 import { mergePipeOptions } from './mergePipeOptions';
 import { multiPipe } from './multiPipe';
+
+import type { Asset } from '../Asset';
+import type { AssetPipe } from './AssetPipe';
 
 export interface PipeSystemOptions
 {

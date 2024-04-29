@@ -1,4 +1,4 @@
 export * from './texturePacker';
-export * from './texturePackerCompress';
 export * from './texturePackerCacheBuster';
+export * from './texturePackerCompress';
 export * from './texturePackerManifestMod';

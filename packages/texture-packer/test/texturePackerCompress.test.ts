@@ -1,9 +1,10 @@
+import { readJSONSync } from 'fs-extra';
+import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
 import { AssetPack } from '@play-co/assetpack-core';
 import { compress } from '@play-co/assetpack-plugin-image';
 import { texturePacker, texturePackerCompress } from '@play-co/assetpack-plugin-texture-packer';
-import { readJSONSync } from 'fs-extra';
+
 import type { File } from '../../../shared/test/index';
-import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
 
 const pkg = 'texture-packer';
 

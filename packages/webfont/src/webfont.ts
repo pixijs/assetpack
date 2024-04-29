@@ -1,6 +1,7 @@
-import type { AssetPipe, Asset } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt, path } from '@play-co/assetpack-core';
 import { fonts } from './fonts';
+import { checkExt, createNewAssetAt, path } from '@play-co/assetpack-core';
+
+import type { Asset, AssetPipe } from '@play-co/assetpack-core';
 
 export function webfont(): AssetPipe
 {

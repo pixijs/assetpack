@@ -1,7 +1,8 @@
-import type { Asset } from '@play-co/assetpack-core';
-import { type AssetPipe, path, findAssets } from '@play-co/assetpack-core';
-import { AtlasView } from './AtlasView';
 import { readJsonSync, writeJSONSync } from 'fs-extra';
+import { AtlasView } from './AtlasView';
+import { type AssetPipe, findAssets, path } from '@play-co/assetpack-core';
+
+import type { Asset } from '@play-co/assetpack-core';
 
 export interface SpineManifestOptions
 {

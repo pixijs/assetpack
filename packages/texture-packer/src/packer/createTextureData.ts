@@ -1,7 +1,8 @@
-import sharp from 'sharp';
-import type { PackTexturesOptions, PixiRectData, TextureData } from './packTextures';
 import { MaxRectsPacker } from 'maxrects-packer';
+import sharp from 'sharp';
 import { Logger } from '@play-co/assetpack-core';
+
+import type { PackTexturesOptions, PixiRectData, TextureData } from './packTextures';
 
 export async function createTextureData(options: Required<PackTexturesOptions>)
 {
@@ -14,7 +15,7 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
 
     const scale = options.scale;
 
-    const textureDatas =  await Promise.all(options.texturesToPack.map(async (texture) =>
+    const textureDatas = await Promise.all(options.texturesToPack.map(async (texture) =>
     {
         let sharpImage = sharp(texture.contents);
 

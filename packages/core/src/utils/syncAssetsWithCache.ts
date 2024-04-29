@@ -1,4 +1,5 @@
 import { Asset } from '../Asset';
+
 import type { CachedAsset } from '../AssetCache';
 
 export function syncAssetsWithCache(assetHash: Record<string, Asset>, cachedData: Record<string, CachedAsset>)

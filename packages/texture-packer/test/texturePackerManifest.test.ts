@@ -1,9 +1,10 @@
-import { AssetPack } from '@play-co/assetpack-core';
-import { texturePacker } from '@play-co/assetpack-plugin-texture-packer';
-import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
-import type { File } from '../../../shared/test/index';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test/index';
 import { texturePackerManifestMod } from '../src/texturePackerManifestMod';
+import { AssetPack } from '@play-co/assetpack-core';
+import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
+import { texturePacker } from '@play-co/assetpack-plugin-texture-packer';
+
+import type { File } from '../../../shared/test/index';
 
 const pkg = 'texture-packer';
 

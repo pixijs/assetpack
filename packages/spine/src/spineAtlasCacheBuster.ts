@@ -1,7 +1,8 @@
-import type { Asset } from '@play-co/assetpack-core';
-import { checkExt, type AssetPipe, findAssets } from '@play-co/assetpack-core';
-import { AtlasView } from './AtlasView';
 import { removeSync, writeFileSync } from 'fs-extra';
+import { AtlasView } from './AtlasView';
+import { type AssetPipe, checkExt, findAssets } from '@play-co/assetpack-core';
+
+import type { Asset } from '@play-co/assetpack-core';
 
 /**
  * This should be used after the cache buster plugin in the pipes.
@@ -62,7 +63,7 @@ export function spineAtlasCacheBuster(): AssetPipe
                         asset.filename === texture, asset, true);
 
                     // last transformed child is the renamed texture
-                    const cacheBustedTexture =  textureAssets[0].getFinalTransformedChildren()[0];
+                    const cacheBustedTexture = textureAssets[0].getFinalTransformedChildren()[0];
 
                     atlasView.replaceTexture(texture, cacheBustedTexture.filename);
                 });

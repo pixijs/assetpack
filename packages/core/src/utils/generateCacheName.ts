@@ -1,5 +1,6 @@
-import type { AssetPackConfig } from '../config';
 import objectHash from 'object-hash';
+
+import type { AssetPackConfig } from '../config';
 
 /**
  * Returns a unique name based on the hash generated from the config

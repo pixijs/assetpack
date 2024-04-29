@@ -1,7 +1,7 @@
 import { assetPath, createFolder, getInputDir } from '../../../shared/test';
 import { Asset } from '../src/Asset';
-import { AssetWatcher } from '../src/AssetWatcher';
 import { AssetCache } from '../src/AssetCache';
+import { AssetWatcher } from '../src/AssetWatcher';
 import { logAssetGraph } from '../src/utils/logAssetGraph';
 
 const pkg = 'core';

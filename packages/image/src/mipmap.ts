@@ -1,9 +1,10 @@
-import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt } from '@play-co/assetpack-core';
 import sharp from 'sharp';
-import type { CompressImageData } from './compress';
 import { mipmapSharp } from './utils/mipmapSharp';
 import { resolveOptions } from './utils/resolveOptions';
+import { checkExt, createNewAssetAt } from '@play-co/assetpack-core';
+
+import type { CompressImageData } from './compress';
+import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 
 export interface MipmapOptions<T extends string = ''> extends PluginOptions<'fix' | T>
 {
@@ -46,7 +47,7 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions>
         },
         async transform(asset: Asset, options)
         {
-            const shouldMipmap =  mipmap && !asset.metaData[options.tags.fix as any];
+            const shouldMipmap = mipmap && !asset.metaData[options.tags.fix as any];
 
             let processedImages: CompressImageData[];
 

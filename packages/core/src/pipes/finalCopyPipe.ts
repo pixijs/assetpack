@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
-import type { Asset } from '../Asset';
 import { createNewAssetAt } from '../utils/createNewAssetAt';
+
+import type { Asset } from '../Asset';
 import type { AssetPipe } from './AssetPipe';
 
 export const finalCopyPipe: AssetPipe<object> = {

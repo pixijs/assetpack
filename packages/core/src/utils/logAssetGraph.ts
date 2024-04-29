@@ -1,5 +1,6 @@
-import type { Asset } from '../Asset';
 import { path } from './path';
+
+import type { Asset } from '../Asset';
 
 const stateColorMap = {
     normal: 'white',

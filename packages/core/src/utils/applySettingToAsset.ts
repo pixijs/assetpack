@@ -1,8 +1,9 @@
-import type { Asset } from '../Asset';
-import type { AssetSettings } from '../pipes/PipeSystem';
 import minimatch from 'minimatch';
 import { merge } from './merge';
 import { path } from './path';
+
+import type { Asset } from '../Asset';
+import type { AssetSettings } from '../pipes/PipeSystem';
 
 export function applySettingToAsset(asset: Asset, settings: AssetSettings[], entryPath: string)
 {

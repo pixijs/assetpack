@@ -1,9 +1,10 @@
 // ////ts-nocheck
-import type { AssetPipe, Asset, PluginOptions } from '@play-co/assetpack-core';
-import { checkExt, createNewAssetAt, stripTags } from '@play-co/assetpack-core';
-import type { BitmapFontOptions } from 'msdf-bmfont-xml';
-import generateBMFont from 'msdf-bmfont-xml';
 import fs from 'fs-extra';
+import generateBMFont from 'msdf-bmfont-xml';
+import { checkExt, createNewAssetAt, stripTags } from '@play-co/assetpack-core';
+
+import type { BitmapFontOptions } from 'msdf-bmfont-xml';
+import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 
 export interface SDFFontOptions extends PluginOptions<'sdf'>
 {
