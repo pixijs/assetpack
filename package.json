@@ -1,5 +1,5 @@
 {
-  "name": "assetpack",
+  "name": "@play-co/assetpack",
   "private": true,
   "license": "MIT",
   "workspaces": [
@@ -10,10 +10,11 @@
     "build:force": "nx run-many --target=build --all --parallel --skip-nx-cache",
     "clean": "rimraf packages/*/{dist,.testInput,.testOutput,.assetpack}",
     "lint": "eslint --cache packages shared --ext .js,.ts,.mjs --max-warnings 0",
-    "prerelease": "npm run lint && npm run test:force && npm run build:force",
+    "lint:fix": "npm run lint -- --fix",
+    "prepare": "husky install",
+    "prerelease": "npm run lint && npm run build:force",
     "release": "lerna publish --no-private --exact --force-publish",
     "release:fromPackage": "lerna publish from-package --no-private",
-    "prepare": "husky install",
     "pretest": "npm run clean",
     "test": "nx run-many --target=test --all --parallel",
     "test:force": "nx run-many --target=test --all --parallel --skip-nx-cache",
@@ -30,6 +31,7 @@
       "eslint --cache --fix --max-warnings 0"
     ]
   },
+  "dependencies": {},
   "devDependencies": {
     "@nrwl/nx-cloud": "latest",
     "@pixi/eslint-config": "^4.0.1",

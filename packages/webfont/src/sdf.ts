@@ -1,110 +1,88 @@
 // ////ts-nocheck
-import type { Plugin, PluginOptions } from '@assetpack/core';
-import { checkExt, hasTag, path, SavableAssetCache } from '@assetpack/core';
-import type { BitmapFontOptions } from 'msdf-bmfont-xml';
-import generateBMFont from 'msdf-bmfont-xml';
 import fs from 'fs-extra';
+import generateBMFont from 'msdf-bmfont-xml';
+import { checkExt, createNewAssetAt, stripTags } from '@play-co/assetpack-core';
 
-export interface SDFFontOptions extends PluginOptions<'font'>
-{
-    font: Omit<BitmapFontOptions, 'outputType' | 'fieldType'>;
-}
+import type { BitmapFontOptions } from 'msdf-bmfont-xml';
+import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
 
-interface DefaultOptions extends Required<SDFFontOptions>
+export interface SDFFontOptions extends PluginOptions<'sdf'>
 {
-    font: BitmapFontOptions;
+    name: string,
+    type: BitmapFontOptions['fieldType'],
+    font?: Omit<BitmapFontOptions, 'outputType' | 'fieldType'>;
 }
 
 export function signedFont(
-    name: string,
-    type: BitmapFontOptions['fieldType'],
-    tag: string,
-    options?: Partial<SDFFontOptions>
-): Plugin<SDFFontOptions>
+    defaultOptions: SDFFontOptions
+): AssetPipe<SDFFontOptions>
 {
-    const defaultOptions: DefaultOptions = {
-        font: {
-            ...options?.font,
-            fieldType: type,
-        },
-        tags: {
-            font: tag,
-            ...options?.tags
-        },
-    };
-
     return {
         folder: false,
-        name,
-        test(tree, _p, options)
+        name: defaultOptions.name,
+        defaultOptions,
+        test(asset: Asset, options)
         {
-            const opts = { ...defaultOptions.tags, ...options.tags } as Required<SDFFontOptions['tags']>;
-
-            if (!hasTag(tree, 'path', opts.font)) return false;
-
-            return checkExt(tree.path, '.ttf');
+            return asset.allMetaData[options.type] && checkExt(asset.path, '.ttf');
         },
-        async transform(tree, processor, optionsOverrides)
+        async transform(asset: Asset, options)
         {
-            const opts = { ...defaultOptions.font, ...optionsOverrides.font } as DefaultOptions['font'];
-            const input = tree.path;
-            const output = processor.inputToOutput(input, '.fnt');
+            const newFileName = stripTags(asset.filename.replace(/\.(ttf)$/i, ''));
 
-            opts.filename = opts.filename ?? processor.removeTagsFromPath(path.basename(input, path.extname(input)));
-
-            const res = await GenerateFont(input, {
-                ...opts,
+            const { font, textures } = await GenerateFont(asset.path, {
+                ...options.font,
+                filename: newFileName,
+                fieldType: options.type,
                 outputType: 'xml',
             });
 
-            const fntData = res.font.data;
+            const assets: Asset[] = [];
+            const promises: Promise<void>[] = [];
 
-            processor.addToTreeAndSave({
-                tree,
-                outputOptions: {
-                    outputPathOverride: output,
-                    outputData: fntData
-                },
-                transformOptions: {
-                    transformId: this.name!,
-                }
-            });
-
-            res.textures.forEach(({ filename, texture }) =>
+            textures.forEach(({ filename, texture }) =>
             {
-                const name = `${path.join(path.dirname(output), filename)}.png`;
+                const newTextureName = `${filename}.png`;
 
-                processor.saveToOutput({
-                    tree,
-                    outputOptions: {
-                        outputData: texture,
-                        outputPathOverride: name,
-                    }
-                });
+                const newTextureAsset = createNewAssetAt(asset, newTextureName);
+
+                // don't compress!
+                newTextureAsset.metaData.nc = true;
+                newTextureAsset.metaData.fix = true;
+
+                assets.push(newTextureAsset);
+
+                newTextureAsset.buffer = texture;
             });
 
-            SavableAssetCache.set(tree.path, {
-                tree,
-                transformData: {
-                    type: this.name!,
-                    files: [{
-                        name: processor.trimOutputPath(processor.inputToOutput(tree.path)),
-                        paths: [output]
-                    }]
-                }
-            });
+            const newFontAsset = createNewAssetAt(asset, font.filename);
+
+            assets.push(newFontAsset);
+
+            newFontAsset.buffer = Buffer.from(font.data);
+
+            await Promise.all(promises);
+
+            return assets;
         }
     };
 }
 
-export function sdfFont(options?: Partial<SDFFontOptions>): Plugin<SDFFontOptions>
+export function sdfFont(options: Partial<SDFFontOptions> = {}): AssetPipe
 {
-    return signedFont('sdf-font', 'sdf', 'sdf', options);
+    return signedFont({
+        name: 'sdf-font',
+        type: 'sdf',
+        ...options
+    });
 }
 
-export function msdfFont(options?: Partial<SDFFontOptions>): Plugin<SDFFontOptions>
+export function msdfFont(options?: Partial<SDFFontOptions>): AssetPipe
 {
-    return signedFont('msdf-font', 'msdf', 'msdf', options);
+    return signedFont({
+        name: 'msdf-font',
+        type: 'msdf',
+        ...options,
+    });
 }
 
 async function GenerateFont(input: string, params: BitmapFontOptions): Promise<{
@@ -112,9 +90,9 @@ async function GenerateFont(input: string, params: BitmapFontOptions): Promise<{
     font: { filename: string, data: string }
 }>
 {
-    return new Promise((resolve, reject) =>
+    return new Promise(async (resolve, reject) =>
     {
-        const fontBuffer = fs.readFileSync(input);
+        const fontBuffer = await fs.readFile(input);
 
         generateBMFont(fontBuffer, params, (err, textures, font) =>
         {

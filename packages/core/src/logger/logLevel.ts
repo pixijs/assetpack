@@ -1,4 +1,4 @@
-export enum LogLevels
+export enum LogLevel
     {
     none = 0,
     error = 1,
@@ -6,3 +6,5 @@ export enum LogLevels
     info = 3,
     verbose = 4,
 }
+
+export type LogLevelKeys = keyof typeof LogLevel;

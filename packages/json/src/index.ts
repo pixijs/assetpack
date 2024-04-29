@@ -1,34 +1,44 @@
-import type { Plugin } from '@assetpack/core';
-import { checkExt, Logger } from '@assetpack/core';
-import fs from 'fs-extra';
+import { checkExt, createNewAssetAt, Logger } from '@play-co/assetpack-core';
 
-export function json(): Plugin
+import type { Asset, AssetPipe, PluginOptions } from '@play-co/assetpack-core';
+
+export type JsonOptions = PluginOptions<'nc'>;
+
+export function json(_options: JsonOptions = {}): AssetPipe
 {
-    return {
-        folder: false,
-        test(tree)
-        {
-            return checkExt(tree.path, '.json');
-        },
-        async post(tree, processor)
-        {
-            let json = fs.readFileSync(tree.path, 'utf8');
+    const defaultOptions = {
+        tags: {
+            nc: 'nc',
+            ..._options?.tags
+        }
 
+    };
+
+    return {
+        name: 'json',
+        folder: false,
+        defaultOptions,
+        test(asset: Asset, options)
+        {
+            return !asset.metaData[options.tags.nc] && checkExt(asset.path, '.json');
+        },
+        async transform(asset: Asset)
+        {
             try
             {
-                json = JSON.stringify(JSON.parse(json));
+                const json = JSON.parse(asset.buffer.toString());
+                const compressedJsonAsset = createNewAssetAt(asset, asset.filename);
+
+                compressedJsonAsset.buffer = Buffer.from(JSON.stringify(json));
+
+                return [compressedJsonAsset];
             }
             catch (e)
             {
-                Logger.warn(`[json] Failed to parse json file: ${tree.path}`);
-            }
+                Logger.warn(`[json] Failed to compress json file: ${asset.path}`);
 
-            processor.saveToOutput({
-                tree,
-                outputOptions: {
-                    outputData: json,
-                }
-            });
+                return [asset];
+            }
         }
     };
 }

@@ -1,7 +1,7 @@
-import { AssetPack } from '@assetpack/core';
-import { json } from '../src';
 import { existsSync, readFileSync } from 'fs-extra';
 import { assetPath, createFolder, getInputDir, getOutputDir } from '../../../shared/test';
+import { json } from '../src';
+import { AssetPack } from '@play-co/assetpack-core';
 
 const pkg = 'json';
 
@@ -30,9 +30,10 @@ describe('Json', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                json: json()
-            }
+            cache: false,
+            pipes: [
+                json()
+            ]
         });
 
         await assetpack.run();
@@ -57,7 +58,7 @@ describe('Json', () =>
                         name: 'json',
                         files: [
                             {
-                                name: 'json{ignore}.json',
+                                name: 'json{nc}.json',
                                 content: assetPath(pkg, 'json-busted.json'),
                             },
                         ],
@@ -68,12 +69,11 @@ describe('Json', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                json: json()
-            }
+            cache: false,
+            pipes: [
+                json()
+            ]
         });
-
-        const post = jest.spyOn(assetpack.config.plugins.json, 'post');
 
         await assetpack.run();
 
@@ -81,7 +81,6 @@ describe('Json', () =>
         const res = data.split('\n').length;
 
         expect(res).toEqual(5);
-        expect(post).toHaveBeenCalledTimes(0);
     });
 
     it('should minify the json', async () =>
@@ -112,19 +111,16 @@ describe('Json', () =>
         const assetpack = new AssetPack({
             entry: inputDir,
             output: outputDir,
-            plugins: {
-                json: json()
-            }
+            cache: false,
+            pipes: [
+                json()
+            ]
         });
-
-        const post = jest.spyOn(assetpack.config.plugins.json, 'post');
 
         await assetpack.run();
 
         const data = readFileSync(`${outputDir}/json/json.json`, 'utf8');
-        const res = data.split('\n').length;
 
-        expect(res).toEqual(1);
-        expect(post).toHaveBeenCalledTimes(1);
+        expect(data.replace(/\\/g, '').trim()).toEqual(`{"hello":"world","Im":"not broken"}`);
     });
 });

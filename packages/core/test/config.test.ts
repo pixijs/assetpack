@@ -1,6 +1,7 @@
-import { createPlugin } from '../../../shared/test';
-import type { AssetPackConfig } from '../src';
-import { AssetPack, path } from '../src';
+import { createAssetPipe } from '../../../shared/test';
+import { AssetPack } from '../src';
+
+import type { AssetPackConfig } from '../src/config';
 
 describe('AssetPack Config', () =>
 {
@@ -9,40 +10,38 @@ describe('AssetPack Config', () =>
         const assetpack = new AssetPack({});
 
         expect(assetpack.config).toEqual({
-            entry: path.join(process.cwd(), './static'),
-            output: path.join(process.cwd(), './dist'),
+            entry: './static',
+            output: './dist',
             ignore: [],
-            cache: false,
+            cache: true,
             logLevel: 'info',
-            plugins: {},
-            files: []
+            pipes: [],
         });
     });
 
     it('should merge configs correctly', async () =>
     {
-        const plugin = createPlugin({ test: true });
+        const plugin = createAssetPipe({ test: true });
         const baseConfig: AssetPackConfig = {
             entry: 'src/old',
             output: 'dist/old',
             ignore: ['scripts/**/*'],
-            plugins: {
-                test: plugin
-            }
+            pipes: [
+                plugin
+            ]
         };
 
         const assetpack = new AssetPack(baseConfig);
 
         expect(assetpack.config).toEqual({
-            entry: path.join(process.cwd(), 'src/old'),
-            output: path.join(process.cwd(), 'dist/old'),
+            entry: 'src/old',
+            output:  'dist/old',
             ignore: ['scripts/**/*'],
-            cache: false,
+            cache: true,
             logLevel: 'info',
-            plugins: {
-                test: plugin
-            },
-            files: []
+            pipes: [
+                plugin
+            ],
         });
     });
 });

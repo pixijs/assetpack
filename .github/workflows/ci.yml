@@ -19,5 +19,5 @@ jobs:
       - run: npm run lint
       - run: npx nx affected --target=test:types --parallel=3
       - uses: FedericoCarboni/setup-ffmpeg@v2
-      - run: npx nx affected --target=test --parallel=3 --ci
       - run: npx nx affected --target=build --parallel=3
+      - run: npx nx affected --target=test --parallel=3 --ci

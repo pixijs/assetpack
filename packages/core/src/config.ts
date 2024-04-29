@@ -1,5 +1,6 @@
-import type { LogLevels } from './logger/logLevel';
-import type { Plugin } from './Plugin';
+import type { LogLevelKeys } from './logger/logLevel';
+import type { AssetPipe } from './pipes/AssetPipe';
+import type { AssetSettings } from './pipes/PipeSystem';
 
 export interface AssetPackConfig
 {
@@ -13,28 +14,11 @@ export interface AssetPackConfig
       */
     ignore?: string[];
     /**
-      * EXPERIMENTAL
       * If true cached tree will be used
-      * @defaultValue false
       */
     cache?: boolean;
-    logLevel?: keyof typeof LogLevels;
-    plugins?: Record<string, Plugin>
-    files?: Array<{
-        files: string[],
-        settings?: Record<string, any>
-        tags?: Array<string | { name: string, data: any }>
-    }>
+    logLevel?: LogLevelKeys;
+    pipes?: (AssetPipe | AssetPipe[])[];
+    assetSettings?: AssetSettings[];
 }
 
-export type ReqAssetPackConfig = Required<AssetPackConfig>;
-
-export const defaultConfig: AssetPackConfig = {
-    entry: './static',
-    output: './dist',
-    ignore: [],
-    cache: false,
-    logLevel: 'info',
-    plugins: {},
-    files: []
-};

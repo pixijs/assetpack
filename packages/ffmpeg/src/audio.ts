@@ -1,12 +1,14 @@
-import type { Plugin } from '@assetpack/core';
-import { merge } from '@assetpack/core';
-import type { FfmpegOptions } from './ffmpeg';
 import { ffmpeg } from './ffmpeg';
+import { merge } from '@play-co/assetpack-core';
 
-export function audio(options?: FfmpegOptions): Plugin<FfmpegOptions>
+import type { FfmpegOptions } from './ffmpeg';
+import type { AssetPipe } from '@play-co/assetpack-core';
+
+export function audio(_options?: FfmpegOptions): AssetPipe
 {
     // default settings for converting mp3, ogg, wav to mp3, ogg
-    let defaultOptions: FfmpegOptions = {
+    const defaultOptions: FfmpegOptions = {
+        name: 'audio',
         inputs: ['.mp3', '.ogg', '.wav'],
         outputs: [
             {
@@ -30,11 +32,7 @@ export function audio(options?: FfmpegOptions): Plugin<FfmpegOptions>
         ]
     };
 
-    defaultOptions = merge(true, defaultOptions, options);
-
-    const audio = ffmpeg(defaultOptions);
-
-    audio.name = 'audio';
+    const audio = ffmpeg(merge(true, defaultOptions, _options));
 
     return audio;
 }

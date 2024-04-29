@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-
 import { createConfig } from '../../shared/rollup.config.mjs';
 
 export default createConfig({

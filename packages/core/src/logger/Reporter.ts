@@ -1,12 +1,14 @@
 import chalk from 'chalk';
-import { LogLevels } from './logLevel';
-import { persistMessage, resetWindow, setSpinnerStatus, updateSpinner } from './render';
+import { LogLevel } from './logLevel';
+import { persistMessage, resetWindow, startProgress, stopProgress, updateProgress } from './render';
 import { prettifyTime } from './utils';
+
+import type { LogLevelKeys } from './logLevel';
 
 export interface LogEvent
 {
     type: 'log';
-    level: keyof typeof LogLevels;
+    level: LogLevelKeys;
     message: string;
 }
 
@@ -21,85 +23,67 @@ export type ReporterEvent = LogEvent | BuildEvent;
 
 export class Reporter
 {
-    public level: keyof typeof LogLevels = 'info';
+    public level: LogLevelKeys = 'info';
     private _buildTime = 0;
 
     // Exported only for test
     public report(event: ReporterEvent): void
     {
-        const logLevelFilter = LogLevels[this.level || 'info'];
+        const logLevelFilter = LogLevel[this.level || 'info'];
 
         switch (event.type)
         {
             case 'buildStart': {
-                if (logLevelFilter < LogLevels.info)
+                if (logLevelFilter < LogLevel.info)
                 {
                     break;
                 }
 
                 this._buildTime = Date.now();
-
                 // Clear any previous output
                 resetWindow();
-
+                persistMessage(chalk.green.bold(`✔ AssetPack Initialized`));
                 persistMessage(`${chalk.blue.bold('›')} ${chalk.blue.bold(`Building: ${event.message}`)}`);
+                startProgress();
 
                 break;
             }
             case 'buildProgress': {
-                if (logLevelFilter < LogLevels.info)
+                if (logLevelFilter < LogLevel.info)
                 {
                     break;
                 }
 
-                switch (event.phase)
-                {
-                    case 'start':
-                        updateSpinner('Starting Plugins...');
-                        break;
-                    case 'delete':
-                        setSpinnerStatus('success', 'Plugins Started');
-                        updateSpinner('Cleaning Tree...');
-                        break;
-                    case 'transform':
-                        setSpinnerStatus('success', 'Tree Cleaned');
-                        updateSpinner('Transforming Assets...');
-                        break;
-                    case 'post':
-                        setSpinnerStatus('success', 'Assets Transformed');
-                        updateSpinner('Post Processing Assets...');
-                        break;
-                    case 'finish':
-                        setSpinnerStatus('success', 'Assets Post Processed');
-                        updateSpinner('Tearing Down Plugins...');
-                        break;
-                }
+                // render a bar..
+                const progress = parseInt(event.message || '0', 10);
+
+                updateProgress(progress);
+
                 break;
             }
             case 'buildSuccess':
-                if (logLevelFilter < LogLevels.info)
+                if (logLevelFilter < LogLevel.info)
                 {
                     break;
                 }
 
-                setSpinnerStatus('success', 'Plugins Torn Down');
+                stopProgress();
                 resetWindow();
-
-                persistMessage(chalk.green.bold(`› Built in: ${prettifyTime(Date.now() - this._buildTime)}`));
+                persistMessage(chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Date.now() - this._buildTime)}`));
                 break;
             case 'buildFailure':
-                if (logLevelFilter < LogLevels.error)
+                if (logLevelFilter < LogLevel.error)
                 {
                     break;
                 }
 
+                stopProgress();
                 resetWindow();
-
-                setSpinnerStatus('error', chalk.red.bold('Build failed.'));
+                persistMessage(chalk.green.bold(`✖ AssetPack Build Failed`));
 
                 break;
             case 'log': {
-                if (logLevelFilter < LogLevels[event.level])
+                if (logLevelFilter < LogLevel[event.level])
                 {
                     break;
                 }
