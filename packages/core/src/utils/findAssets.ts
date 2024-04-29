@@ -1,6 +1,6 @@
 import type { Asset } from '../Asset';
 
-export function findAssetsWithFileName(
+export function findAssets(
     test: (asset: Asset) => boolean,
     asset: Asset,
     searchTransform: boolean,
@@ -16,14 +16,14 @@ export function findAssetsWithFileName(
     {
         const child = asset.children[i];
 
-        findAssetsWithFileName(test, child, searchTransform, out);
+        findAssets(test, child, searchTransform, out);
     }
 
     for (let i = 0; i < asset.transformChildren.length; i++)
     {
         const transformChild = asset.transformChildren[i];
 
-        findAssetsWithFileName(test, transformChild, searchTransform, out);
+        findAssets(test, transformChild, searchTransform, out);
     }
 
     return out;

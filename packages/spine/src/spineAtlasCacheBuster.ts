@@ -1,5 +1,5 @@
 import type { Asset } from '@play-co/assetpack-core';
-import { checkExt, type AssetPipe, findAssetsWithFileName } from '@play-co/assetpack-core';
+import { checkExt, type AssetPipe, findAssets } from '@play-co/assetpack-core';
 import { AtlasView } from './AtlasView';
 import { removeSync, writeFileSync } from 'fs-extra';
 
@@ -58,7 +58,7 @@ export function spineAtlasCacheBuster(): AssetPipe
 
                 atlasView.getTextures().forEach((texture) =>
                 {
-                    const textureAssets = findAssetsWithFileName((asset) =>
+                    const textureAssets = findAssets((asset) =>
                         asset.filename === texture, asset, true);
 
                     // last transformed child is the renamed texture

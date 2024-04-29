@@ -128,5 +128,10 @@ export class PipeSystem
             }
         }
     }
+
+    getPipe(name: string): AssetPipe
+    {
+        return this.pipeHash[name];
+    }
 }
 

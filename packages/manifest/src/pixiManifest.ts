@@ -3,8 +3,7 @@ import {
     type Asset,
     type AssetPipe,
     type PipeSystem,
-    path,
-    findAssetsWithFileName
+    path
 } from '@play-co/assetpack-core';
 
 import fs from 'fs-extra';
@@ -78,8 +77,6 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
         defaultOptions,
         finish: async (asset: Asset, options, pipeSystem: PipeSystem) =>
         {
-            removeAtlasTextures(asset);
-
             const newFileName = path.dirname(options.output) === '.'
                 ? path.joinSafe(pipeSystem.outputPath, options.output) : options.output;
 
@@ -128,34 +125,15 @@ function collectAssets(
 
     if (asset.transformChildren.length > 0)
     {
-        if (asset.metaData.tps)
-        {
-            // do some special think for textures packed sprite sheet pages..
-            getTexturePackedAssets(finalAssets).forEach((pages, pageIndex) =>
-            {
-                bundleAssets.push({
-                    alias: getShortNames(stripTags(path.relative(entryPath, `${asset.path}-${pageIndex}`)), options),
-                    src: pages
-                        .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                        .sort((a, b) => b.localeCompare(a)),
-                    data:  options.includeMetaData ? {
-                        tags: asset.allMetaData
-                    } : undefined
-                });
-            });
-        }
-        else
-        {
-            bundleAssets.push({
-                alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
-                src: finalAssets
-                    .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                    .sort((a, b) => b.localeCompare(a)),
-                data:  options.includeMetaData ? {
-                    tags: asset.allMetaData
-                } : undefined
-            });
-        }
+        bundleAssets.push({
+            alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
+            src: finalAssets
+                .map((finalAsset) => path.relative(outputPath, finalAsset.path))
+                .sort((a, b) => b.localeCompare(a)),
+            data:  options.includeMetaData ? {
+                tags: asset.allMetaData
+            } : undefined
+        });
     }
 
     asset.children.forEach((child) =>
@@ -164,51 +142,6 @@ function collectAssets(
     });
 
     // for all assets.. check for atlas and remove them from the bundle..
-}
-
-function removeAtlasTextures(asset: Asset)
-{
-    // do a pass to remove what we don't want..
-
-    const atlasAssets = findAssetsWithFileName((asset) =>
-        asset.extension === '.atlas' && asset.transformChildren.length === 0, asset, true);
-
-    atlasAssets.forEach((atlasAsset) =>
-    {
-        const view = new AtlasView(atlasAsset.buffer);
-
-        const textureNames = view.getTextures();
-
-        textureNames.forEach((texture) =>
-        {
-            const textureAssets = findAssetsWithFileName((asset) =>
-                asset.filename === texture, asset, true);
-
-            textureAssets.forEach((textureAsset) =>
-            {
-                textureAsset.skip = true;
-            });
-        });
-    });
-}
-
-function getTexturePackedAssets(assets: Asset[])
-{
-    // first get the jsons..
-    const jsonAssets = assets.filter((asset) => asset.extension === '.json');
-
-    const groupAssets: Asset[][] = [];
-
-    for (let i = 0; i < jsonAssets.length; i++)
-    {
-        const jsonAsset = jsonAssets[i];
-
-        groupAssets[jsonAsset.allMetaData.page] ??= [];
-
-        groupAssets[jsonAsset.allMetaData.page].push(jsonAsset);
-    }
-
-    return groupAssets;
 }
 
 function getShortNames(name: string, options: PixiManifestOptions)

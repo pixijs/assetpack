@@ -2,8 +2,8 @@ import { AssetPack } from '@play-co/assetpack-core';
 import { audio } from '@play-co/assetpack-plugin-ffmpeg';
 import { compress, mipmap } from '@play-co/assetpack-plugin-image';
 import { pixiManifest } from '@play-co/assetpack-plugin-manifest';
-import { spineAtlasMipmap } from '@play-co/assetpack-plugin-spine';
-import { texturePacker } from '@play-co/assetpack-plugin-texture-packer';
+import { spineAtlasManifestMod, spineAtlasMipmap } from '@play-co/assetpack-plugin-spine';
+import { texturePacker, texturePackerManifestMod } from '@play-co/assetpack-plugin-texture-packer';
 import { existsSync, readJSONSync } from 'fs-extra';
 import type { File } from '../../../shared/test';
 import {
@@ -131,6 +131,8 @@ describe('Manifest', () =>
                     avif: false,
                 }),
                 pixiManifest(),
+                spineAtlasManifestMod(),
+                texturePackerManifestMod(),
             ]
         });
 
@@ -338,6 +340,8 @@ describe('Manifest', () =>
                     trimExtensions: true,
                     includeMetaData: false
                 }),
+                spineAtlasManifestMod(),
+                texturePackerManifestMod(),
             ],
         });
 
@@ -483,6 +487,8 @@ describe('Manifest', () =>
                     trimExtensions: false,
                     includeMetaData: false
                 }),
+                spineAtlasManifestMod(),
+                texturePackerManifestMod(),
             ],
         });
 
@@ -605,6 +611,8 @@ describe('Manifest', () =>
                     trimExtensions: false,
                     includeMetaData: false
                 }),
+                spineAtlasManifestMod(),
+                texturePackerManifestMod(),
             ],
         });
 
@@ -749,6 +757,8 @@ describe('Manifest', () =>
                     trimExtensions: true,
                     includeMetaData: false
                 }),
+                spineAtlasManifestMod(),
+                texturePackerManifestMod(),
             ],
         });
 

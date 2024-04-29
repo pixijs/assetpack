@@ -16,4 +16,4 @@ export * from './utils/merge';
 export * from './utils/path';
 export * from './utils/stripTags';
 export * from './utils/swapExt';
-export * from './utils/findAssetsWithFileName';
+export * from './utils/findAssets';
