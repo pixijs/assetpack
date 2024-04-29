@@ -131,22 +131,22 @@ describe('Spine Atlas All', () =>
 
         [
             {
-                atlas: `dragon@0.5x.webp-gWXF6w.atlas`,
-                png1: `dragon@0.5x-7mmX8g.webp`,
-                png2: `dragon2@0.5x-k_22pw.webp`
+                atlas: `dragon-ZmGiUA@0.5x.webp.atlas`,
+                png1: `dragon-7mmX8g@0.5x.webp`,
+                png2: `dragon2-k_22pw@0.5x.webp`
             },
             {
-                atlas: `dragon.webp-spj8.atlas`,
+                atlas: `dragon-spj8.webp.atlas`,
                 png1: `dragon-rSwKOg.webp`,
                 png2: `dragon2-ws3uhw.webp`
             },
             {
-                atlas: `dragon@0.5x.png-jg5ydg.atlas`,
-                png1: `dragon@0.5x-3--s.png`,
-                png2: `dragon2@0.5x-vflfww.png`
+                atlas: `dragon-wstH@0.5x.png.atlas`,
+                png1: `dragon-3--s@0.5x.png`,
+                png2: `dragon2-vflfww@0.5x.png`
             },
             {
-                atlas: `dragon.png-O471eg.atlas`,
+                atlas: `dragon-O471eg.png.atlas`,
                 png1: `dragon-vezElA.png`,
                 png2: `dragon2-3UnJNw.png`
             }

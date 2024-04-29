@@ -1,4 +1,4 @@
-import { createNewAssetAt, swapExt } from '@play-co/assetpack-core';
+import { createNewAssetAt, stripTags, swapExt } from '@play-co/assetpack-core';
 
 import type { Asset, AssetPipe } from '@play-co/assetpack-core';
 
@@ -27,7 +27,21 @@ export function cacheBuster(): AssetPipe
         async transform(asset: Asset)
         {
             const hash = asset.hash;
-            const newFileName = swapExt(asset.filename, `-${hash}${asset.extension}`);
+
+            // first try to stick the has on the end of the original file name
+            const originalFileName = swapExt(stripTags(asset.rootTransformAsset.filename), '');
+
+            let newFileName: string;
+
+            if (asset.filename.includes(originalFileName))
+            {
+                newFileName = asset.filename.replace(originalFileName, `${originalFileName}-${hash}`);
+            }
+            else
+            {
+                // failing that just stick it on the end!
+                newFileName = swapExt(asset.filename, `-${hash}${asset.extension}`);
+            }
 
             const newAsset = createNewAssetAt(asset, newFileName);
 

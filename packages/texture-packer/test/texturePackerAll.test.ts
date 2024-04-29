@@ -79,20 +79,20 @@ describe('Texture Packer All', () =>
 
         [
             {
-                json: `sprites@0.5x.webp-1it4Qw.json`,
-                image: `sprites@0.5x-g_W8Sw.webp`,
+                json: `sprites-dvKKlQ@0.5x.webp.json`,
+                image: `sprites-g_W8Sw@0.5x.webp`,
             },
             {
-                json: `sprites.webp-RCqjNQ.json`,
+                json: `sprites-RCqjNQ.webp.json`,
                 image: `sprites-wXEUjA.webp`,
             },
             {
-                json: `sprites@0.5x.png--5BuTA.json`,
-                image: `sprites@0.5x-TV3-Lg.png`,
+                json: `sprites-1Cv-Yg@0.5x.png.json`,
+                image: `sprites-TV3-Lg@0.5x.png`,
 
             },
             {
-                json: `sprites.png-FYLGeg.json`,
+                json: `sprites-FYLGeg.png.json`,
                 image: `sprites-Ef_oOA.png`,
             }
         ].forEach(({ json, image }) =>
