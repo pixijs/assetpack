@@ -173,7 +173,11 @@ export class AssetPack
             {
                 if (asset.skip) return;
 
-                await this._pipeSystem.transform(asset);
+                await this._pipeSystem.transform(asset).catch((e) =>
+                {
+                    // eslint-disable-next-line max-len
+                    Logger.error(`[AssetPack] Transform failed:\ntransform: ${e.name}\nasset:${asset.path}\nerror:${e.message}`);
+                });
                 index++;
 
                 const percent = Math.round((index / assetsToTransform.length) * 100);
