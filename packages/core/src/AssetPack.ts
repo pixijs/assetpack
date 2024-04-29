@@ -7,11 +7,11 @@ import type { AssetSettings } from './pipes/PipeSystem';
 import { PipeSystem } from './pipes/PipeSystem';
 import { finalCopyPipe } from './pipes/finalCopyPipe';
 import type { AssetPackConfig } from './config';
-import objectHash from 'object-hash';
 import { Logger } from './logger/Logger';
 import { promiseAllConcurrent } from './utils/promiseAllConcurrent';
 import { path } from './utils/path';
 import merge from 'merge';
+import { generateCacheName } from './utils/generateCacheName';
 
 export class AssetPack
 {
@@ -41,10 +41,10 @@ export class AssetPack
             level: this.config.logLevel || 'info',
         });
 
-        const { pipes, cache, ...configWithoutPlugins } = this.config;
+        const { pipes, cache } = this.config;
 
         // make a hash..
-        const cacheName = [objectHash(configWithoutPlugins), ...(pipes as AssetPipe[]).map((pipe) => pipe.name)].join('-');
+        const cacheName = generateCacheName(this.config);
 
         let assetCacheData = null;
         let assetCache: AssetCache | null = null;
@@ -243,3 +243,4 @@ function normalizePath(pth: string)
 
     return pth;
 }
+

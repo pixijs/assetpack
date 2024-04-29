@@ -55,7 +55,7 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
     });
 
-    it.only('should compress png with 1 plugin', async () =>
+    it('should compress png with 1 plugin', async () =>
     {
         const testName = 'compress-png-1-plugin';
         const inputDir = getInputDir(pkg, testName);

@@ -3,6 +3,7 @@ import { createFolder, createAssetPipe, getInputDir, getOutputDir } from '../../
 import type { Asset } from '../src/Asset';
 import { AssetPack } from '../src/AssetPack';
 import { extractTagsFromFileName } from '../src/utils/extractTagsFromFileName';
+import { generateCacheName } from '../src/utils/generateCacheName';
 
 describe('Utils', () =>
 {
@@ -24,7 +25,7 @@ describe('Utils', () =>
         expect(extractTagsFromFileName('test{tag1}{tag2=1&2}.json')).toEqual({ tag1: true, tag2: [1, 2] });
     });
 
-    it.only('should allow for tags to be overridden', async () =>
+    it('should allow for tags to be overridden', async () =>
     {
         const testName = 'tag-override';
         const inputDir = getInputDir(pkg, testName);
@@ -81,5 +82,51 @@ describe('Utils', () =>
         });
 
         await assetpack.run();
+    });
+
+    it('should create a unique cache name', async () =>
+    {
+        const cacheName = generateCacheName({
+            entry: 'test',
+            output: 'out',
+            pipes: [
+                {
+                    name: 'test',
+                    defaultOptions: { hi: 'there' }
+                },
+            ],
+        });
+
+        expect(cacheName).toEqual('9782a5400ded95c60849cf955508938b7efdc8a0');
+
+        // change the settings:
+
+        const cacheName2 = generateCacheName({
+            entry: 'test',
+            output: 'out',
+            pipes: [
+                {
+                    name: 'test-2',
+                    defaultOptions: { hi: 'there' }
+                },
+            ],
+        });
+
+        expect(cacheName2).toEqual('abdf0d02db2c221346e31f61331e5880deff6f4e');
+
+        // change the settings:
+
+        const cacheName3 = generateCacheName({
+            entry: 'test',
+            output: 'out',
+            pipes: [
+                {
+                    name: 'test-2',
+                    defaultOptions: { hi: 'bye!' }
+                },
+            ],
+        });
+
+        expect(cacheName3).toEqual('ab900fa81d7121ea46bd2eafe9e826633c1c48a0');
     });
 });
