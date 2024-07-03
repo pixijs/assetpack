@@ -1,4 +1,0 @@
-{
-    "extends": "./tsconfig.json",
-    "include": ["packages", "scripts", "shared", ".eslintrc.js", "jest.config.js", "global.d.ts"],
-}

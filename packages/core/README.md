@@ -1,1 +1,0 @@
-# @assetpack/core
