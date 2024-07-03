@@ -12,7 +12,7 @@ To see a full list of configuration options, see the [API Reference](/docs/guide
 ```ts
 // vite.config.mts
 import { defineConfig, type Plugin, type ResolvedConfig } from 'vite';
-import { AssetPack } from 'assetpack';
+import { AssetPack } from '@assetpack/core';
 
 function assetpackPlugin(): Plugin {
     const apConfig = {

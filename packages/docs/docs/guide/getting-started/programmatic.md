@@ -14,7 +14,7 @@ To see a full list of configuration options, see the [API Reference](/docs/guide
 To use AssetPack programmatically, you need to import the `assetpack` function from the `assetpack` package, and call it with the following options:
 
 ```js
-import { AssetPack } from 'assetpack';
+import { AssetPack } from '@assetpack/core';
 
 const assetpack = new AssetPack({
     entry: './raw-assets',

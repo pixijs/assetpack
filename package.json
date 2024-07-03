@@ -22,7 +22,8 @@
     "test:watch": "vitest",
     "watch": "npm run --ws watch --if-present",
     "deploy": "npm run deploy --workspace @assetpack/docs",
-    "docs:start": "npm run start --workspace @assetpack/docs"
+    "docs:start": "npm run start --workspace @assetpack/docs",
+    "docs:build": "npm run build --workspace @assetpack/docs"
   },
   "husky": {
     "hooks": {

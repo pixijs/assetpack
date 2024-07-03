@@ -28,7 +28,7 @@ The directory where you want your optimised assets to be outputted to.
 | ---------- | ------- | -------- |
 | `string[]` |         | No       |
 
-An optional array of ignore patterns. Any file path matching the patterns will not be processed by assetpack.
+An optional array of ignore patterns. Any file path matching the patterns will not be processed by AssetPack.
 
 ### cache
 
@@ -58,9 +58,9 @@ An optional string to set the log level.
 
 | Type     | Default | Required |
 | -------- | ------- | -------- |
-| `Pipe[]` |         | No       |
+| `Plugin[]` |         | No       |
 
-An array of pipes to use. For examples of pipes, see [Pipes](/docs/guide/pipes/overview#concepts).
+An array of pipes to use. For examples of pipes, see [Plugins](/docs/guide/pipes/overview#plugins).
 
 ### assetSettings
 

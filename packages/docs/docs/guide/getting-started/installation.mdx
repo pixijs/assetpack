@@ -15,10 +15,10 @@ It uses a plugin based system to allow you to create your own plugins to do what
 
 ## Installation
 
-To install AssetPack, you need to install the `assetpack` package.
+To install AssetPack, you need to install the `@assetpack/core` package.
 
 ```bash
-npm install --save-dev assetpack
+npm install --save-dev @assetpack/core
 ```
 
 :::info COMPATIBILITY NOTE
@@ -35,7 +35,7 @@ First create a `.assetpack.js` file in the root of your project. This file shoul
 
 ```js
 // .assetpack.js
-import { compress } from 'assetpack';
+import { compress } from '@assetpack/core';
 
 export default {
     entry: './raw-assets',
@@ -52,7 +52,7 @@ Then to run AssetPack, you can use the CLI, run programatically, or use a build 
 - [Programmatic](/docs/guide/getting-started/programmatic)
 - [Vite](/docs/guide/getting-started/vite)
 
-AssetPack has a number of built-in pipes for you to use, to see the full list of pipes, see the [Pipes](/docs/guide/pipes) page.
+AssetPack has a number of built-in pipes for you to use, to see the full list of pipes, see the [Pipes](/docs/guide/pipes/overview) page.
 
 ### PixiJS Setup
 
@@ -60,7 +60,7 @@ If you are using AssetPack with PixiJS, you can use the `pixiPipes` function to 
 
 ```js
 // .assetpack.js
-import { compress, pixiPipes } from 'assetpack';
+import { compress, pixiPipes } from '@assetpack/core';
 
 export default {
     entry: './raw-assets',

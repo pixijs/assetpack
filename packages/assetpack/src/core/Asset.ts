@@ -110,7 +110,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            Logger.warn('[AssetPack] folders should not have buffers!. Contact the developer of Assetpack');
+            Logger.warn('[AssetPack] folders should not have buffers!. Contact the developer of AssetPack');
         }
 
         if (!this._buffer)
@@ -132,7 +132,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            Logger.warn('[AssetPack] folders should not have hashes. Contact the developer of the Assetpack');
+            Logger.warn('[AssetPack] folders should not have hashes. Contact the developer of the AssetPack');
         }
 
         this._hash ??= getHash(this.buffer);
