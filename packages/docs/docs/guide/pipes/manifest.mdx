@@ -1,0 +1,79 @@
+---
+sidebar_position: 5
+---
+
+# Manifest
+
+This plugin generates a manifest file so you can easily load your assets in the browser. The manifest file contains a list of all the assets in your project, including their paths and aliases.
+
+The plugin also allows you to create bundles of assets by using tags in your folder structure. This is useful for grouping assets together, such as images for a specific scene or level.
+
+We believe this plugin is a must-have for any PixiJS project, as it simplifies the process of loading assets and helps you manage your project more efficiently.
+
+## API
+
+| Option          | Type      | Description                                                                                    |
+| --------------- | --------- | ---------------------------------------------------------------------------------------------- |
+| output          | `string`  | The path to the manifest file.<br />Defaults to the output folder defined in your config.      |
+| createShortcuts | `boolean` | Whether to create the shortest possible alias for an asset.<br />Defaults to `false`.          |
+| trimExtensions  | `boolean` | Whether to trim the extensions from the asset aliases. <br />Defaults to `false`.              |
+| includeMetaData | `boolean` | Whether to include the tags the asset has used in the manifest file. <br />Defaults to `true`. |
+
+## Example
+
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: '24px' }}>
+    <img
+        src={'/assetpack/screenshots/manifest/manifest-tags.png'}
+        alt="Tags Example"
+        style={{
+            borderRadius: '12px',
+            boxShadow: '0 0 20px hsla(192, 84%, 40%, 0.5)',
+        }}
+    />
+</div>
+
+```js
+import { pixiManifest } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: {
+    ...
+    // These options are the default values, all options shown here are optional
+    // This should be the last pipe in the list
+    pixiManifest({
+      output: "manifest.json",
+      createShortcuts: false,
+      trimExtensions: false,
+      includeMetaData: true,
+    })
+  },
+};
+```
+
+## Tags
+
+| Tag       | Folder/File | Description                                     |
+| --------- | ----------- | ----------------------------------------------- |
+| `m`       | `folder`    | Generates a bundle entry in the manifest file.  |
+| `mIgnore` | `both`      | Ignores the folder/file from the manifest file. |
+
+
+---
+
+## Usage with Spine plugin
+
+When using the [Spine plugins](/docs/guide/pipes/spine), you should use the `spineAtlasManifestMod` plugin to augment the manifest file with the spine atlas files. This ensures that the spine atlas files are included in the manifest.
+
+```js
+import { pixiManifest, spineAtlasManifestMod } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: [
+    ...
+    pixiManifest(),
+    spineAtlasManifestMod(),
+  ]
+};
+```

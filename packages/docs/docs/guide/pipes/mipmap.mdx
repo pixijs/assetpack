@@ -1,0 +1,70 @@
+---
+sidebar_position: 4
+---
+
+import { ImageToggle } from '@site/src/components/ImageToggle';
+
+# Mipmaps
+
+The mipmap plugin generates mipmaps for images, creating multiple resolutions of the same image. This is particularly useful for optimizing graphics in web games, where different resolutions are needed for various screen sizes and device capabilities.
+
+:::info
+When generating multiple resolutions, the plugin assumes that the original image is at the highest resolution. The plugin will then generate lower-resolution versions of the image based on the specified template and resolutions.
+:::
+
+## API
+
+| Option          | Type     | Description                                                                                                                       |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| template        | `string` | A template for denoting the resolution of the images.<br />Defaults to `@%%x`.                                                    |
+| resolutions     | `object` | An object containing the resolutions that the images will be resized to.<br />Defaults to `{ default: 1, low: 0.5 }`.             |
+| fixedResolution | `string` | A resolution used if the fix tag is applied e.g.<br />Resolution must match one found in resolutions.<br />Defaults to `default`. |
+
+## Example
+
+<ImageToggle image={'mipmap/mipmap'} height={350} />
+
+```js
+import { mipmap } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: [
+    ...
+    // these options are the default values, all options shown here are optional
+    mipmap({
+      template: "@%%x",
+      resolutions: { default: 1, low: 0.5 }, // { high: 2, default: 1, low: 0.5 }
+      fixedResolution: "default",
+    }),
+  ]
+};
+```
+
+## Example: custom resolution
+
+<ImageToggle image={'mipmap/mipmap-custom'} height={350} />
+
+```js
+import { mipmap } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: [
+    ...
+    mipmap({
+      resolutions: { high: 2, default: 1, low: 0.5 },
+    }),
+  ]
+};
+```
+
+## Tags
+
+| Tag   | Folder/File | Description                                                                            |
+| ----- | ----------- | -------------------------------------------------------------------------------------- |
+| `fix` | `both`      | If present the `fixedResolution` will be used. No other resolutions will be generated. |
+
+### Example: fixed resolution
+
+<ImageToggle image={'mipmap/mipmap-fixed'} height={350} />

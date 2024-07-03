@@ -1,0 +1,59 @@
+---
+sidebar_position: 1
+---
+
+import { ImageToggle } from '@site/src/components/ImageToggle';
+
+# Cache Buster
+
+The `cacheBuster` plugin is an essential tool for ensuring that assets are correctly updated when they change.
+When the `cacheBuster` plugin is added to the AssetPack configuration file, it generates unique hashes and appends them to file names.
+This process ensures that when assets are modified, the updated versions are correctly re-downloaded by the user's browser, bypassing any cached versions.
+
+## Example
+
+<ImageToggle image={'cache/cache-buster'} height={350} />
+
+To use the `cacheBuster` plugin, include it in your AssetPack pipeline.
+It's crucial to note that the order of plugins in the pipeline affects the final output. For optimal results,
+ensure that the `cacheBuster` transformation occurs at the correct stage in your pipeline.
+
+```ts
+// assetpack.config.ts
+import { cacheBuster } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: {
+    ...
+    // make sure these pipes are added after plugins that generate files
+    cacheBuster(),
+  },
+};
+```
+
+## Spine and Texture Packer
+
+When integrating with the [`texturePacker`](/docs/guides/pipes/texture-packer) plugin or your porject has spine atlas files,
+you need to add the `texturePackerCacheBuster` / `spineAtlasCacheBuster` pipes immediately after the `cacheBuster` pipe.
+
+The `texturePackerCacheBuster` ensures that the JSON files internally update their asset names to reflect the newly hashed file names.
+The `spineAtlasCacheBuster` pipe performs a similar function for spine atlas files.
+
+### Example
+
+```ts
+// assetpack.config.ts
+import { cacheBuster, texturePackerCacheBuster, spineAtlasCacheBuster } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: {
+    ...
+    // make sure these pipes are added after plugins that generate files
+    cacheBuster(),
+    texturePackerCacheBuster(),
+    spineAtlasCacheBuster(),
+  },
+};
+```

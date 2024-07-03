@@ -1,0 +1,79 @@
+---
+sidebar_position: 2
+---
+
+import { ImageToggle } from '@site/src/components/ImageToggle';
+
+# Audio & FFmpeg
+
+The AssetPack library includes powerful plugins for audio conversion and file format manipulation using FFmpeg. These plugins, audio and ffmpeg, provide robust solutions for handling a variety of media file formats.
+
+## Audio
+
+The audio plugin converts and compresses audio files (`mp3`, `wav`, and `ogg`) to `mp3` and `ogg` formats. This is particularly useful for ensuring compatibility and optimizing file sizes for web delivery.
+
+### Example
+
+<ImageToggle image={'audio/audio'} height={350} />
+
+```ts
+// assetpack.config.ts
+import { audio } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: [
+    audio: audio(),
+  ],
+};
+```
+
+## FFmpeg
+
+The `ffmpeg` plugin exposes the full FFmpeg API, allowing for the conversion of any file type to any other file type. This provides a high level of customization and control over the conversion process, enabling a wide range of media processing tasks.
+
+## API
+
+| Option             | Type        | Description                                                                                                                  |
+| ------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| inputs             | `string[]`  | An array of file extensions to be processed.                                                                                 |
+| outputs            | `object[]`  | An array of objects containing the output formats and options for each format.                                               |
+| outputs.formats    | `string[]`  | An array of file extensions to be output.                                                                                    |
+| outputs.recompress | `boolean`   | A boolean value indicating whether the input file should be compressed if the output format is the same as the input format. |
+| outputs.options    | `object`    | An object containing the FFmpeg options for the output file.                                                                 |
+
+### Example
+
+```ts
+// assetpack.config.ts
+import { ffmpeg } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: [
+    ffmpeg({
+      inputs: ['.mp3', '.ogg', '.wav'],
+      outputs: [
+        {
+          formats: ['.mp3'],
+          recompress: false,
+          options: {
+            audioBitrate: 96,
+            audioChannels: 1,
+            audioFrequency: 48000,
+          },
+        },
+        {
+          formats: ['.ogg'],
+          recompress: false,
+          options: {
+            audioBitrate: 32,
+            audioChannels: 1,
+            audioFrequency: 22050,
+          },
+        },
+      ],
+    }),
+  ],
+};
+```

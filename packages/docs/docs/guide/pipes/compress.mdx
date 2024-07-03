@@ -1,0 +1,48 @@
+---
+sidebar_position: 4
+---
+import { ImageToggle } from '@site/src/components/ImageToggle';
+
+# Compression
+
+The compress plugin uses the Sharp library to compress images into different formats, such as JPEG, PNG, WebP, and AVIF. This helps reduce file sizes while maintaining image quality, ensuring faster load times and better performance.
+
+## API
+
+| Option | Type              | Description                                                                                                          |
+| ------ | ----------------- | -------------------------------------------------------------------------------------------------------------------- |
+| jpg    | `object \| false` | Any settings supported by [sharp jpeg](https://sharp.pixelplumbing.com/api-output#jpeg).                             |
+| png    | `object \| false` | Any settings supported by [sharp png](https://sharp.pixelplumbing.com/api-output#png).                               |
+| webp   | `object \| false` | Any settings supported by [sharp webp](https://sharp.pixelplumbing.com/api-output#webp).                             |
+| avif   | `object \| false` | Any settings supported by [sharp avif](https://sharp.pixelplumbing.com/api-output#avif). <br /> Defaults to `false`. |
+
+## Example
+
+<ImageToggle image={'compress/compress'} height={350} />
+
+```js
+import { compress } from "@assetpack/core";
+
+export default {
+  ...
+  pipes: [
+    ...
+    // these options are the default values, all options shown here are optional
+    compress({
+      jpg: {},
+      png: { quality: 90 },
+      webp: { quality: 80, alphaQuality: 80, },
+      avif: false,
+    }),
+  ]
+};
+```
+
+## Tags
+
+| Tag  | Folder/File | Description                                     |
+| ---- | ----------- | ----------------------------------------------- |
+| `nc` | `both`      | If present the image(s) will not be compressed. |
+
+### Example
+<ImageToggle image={'compress/compress-off'} height={350} />

@@ -1,0 +1,61 @@
+---
+sidebar_position: 0
+title: Overview
+---
+
+import { Image } from '@site/src/components/ImageToggle';
+
+# Overview
+
+AssetPack provides a wide range of plugins for processing and optimizing assets.
+These plugins can be combined to create a custom pipeline that meets the specific needs of your project.
+
+:::note
+The order of the plugins in the pipe is important, as each plugin processes the asset in sequence
+:::
+
+## Plugins
+
+-   [Cache Buster](/docs/guide/pipes/cache-buster): Adds hashes to file names to ensure that assets are correctly updated when they change.
+-   [Audio](/docs/guide/pipes/audio): Converts and compresses audio files using FFmpeg.
+-   [FFmpeg](/docs/guide/pipes/audio): Converts files to any other file type using the FFmpeg API.
+-   [Compression](/docs/guide/pipes/compress): Compresses images into different formats.
+-   [Mipmaps](/docs/guide/pipes/mipmap): Generates mipmaps for images.
+-   [JSON](/docs/guide/pipes/json): Minifies JSON files.
+-   [Manifest](/docs/guide/pipes/manifest): Generates a PixiJS manifest file containing the paths of all processed assets.
+-   [Spine](/docs/guide/pipes/spine): Compresses and mipmap Spine atlas files.
+-   [Texture Packer](/docs/guide/pipes/texture-packer): Generate spritesheets from individual images and compress/mipmap
+-   [Webfont](/docs/guide/pipes/webfont): Converts font files into `woff2`/`sdf`/`msdf` formats.
+
+## Tags
+
+Tags are fundamental to AssetPack. They are used to let a plugin know which assets to process. Tags are added to folder/file names and are used to filter assets in the plugin.
+
+For example, the [manifest plugin](/docs/guide/pipes/manifest) uses two different tags: `{m}` and `{mIgnore}`.
+The `{m}` tag generates a bundle entry in the manifest file, while the `{mIgnore}` tag ignores the folder/file from the manifest file.
+
+Each plugin has its own set of tags, so be sure to check the documentation for the plugin you are using.
+
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: '24px' }}>
+    <img
+        src={'/assetpack/screenshots/tags-example.png'}
+        alt="Tags Example"
+        style={{
+            borderRadius: '12px',
+            boxShadow: '0 0 20px hsla(192, 84%, 40%, 0.5)',
+        }}
+    />
+</div>
+
+
+
+### Built-in Tags
+
+- `{copy}`: The tags forces an asset to be copied to the output directory, without any processing.
+- `{ignore}`: The tag ensures that the asset is not processed by AssetPack and is not copied to the output directory.
+
+### Other Tag Examples
+
+- You can also add multiple tags to a single asset, like this `asset{tag1}{tag2}`.
+- Tags can have data appended to them, like this `asset{tag1:myData}`.
+- Tags can have multiple data values, like this `asset{tag1:100,200}`.

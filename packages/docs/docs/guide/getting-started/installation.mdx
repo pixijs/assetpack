@@ -1,0 +1,87 @@
+---
+sidebar_position: 1
+title: Installation
+---
+
+## Overview
+
+AssetPack is a tool for optimising assets for the web. It can be used to transform, combine, compress assets.
+Any asset that you want to transform or optimise into something else can be done with AssetPack.
+
+AssetPack is framework agnostic, and can be used with any framework you like, such as PixiJS, Threejs, Phaser, etc.
+It uses a plugin based system to allow you to create your own plugins to do whatever you want with your assets.
+
+---
+
+## Installation
+
+To install AssetPack, you need to install the `assetpack` package.
+
+```bash
+npm install --save-dev assetpack
+```
+
+:::info COMPATIBILITY NOTE
+AssetPack requires [Node.js](https://nodejs.org/en/) version 20+, please upgrade if your package manager warns about it.
+:::
+
+---
+
+## Setup
+
+To set up AssetPack, you need to create a configuration file that defines what assets you want to optimise and how you want to optimise them.
+
+First create a `.assetpack.js` file in the root of your project. This file should export an object with the following properties:
+
+```js
+// .assetpack.js
+import { compress } from 'assetpack';
+
+export default {
+    entry: './raw-assets',
+    output: './public/assets',
+    pipes: [],
+};
+```
+
+To see the full list of configuration options, see the [Configuration](/docs/guide/configuration) page.
+
+Then to run AssetPack, you can use the CLI, run programatically, or use a build tool like Vite.
+
+- [CLI](/docs/guide/getting-started/cli)
+- [Programmatic](/docs/guide/getting-started/programmatic)
+- [Vite](/docs/guide/getting-started/vite)
+
+AssetPack has a number of built-in pipes for you to use, to see the full list of pipes, see the [Pipes](/docs/guide/pipes) page.
+
+### PixiJS Setup
+
+If you are using AssetPack with PixiJS, you can use the `pixiPipes` function to add a pre-configured set of pipes, with an opinionated set of defaults for PixiJS.
+
+```js
+// .assetpack.js
+import { compress, pixiPipes } from 'assetpack';
+
+export default {
+    entry: './raw-assets',
+    output: './public/assets',
+    pipes: [
+        ...pixiPipes({
+            // PixiJS configuration options
+        }),
+    ],
+};
+```
+
+To see how to configure the PixiJS pipes, see the [PixiJS Configuration](/docs/guide/getting-started/pixi) page.
+
+---
+
+## Why AssetPack?
+
+AssetPack was designed to solve the problem of having assets come in many different formats, and having to convert them into a format that is suitable for your game.
+For example, you might have been given an audio file, e.g. `music.wav`, to be put in your game, but to get the best coverage across browsers, you need to convert it
+into an `ogg` and `mp3` file. AssetPack can do this for you, and you can even compress the audio file to reduce the size of the file.
+
+AssetPack can also be used to combine multiple images into a single sprite sheet, or to generate multiple sizes of an image. This can be useful if you want
+to support different screen sizes, or if you want to reduce the number of HTTP requests your game makes.
