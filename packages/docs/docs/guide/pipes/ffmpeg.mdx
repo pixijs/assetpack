@@ -32,16 +32,6 @@ export default {
 
 The `ffmpeg` plugin exposes the full FFmpeg API, allowing for the conversion of any file type to any other file type. This provides a high level of customization and control over the conversion process, enabling a wide range of media processing tasks.
 
-## API
-
-| Option             | Type        | Description                                                                                                                  |
-| ------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| inputs             | `string[]`  | An array of file extensions to be processed.                                                                                 |
-| outputs            | `object[]`  | An array of objects containing the output formats and options for each format.                                               |
-| outputs.formats    | `string[]`  | An array of file extensions to be output.                                                                                    |
-| outputs.recompress | `boolean`   | A boolean value indicating whether the input file should be compressed if the output format is the same as the input format. |
-| outputs.options    | `object`    | An object containing the FFmpeg options for the output file.                                                                 |
-
 ### Example
 
 ```ts
@@ -77,3 +67,14 @@ export default {
   ],
 };
 ```
+
+## API
+
+| Option             | Type        | Description                                                                                                                  |
+| ------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| inputs             | `string[]`  | An array of file extensions to be processed.                                                                                 |
+| outputs            | `object[]`  | An array of objects containing the output formats and options for each format.                                               |
+| outputs.formats    | `string[]`  | An array of file extensions to be output.                                                                                    |
+| outputs.recompress | `boolean`   | A boolean value indicating whether the input file should be compressed if the output format is the same as the input format. |
+| outputs.options    | `object`    | An object containing the FFmpeg options for the output file.                                                                 |
+

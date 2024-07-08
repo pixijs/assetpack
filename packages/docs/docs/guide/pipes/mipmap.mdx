@@ -12,14 +12,6 @@ The mipmap plugin generates mipmaps for images, creating multiple resolutions of
 When generating multiple resolutions, the plugin assumes that the original image is at the highest resolution. The plugin will then generate lower-resolution versions of the image based on the specified template and resolutions.
 :::
 
-## API
-
-| Option          | Type     | Description                                                                                                                       |
-| --------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| template        | `string` | A template for denoting the resolution of the images.<br />Defaults to `@%%x`.                                                    |
-| resolutions     | `object` | An object containing the resolutions that the images will be resized to.<br />Defaults to `{ default: 1, low: 0.5 }`.             |
-| fixedResolution | `string` | A resolution used if the fix tag is applied e.g.<br />Resolution must match one found in resolutions.<br />Defaults to `default`. |
-
 ## Example
 
 <ImageToggle image={'mipmap/mipmap'} height={350} />
@@ -58,6 +50,14 @@ export default {
   ]
 };
 ```
+
+## API
+
+| Option          | Type     | Description                                                                                                                       |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| template        | `string` | A template for denoting the resolution of the images.<br />Defaults to `@%%x`.                                                    |
+| resolutions     | `object` | An object containing the resolutions that the images will be resized to.<br />Defaults to `{ default: 1, low: 0.5 }`.             |
+| fixedResolution | `string` | A resolution used if the fix tag is applied e.g.<br />Resolution must match one found in resolutions.<br />Defaults to `default`. |
 
 ## Tags
 

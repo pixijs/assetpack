@@ -5,7 +5,7 @@ import type { Config } from '@docusaurus/types';
 
 const config: Config = {
     title: 'PixiJS AssetPack',
-    tagline: 'A configurable asset pipeline for web games',
+    tagline: 'A configurable asset pipeline for the web',
     favicon: 'img/favicon.png',
 
     // Set the production url of your site here

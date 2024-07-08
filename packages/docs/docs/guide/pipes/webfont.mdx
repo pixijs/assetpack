@@ -12,13 +12,9 @@ AssetPack provides a couple of plugins generating `woff2`/`sdf`/`msdf` fonts fro
 
 This plugin generates `woff2` fonts from `ttf`, `otf`, `woff`, and `svg` files.
 
-### API
-
-N/A for this plugin.
-
 ### Example
 
-<ImageToggle image={"webfonts/webfont"} />
+<ImageToggle image={'webfonts/webfont'} />
 
 ```js
 import { webfont } from "@assetpack/core";
@@ -44,31 +40,9 @@ export default {
 
 These plugins generate signed distance field (SDF) and multi-channel signed distance field (MSDF) fonts from `ttf` files.
 
-### API
-
-| Option              | Type                        | Description                                                                                                                 |
-| ------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| font                | `object`                    | An object containing options to customise the font generation. See below for available options.                             |
-| font.outputType     | `'xml' \| 'json'`           | Type of output font file. Can be `xml` for a BMFont standard .fnt file.<br />Defaults to `'xml' \| 'json'`                  |
-| font.charset        | `string \| string[]`        | The characters to include in the bitmap font.                                                                               |
-| font.fontSize       | `number`                    | The font size at which to generate the distance field.<br />Defaults to `42`                                                |
-| font.textureSize    | `[number, number]`          | The dimensions of an output texture sheet, normally power-of-2 for GPU usage.<br />Defaults to `[512, 512]`                 |
-| font.texturePadding | `number`                    | Pixels between each glyph in the texture.<br />Defaults to `2`                                                              |
-| font.border         | `number`                    | Space between glyph textures and edge.<br />Defaults to `0`                                                                 |
-| font.fieldType      | `'msdf' \| 'sdf' \| 'psdf'` | What kind of distance field to generate. Can be `msdf`, `sdf`, or `psdf`.<br />Defaults to `'msdf'`                         |
-| font.distanceRange  | `number`                    | The width of the range around the shape between the minimum and maximum representable signed distance.<br />Defaults to `3` |
-| font.roundDecimal   | `number`                    | Rounded digits of the output font metrics. For `xml` output, `roundDecimal: 0` recommended.                                 |
-| font.vector         | `boolean`                   | Output an SVG Vector file for debugging.<br />Defaults to `false`                                                           |
-| font\['smart-size'\] | `boolean`                   | Shrink atlas to the smallest possible square.<br />Defaults to `false`                                                      |
-| font.pot            | `boolean`                   | Output atlas size shall be power of 2.<br />Defaults to `false`                                                             |
-| font.square         | `boolean`                   | Output atlas size shall be square.<br />Defaults to `false                                                                  |
-| font.rot            | `boolean`                   | Allow 90-degree rotation while packing.<br />Defaults to `false`                                                            |
-| font.rtl            | `boolean`                   | Use RTL (Arabic/Persian) characters fix.<br />Defaults to `false`                                                           |
-
-
 ### Example
 
-<ImageToggle image={"webfonts/webfont-sdf"} />
+<ImageToggle image={'webfonts/webfont-sdf'} />
 
 ```js
 import { sdf, msdf } from "@assetpack/core";
@@ -83,9 +57,30 @@ export default {
 };
 ```
 
+### API
+
+| Option               | Type                        | Description                                                                                                                 |
+| -------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| font                 | `object`                    | An object containing options to customise the font generation. See below for available options.                             |
+| font.outputType      | `'xml' \| 'json'`           | Type of output font file. Can be `xml` for a BMFont standard .fnt file.<br />Defaults to `'xml' \| 'json'`                  |
+| font.charset         | `string \| string[]`        | The characters to include in the bitmap font.                                                                               |
+| font.fontSize        | `number`                    | The font size at which to generate the distance field.<br />Defaults to `42`                                                |
+| font.textureSize     | `[number, number]`          | The dimensions of an output texture sheet, normally power-of-2 for GPU usage.<br />Defaults to `[512, 512]`                 |
+| font.texturePadding  | `number`                    | Pixels between each glyph in the texture.<br />Defaults to `2`                                                              |
+| font.border          | `number`                    | Space between glyph textures and edge.<br />Defaults to `0`                                                                 |
+| font.fieldType       | `'msdf' \| 'sdf' \| 'psdf'` | What kind of distance field to generate. Can be `msdf`, `sdf`, or `psdf`.<br />Defaults to `'msdf'`                         |
+| font.distanceRange   | `number`                    | The width of the range around the shape between the minimum and maximum representable signed distance.<br />Defaults to `3` |
+| font.roundDecimal    | `number`                    | Rounded digits of the output font metrics. For `xml` output, `roundDecimal: 0` recommended.                                 |
+| font.vector          | `boolean`                   | Output an SVG Vector file for debugging.<br />Defaults to `false`                                                           |
+| font\['smart-size'\] | `boolean`                   | Shrink atlas to the smallest possible square.<br />Defaults to `false`                                                      |
+| font.pot             | `boolean`                   | Output atlas size shall be power of 2.<br />Defaults to `false`                                                             |
+| font.square          | `boolean`                   | Output atlas size shall be square.<br />Defaults to `false                                                                  |
+| font.rot             | `boolean`                   | Allow 90-degree rotation while packing.<br />Defaults to `false`                                                            |
+| font.rtl             | `boolean`                   | Use RTL (Arabic/Persian) characters fix.<br />Defaults to `false`                                                           |
+
 ### Tags
 
-| Tag    | Folder/File | Description                                                    |
-| ------ | ----------- | -------------------------------------------------------------- |
-| `sdf`  | `both`      | If present the file(s) will be converted to a SDF font.        |
-| `msdf` | `both`      | If present the file(s) will be converted to a MSDF font.       |
+| Tag    | Folder/File | Description                                              |
+| ------ | ----------- | -------------------------------------------------------- |
+| `sdf`  | `both`      | If present the file(s) will be converted to a SDF font.  |
+| `msdf` | `both`      | If present the file(s) will be converted to a MSDF font. |
