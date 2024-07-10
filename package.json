@@ -52,7 +52,7 @@
       "packages/assetpack/test/cache/**/*"
     ],
     "lint": [
-      "**/*.{ts,js,mjs,tsx,jsx}"
+      "**/*.{ts,tsx}"
     ]
   }
 }
