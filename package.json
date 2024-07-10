@@ -14,7 +14,7 @@
     "prepare": "husky install",
     "prerelease": "npm run test:lint && npm run build",
     "release": "npm run release --workspace @assetpack/core",
-    "public-ci": "npm run publish-ci --workspace @assetpack/core",
+    "publish-ci": "npm run publish-ci --workspace @assetpack/core",
     "pretest": "npm run clean",
     "test": "vitest run",
     "test:lint": "xs lint",
