@@ -9,7 +9,7 @@ AssetPack plugin for minifying JSON files. This plugin simplifies JSON files by 
 ## Example
 
 ```js
-import { json } from "@assetpack/core";
+import { json } from "@assetpack/core/json";
 
 export default {
   ...

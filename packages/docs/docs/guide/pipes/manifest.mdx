@@ -27,7 +27,7 @@ We believe this plugin is a must-have for any PixiJS project, as it simplifies t
 </div> */}
 
 ```js
-import { pixiManifest } from "@assetpack/core";
+import { pixiManifest } from "@assetpack/core/manifest";
 
 export default {
   ...
@@ -68,7 +68,8 @@ export default {
 When using the [Spine plugins](/docs/guide/pipes/spine), you should use the `spineAtlasManifestMod` plugin to augment the manifest file with the spine atlas files. This ensures that the spine atlas files are included in the manifest.
 
 ```js
-import { pixiManifest, spineAtlasManifestMod } from "@assetpack/core";
+import { pixiManifest } from "@assetpack/core/manifest";
+import { spineAtlasManifestMod } from '@assetpack/core/spine'
 
 export default {
   ...

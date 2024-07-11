@@ -30,7 +30,7 @@ This setup also abstracts away some of the more complex features of AssetPack, t
 Please refer to the [API Reference](/docs/guide/configuration) for the full list of options.
 
 ```js
-import { pixiPipes } from "@assetpack/core";
+import { pixiPipes } from "@assetpack/core/pixi";
 
 export default {
   ...

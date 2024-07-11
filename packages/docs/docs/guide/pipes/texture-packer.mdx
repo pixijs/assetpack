@@ -20,7 +20,7 @@ If you are using a different library you may need to convert the output.
 <ImageToggle image={'texture-packer/tps-mip'} />
 
 ```js
-import { texturePacker } from "@assetpack/core";
+import { texturePacker } from "@assetpack/core/texture-packer";
 
 export default {
   ...
@@ -87,7 +87,8 @@ To compress the texture atlases you can use the `texturePackerCompress` plugin. 
 <ImageToggle image={'texture-packer/tps-compress'} />
 
 ```js
-import { compress, texturePackerCompress } from "@assetpack/core";
+import { compress } from "@assetpack/core/image";
+import { compress } from "@assetpack/core/texture-packer";
 
 // these options are the default values, all options shown here are optional
 const options = {

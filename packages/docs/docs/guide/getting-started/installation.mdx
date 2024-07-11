@@ -35,8 +35,6 @@ First create a `.assetpack.js` file in the root of your project. This file shoul
 
 ```js
 // .assetpack.js
-import { compress } from '@assetpack/core';
-
 export default {
     entry: './raw-assets',
     output: './public/assets',
@@ -60,7 +58,7 @@ If you are using AssetPack with PixiJS, you can use the `pixiPipes` function to 
 
 ```js
 // .assetpack.js
-import { compress, pixiPipes } from '@assetpack/core';
+import { pixiPipes } from '@assetpack/core/pixi';
 
 export default {
     entry: './raw-assets',

@@ -18,7 +18,8 @@ This plugin should be used in conjunction with the [compress](/docs/guide/pipes/
 <ImageToggle image={"spine/spine-atlas-compress"} />
 
 ```js
-import { compress, spineAtlasCompress } from "@assetpack/core";
+import { compress } from "@assetpack/core/image";
+import { spineAtlasCompress } from "@assetpack/core/spine";
 
 // these options are the default values, all options shown here are optional
 const options = {
@@ -69,7 +70,8 @@ You will want to make sure you are passing the same options to the `mipmap` plug
 <ImageToggle image={"spine/spine-atlas-mip"} />
 
 ```js
-import { mipmap, spineAtlasMipmap } from "@assetpack/core";
+import { mipmap } from "@assetpack/core/image";
+import { spineAtlasMipmap } from "@assetpack/core/spine";
 
 // these options are the default values, all options shown here are optional
 const options = {
@@ -109,7 +111,8 @@ N/A for this plugin.
 ### Example
 
 ```js
-import { pixiManifest, spineAtlasManifestMod } from "@assetpack/core";
+import { pixiManifest } from "@assetpack/core/manifest";
+import { spineAtlasManifestMod } from "@assetpack/core/spine";
 
 export default {
   ...
