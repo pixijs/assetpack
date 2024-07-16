@@ -24,11 +24,11 @@ import { cacheBuster } from "@assetpack/core/cacheBuster";
 
 export default {
   ...
-  pipes: {
+  pipes: [
     ...
     // make sure these pipes are added after plugins that generate files
     cacheBuster(),
-  },
+  ],
 };
 ```
 
@@ -50,12 +50,12 @@ import { spineAtlasCacheBuster } from "@assetpack/core/spine";
 
 export default {
   ...
-  pipes: {
+  pipes: [
     ...
     // make sure these pipes are added after plugins that generate files
     cacheBuster(),
     texturePackerCacheBuster(),
     spineAtlasCacheBuster(),
-  },
+  ],
 };
 ```
