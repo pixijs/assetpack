@@ -1,0 +1,121 @@
+---
+sidebar_position: 7
+---
+
+import { ImageToggle } from '@site/src/components/ImageToggle';
+
+# TexturePacker
+
+AssetPack plugin for generating texture atlases using sharp.
+
+If you are using the [mipmap](/docs/guide/pipes/mipmap) plugin you will want to pass the same options to the `texturePacker` plugin as you are to the `mipmap` plugin.
+
+:::info
+This plugin is designed to work with the spritesheet format PixiJS uses.
+If you are using a different library you may need to convert the output.
+:::
+
+## Example
+
+<ImageToggle image={'texture-packer/tps-mip'} />
+
+```js
+import { texturePacker } from "@assetpack/core/texture-packer";
+
+export default {
+  ...
+  pipes: [
+    ...
+    texturePacker({
+      texturePacker: {
+        padding: 2,
+        nameStyle: "relative",
+        removeFileExtension: false,
+      },
+      resolutionOptions: {
+        template: "@%%x",
+        resolutions: { default: 1, low: 0.5 },
+        fixedResolution: "default",
+        maximumTextureSize: 4096,
+      },
+    })
+  ]
+};
+```
+
+## API
+
+| Option                               | Type              | Description                                                                                                              |
+| ------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| texturePacker                        | `object`          | Options for generating texture atlases.                                                                                  |
+| texturePacker.textureFormat          | `png\|jpg`        | The format of the texture atlas file.<br />Defaults to `png`.                                                            |
+| texturePacker.padding                | `number`          | The padding between sprites in the texture atlas.<br />Defaults to `2`.                                                  |
+| texturePacker.fixedSize              | `boolean`         | Whether the texture atlas should be a fixed size.<br />Defaults to `false`.                                              |
+| texturePacker.powerOfTwo             | `boolean`         | Whether the texture atlas should be a power of two.<br />Defaults to `false`.                                            |
+| texturePacker.width                  | `number`          | The width of the texture atlas.<br />Defaults to `1024`.                                                                 |
+| texturePacker.height                 | `number`          | The height of the texture atlas.<br />Defaults to `1024`.                                                                |
+| texturePacker.allowTrim              | `boolean`         | Whether the texture atlas should allow trimming.<br />Defaults to `true`.                                                |
+| texturePacker.allowRotation          | `boolean`         | Whether the texture atlas should allow rotation.<br />Defaults to `true`.                                                |
+| texturePacker.alphaThreshold         | `number`          | The alpha threshold for the texture atlas.<br />Defaults to `0.1`.                                                       |
+| texturePacker.scale                  | `number`          | The scale of the texture atlas.<br />Defaults to `1`.                                                                    |
+| texturePacker.resolution             | `number`          | The resolution of the texture atlas.<br />Defaults to `1`.                                                               |
+| texturePacker.nameStyle              | `short\|relative` | The name style of the texture atlas.<br />Defaults to `relative`.                                                        |
+| texturePacker.removeFileExtension    | `boolean`         | Whether the file extension should be removed.<br />Defaults to `false`.                                                  |
+|                                      |                   |                                                                                                                          |
+| resolutionOptions                    | `object`          | Options for generating resolutions.                                                                                      |
+| resolutionOptions.template           | `string`          | A template for denoting the resolution of the images.<br />Defaults to `@%%x`.                                           |
+| resolutionOptions.resolutions        | `object`          | An object containing the resolutions that the images will be resized to.<br />Defaults to `{ default: 1, low: 0.5 }`.    |
+| resolutionOptions.fixedResolution    | `string`          | A resolution used if the fix tag is applied. Resolution must match one found in resolutions.<br />Defaults to `default`. |
+| resolutionOptions.maximumTextureSize | `number`          | The maximum size a sprite sheet can be before its split out.<br />Defaults to `4096`.                                    |
+
+## Tags
+
+| Tag   | Folder/File | Description                                                        |
+| ----- | ----------- | ------------------------------------------------------------------ |
+| `tps` | `folder`    | If present the folder will be processed by Texture Packer.         |
+| `jpg` | `folder`    | If present the spritesheet will be saved as a jpg.                 |
+| `fix` | `folder`    | If present the spritesheet will be fixed to a specific resolution. |
+
+---
+
+## Texture Packer Compress
+
+To compress the texture atlases you can use the `texturePackerCompress` plugin. This plugin uses the Sharp library to compress images into different formats, such as JPEG, PNG, WebP, and AVIF. This helps reduce file sizes while maintaining image quality, ensuring faster load times and better performance.
+
+### Example
+
+<ImageToggle image={'texture-packer/tps-compress'} />
+
+```js
+import { compress } from "@assetpack/core/image";
+import { compress } from "@assetpack/core/texture-packer";
+
+// these options are the default values, all options shown here are optional
+const options = {
+  jpg: {},
+  png: { quality: 90 },
+  webp: { quality: 80, alphaQuality: 80, },
+  avif: false,
+};
+
+export default {
+  ...
+  pipes: [
+    ...
+    compress(options),
+    texturePackerCompress(options),
+  ]
+};
+```
+
+### API
+
+See [Compression API](/docs/guide/pipes/compress) for more information.
+
+You will want to make sure you are passing the same options to the `compress` plugin as you are to the `texturePackerCompress` plugin.
+
+### Tags
+
+| Tag  | Folder/File | Description                                  |
+| ---- | ----------- | -------------------------------------------- |
+| `nc` | `folder`    | If present the atlas will not be compressed. |

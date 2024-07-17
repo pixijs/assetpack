@@ -1,24 +1,29 @@
 {
   "name": "assetpack",
   "private": true,
+  "version": "0.0.0",
   "license": "MIT",
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "nx run-many --target=build --all --parallel",
-    "build:force": "nx run-many --target=build --all --parallel --skip-nx-cache",
-    "clean": "rimraf packages/*/{dist,.testInput,.testOutput,.assetpack}",
-    "lint": "eslint --cache packages shared --ext .js,.ts,.mjs --max-warnings 0",
-    "prerelease": "npm run lint && npm run test:force && npm run build:force",
-    "release": "lerna publish --no-private --exact --force-publish",
-    "release:fromPackage": "lerna publish from-package --no-private",
+    "build": "npm run build --workspace @assetpack/core",
+    "clean": "xs clean",
+    "lint:fix": "xs lint --fix",
     "prepare": "husky install",
+    "prerelease": "npm run test:lint && npm run build",
+    "release": "npm run release --workspace @assetpack/core",
+    "publish-ci": "npm run publish-ci --workspace @assetpack/core",
     "pretest": "npm run clean",
-    "test": "nx run-many --target=test --all --parallel",
-    "test:force": "nx run-many --target=test --all --parallel --skip-nx-cache",
-    "test:types": "nx run-many --target=test:types --all --parallel",
-    "test:types:force": "nx run-many --target=test:types --all --parallel --skip-nx-cache"
+    "test": "vitest run",
+    "test:lint": "xs lint",
+    "test:types": "xs types",
+    "test:watch": "vitest",
+    "watch": "npm run --ws watch --if-present",
+    "deploy": "npm run deploy --workspace @assetpack/docs",
+    "docs:start": "npm run start --workspace @assetpack/docs",
+    "docs:build": "npm run build --workspace @assetpack/docs"
   },
   "husky": {
     "hooks": {
@@ -27,29 +32,27 @@
   },
   "lint-staged": {
     "*.{ts,js,mjs}": [
-      "eslint --cache --fix --max-warnings 0"
+      "npm run test:lint --"
     ]
   },
   "devDependencies": {
-    "@nrwl/nx-cloud": "latest",
-    "@pixi/eslint-config": "^4.0.1",
-    "@rollup/plugin-typescript": "^11.0.0",
-    "@types/fs-extra": "^11.0.1",
-    "@types/jest": "^29.4.0",
-    "eslint": "^8.33.0",
-    "find-up": "^5.0.0",
-    "fs-extra": "^11.1.0",
+    "@pixi/extension-scripts": "^2.4.1",
+    "@tsconfig/node20": "^20.1.4",
     "husky": "^8.0.3",
-    "jest": "^29.4.1",
-    "jest-extended": "^3.2.3",
-    "lerna": "^6.4.1",
-    "lint-staged": "^13.1.0",
-    "nx": "^15.6.3",
-    "rimraf": "^3.0.2",
-    "rollup": "^3.12.1",
-    "rollup-plugin-dts": "^5.1.1",
-    "ts-jest": "^29.0.5",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "lint-staged": "^15.2.7",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  },
+  "extensionConfig": {
+    "tsconfig": "tsconfig.eslint.json",
+    "clean": [
+      "**/*/.testInput",
+      "**/*/.testOutput",
+      ".assetpack",
+      "packages/assetpack/test/cache/**/*"
+    ],
+    "lint": [
+      "**/*.{ts,tsx}"
+    ]
   }
 }

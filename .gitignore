@@ -43,3 +43,4 @@ Thumbs.db
 .testInput
 .testOutput
 .assetpack
+packages/assetpack/test/cache
