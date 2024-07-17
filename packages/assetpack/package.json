@@ -3,6 +3,13 @@
   "version": "1.0.0-rc",
   "license": "MIT",
   "type": "module",
+  "homepage": "https://pixijs.io/assetpack/",
+  "bugs": "https://github.com/pixijs/assetpack/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pixijs/assetpack.git"
+  },
+  "keywords": [],
   "exports": {
     ".": "./dist/core/index.js",
     "./cache-buster": "./dist/cache-buster/index.js",
