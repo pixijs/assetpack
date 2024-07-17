@@ -1,6 +1,6 @@
 {
   "name": "@assetpack/core",
-  "version": "1.0.0-rc",
+  "version": "1.0.0",
   "license": "MIT",
   "type": "module",
   "homepage": "https://pixijs.io/assetpack/",
