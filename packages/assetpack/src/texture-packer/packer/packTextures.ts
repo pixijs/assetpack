@@ -73,6 +73,7 @@ export async function packTextures(
         resolution: 1,
         nameStyle: 'relative',
         removeFileExtension: false,
+        exporter: 'Pixi',
         ..._options,
     };
 
