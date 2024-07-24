@@ -43,7 +43,7 @@ describe('Compress', () =>
                     jpg: true,
                     astc: true,
                     basis: true,
-                    bc7: false // Disabled due to the absence of libomp on the GitHub Actions runner: "error while loading shared libraries: libomp.so.5: cannot open shared object file: No such file or directory"
+                    bc7: false // Disabled due to the absence of libomp on the GitHub Actions runner: "error while loading shared libraries: libomp.so.5"
                 }),
             ]
         });
