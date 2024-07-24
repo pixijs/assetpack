@@ -49,6 +49,7 @@ describe('Spine Atlas All', () =>
                     png: true,
                     webp: true,
                     jpg: true,
+                    astc: true,
                 }),
                 mipmap({
                     resolutions: { default: 1, low: 0.5 },
@@ -59,6 +60,7 @@ describe('Spine Atlas All', () =>
                 spineAtlasCompress({
                     png: true,
                     webp: true,
+                    astc: true,
                 }),
             ]
         });
@@ -66,6 +68,7 @@ describe('Spine Atlas All', () =>
         await assetpack.run();
 
         const rawAtlasWebpHalf = readFileSync(`${outputDir}/dragon@0.5x.webp.atlas`);
+        const rawAtlasAstcHalf = readFileSync(`${outputDir}/dragon@0.5x.astc.atlas`);
         const rawAtlasHalf = readFileSync(`${outputDir}/dragon@0.5x.png.atlas`);
 
         expect(rawAtlasHalf.includes('dragon@0.5x.png')).toBeTruthy();
@@ -73,6 +76,9 @@ describe('Spine Atlas All', () =>
 
         expect(rawAtlasWebpHalf.includes('dragon@0.5x.webp')).toBeTruthy();
         expect(rawAtlasWebpHalf.includes('dragon2@0.5x.webp')).toBeTruthy();
+
+        expect(rawAtlasAstcHalf.includes('dragon@0.5x.astc.ktx')).toBeTruthy();
+        expect(rawAtlasAstcHalf.includes('dragon2@0.5x.astc.ktx')).toBeTruthy();
     });
 
     it('should correctly create files when Mipmap and CacheBuster are used', async () =>
@@ -114,6 +120,7 @@ describe('Spine Atlas All', () =>
                     png: true,
                     webp: true,
                     jpg: true,
+                    astc: true
                 }),
                 spineAtlasMipmap({
                     resolutions: { default: 1, low: 0.5 },
@@ -121,6 +128,7 @@ describe('Spine Atlas All', () =>
                 spineAtlasCompress({
                     png: true,
                     webp: true,
+                    astc: true
                 }),
                 cacheBuster(),
                 spineAtlasCacheBuster()
@@ -128,19 +136,21 @@ describe('Spine Atlas All', () =>
         });
 
         await assetpack.run();
-        const globPath = `${outputDir}/*.{atlas,png,webp}`;
+        const globPath = `${outputDir}/*.{atlas,png,webp,astc.ktx}`;
         const files = await glob(globPath);
 
         // need two sets of files
-        expect(files.length).toBe(12);
-        expect(files.filter((file) => file.endsWith('.atlas')).length).toBe(4);
+        expect(files.length).toBe(18);
+        expect(files.filter((file) => file.endsWith('.atlas')).length).toBe(6);
         expect(files.filter((file) => file.endsWith('.png')).length).toBe(4);
         expect(files.filter((file) => file.endsWith('.webp')).length).toBe(4);
+        expect(files.filter((file) => file.endsWith('.astc.ktx')).length).toBe(4);
         expect(files.filter((file) => file.endsWith('.jpg')).length).toBe(0);
 
         const atlasFiles = files.filter((file) => file.endsWith('.atlas'));
         const pngFiles = files.filter((file) => file.endsWith('.png'));
         const webpFiles = files.filter((file) => file.endsWith('.webp'));
+        const astcFiles = files.filter((file) => file.endsWith('.astc.ktx'));
 
         // check that the files are correct
         atlasFiles.forEach((atlasFile) =>
@@ -149,6 +159,7 @@ describe('Spine Atlas All', () =>
             const isHalfSize = atlasFile.includes('@0.5x');
             const isWebp = atlasFile.includes('.webp');
             const isPng = atlasFile.includes('.png');
+            const isAstc = atlasFile.includes('.astc');
 
             const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) =>
             {
@@ -157,7 +168,7 @@ describe('Spine Atlas All', () =>
                     // remove the outputDir
                     file = file.replace(`${outputDir}/`, '');
                     const isFileHalfSize = file.includes('@0.5x');
-                    const isFileFileType = file.includes(isWebp ? '.webp' : '.png');
+                    const isFileFileType = file.includes(isWebp ? '.webp' : isAstc ? '.astc' : '.png');
                     const shouldExist = isHalfSize === isFileHalfSize && isFileType === isFileFileType;
 
                     expect(rawAtlas.includes(file)).toBe(shouldExist);
@@ -174,6 +185,10 @@ describe('Spine Atlas All', () =>
                 {
                     checkFiles(pngFiles, true, true);
                 }
+                else if (isAstc)
+                {
+                    checkFiles(astcFiles, true, true);
+                }
             }
             else
                 if (isWebp)
@@ -183,6 +198,10 @@ describe('Spine Atlas All', () =>
                 else if (isPng)
                 {
                     checkFiles(pngFiles, false, true);
+                }
+                else if (isAstc)
+                {
+                    checkFiles(astcFiles, false, true);
                 }
         });
     });

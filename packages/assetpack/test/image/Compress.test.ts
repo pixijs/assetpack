@@ -41,6 +41,9 @@ describe('Compress', () =>
                     webp: true,
                     avif: true,
                     jpg: true,
+                    astc: true,
+                    basis: true,
+                    bc7: true
                 }),
             ]
         });
@@ -50,10 +53,17 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testPng.png`)).toBe(true);
         expect(existsSync(`${outputDir}/testPng.webp`)).toBe(true);
         expect(existsSync(`${outputDir}/testPng.avif`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.astc.ktx`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.bc7.dds`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.basis.ktx2`)).toBe(true);
+
         expect(existsSync(`${outputDir}/testJpg.jpg`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.webp`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.avif`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.astc.ktx`)).toBe(true);
+        expect(existsSync(`${outputDir}/testJpg.bc7.dds`)).toBe(true);
+        expect(existsSync(`${outputDir}/testJpg.basis.ktx2`)).toBe(true);
     });
 
     it('should compress png with 1 plugin', async () =>
@@ -88,6 +98,9 @@ describe('Compress', () =>
                     webp: true,
                     jpg: true,
                     avif: true,
+                    astc: true,
+                    basis: true,
+                    bc7: true
                 }),
             ],
             assetSettings: [{
@@ -105,9 +118,16 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testPng.png`)).toBe(true);
         expect(existsSync(`${outputDir}/testPng.webp`)).toBe(true);
         expect(existsSync(`${outputDir}/testPng.avif`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.astc.ktx`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.bc7.dds`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.basis.ktx2`)).toBe(true);
+
         expect(existsSync(`${outputDir}/testJpg.jpg`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.webp`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.avif`)).toBe(true);
+        expect(existsSync(`${outputDir}/testJpg.astc.ktx`)).toBe(true);
+        expect(existsSync(`${outputDir}/testJpg.bc7.dds`)).toBe(true);
+        expect(existsSync(`${outputDir}/testJpg.basis.ktx2`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
     });
 
@@ -150,9 +170,16 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testPng.png`)).toBe(true);
         expect(existsSync(`${outputDir}/testPng.webp`)).toBe(false);
         expect(existsSync(`${outputDir}/testPng.avif`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.astc.ktx`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.bc7.dds`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.basis.ktx2`)).toBe(false);
+
         expect(existsSync(`${outputDir}/testJpg.jpg`)).toBe(true);
         expect(existsSync(`${outputDir}/testJpg.webp`)).toBe(false);
         expect(existsSync(`${outputDir}/testJpg.avif`)).toBe(false);
         expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.astc.ktx`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.bc7.dds`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.basis.ktx2`)).toBe(false);
     });
 });

@@ -1,12 +1,12 @@
 import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
-import type { CompressImageData, CompressOptions } from '../compress.js';
+import type { CompressImageData, CompressImageDataResult, CompressOptions } from '../compress.js';
 
 export async function compressSharp(
     image: CompressImageData,
     options: CompressOptions
-): Promise<CompressImageData[]>
+): Promise<CompressImageDataResult[]>
 {
-    const compressed: CompressImageData[] = [];
+    const compressed: CompressImageDataResult[] = [];
 
     const sharpImage = image.sharpImage;
 
@@ -15,7 +15,7 @@ export async function compressSharp(
         compressed.push({
             format: '.png',
             resolution: image.resolution,
-            sharpImage: sharpImage.clone().png({ ...options.png as PngOptions, force: true }),
+            buffer: await sharpImage.clone().png({ ...options.png as PngOptions, force: true }).toBuffer(),
         });
     }
 
@@ -24,7 +24,7 @@ export async function compressSharp(
         compressed.push({
             format: '.webp',
             resolution: image.resolution,
-            sharpImage: sharpImage.clone().webp(options.webp as WebpOptions)
+            buffer: await sharpImage.clone().webp(options.webp as WebpOptions).toBuffer()
         });
     }
 
@@ -33,7 +33,7 @@ export async function compressSharp(
         compressed.push({
             format: '.jpg',
             resolution: image.resolution,
-            sharpImage: sharpImage.clone().jpeg(options.jpg as JpegOptions)
+            buffer: await sharpImage.clone().jpeg(options.jpg as JpegOptions).toBuffer()
         });
     }
 
@@ -42,7 +42,7 @@ export async function compressSharp(
         compressed.push({
             format: '.avif',
             resolution: image.resolution,
-            sharpImage: sharpImage.clone().avif(options.avif as AvifOptions)
+            buffer: await sharpImage.clone().avif(options.avif as AvifOptions).toBuffer()
         });
     }
 
