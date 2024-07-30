@@ -1,5 +1,8 @@
+import { BYPASS } from '../constants.js';
+
 import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 import type { CompressImageData, CompressOptions } from '../compress.js';
+
 
 export async function compressSharp(
     image: CompressImageData,
@@ -10,7 +13,7 @@ export async function compressSharp(
 
     const sharpImage = image.sharpImage;
 
-    if (image.format === '.png' && options.png)
+    if (image.format === '.png' && options.png && options.png !== BYPASS)
     {
         compressed.push({
             format: '.png',
@@ -19,7 +22,7 @@ export async function compressSharp(
         });
     }
 
-    if (options.webp)
+    if (options.webp && options.webp !== BYPASS)
     {
         compressed.push({
             format: '.webp',
@@ -28,7 +31,7 @@ export async function compressSharp(
         });
     }
 
-    if (((image.format === '.jpg') || (image.format === '.jpeg')) && options.jpg)
+    if (((image.format === '.jpg') || (image.format === '.jpeg')) && options.jpg && options.jpg !== BYPASS)
     {
         compressed.push({
             format: '.jpg',
@@ -37,7 +40,7 @@ export async function compressSharp(
         });
     }
 
-    if (options.avif)
+    if (options.avif && options.avif !== BYPASS)
     {
         compressed.push({
             format: '.avif',

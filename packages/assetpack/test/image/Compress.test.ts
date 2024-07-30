@@ -8,7 +8,7 @@ const pkg = 'image';
 
 describe('Compress', () =>
 {
-    it('should compress png', async () =>
+    it('should compress png and bypass jpg', async () =>
     {
         const testName = 'compress-png';
         const inputDir = getInputDir(pkg, testName);
@@ -40,7 +40,7 @@ describe('Compress', () =>
                     png: true,
                     webp: true,
                     avif: true,
-                    jpg: true,
+                    jpg: 'bypass',
                 }),
             ]
         });
@@ -56,7 +56,7 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
     });
 
-    it('should compress png with 1 plugin', async () =>
+    it('should compress png and bypass jpg with 1 plugin', async () =>
     {
         const testName = 'compress-png-1-plugin';
         const inputDir = getInputDir(pkg, testName);
@@ -86,7 +86,7 @@ describe('Compress', () =>
                 compress({
                     png: true,
                     webp: true,
-                    jpg: true,
+                    jpg: 'bypass',
                     avif: true,
                 }),
             ],

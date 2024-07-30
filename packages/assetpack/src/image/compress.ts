@@ -2,6 +2,7 @@ import sharp from 'sharp';
 import { checkExt, createNewAssetAt } from '../core/index.js';
 import { compressSharp } from './utils/compressSharp.js';
 import { resolveOptions } from './utils/resolveOptions.js';
+import { BYPASS } from './constants.js';
 
 import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
@@ -13,10 +14,10 @@ type CompressPngOptions = Omit<PngOptions, 'force'>;
 
 export interface CompressOptions extends PluginOptions
 {
-    png?: CompressPngOptions | boolean;
-    webp?: CompressWebpOptions | boolean;
-    avif?: CompressAvifOptions | boolean;
-    jpg?: CompressJpgOptions | boolean;
+    png?: CompressPngOptions | boolean | typeof BYPASS;
+    webp?: CompressWebpOptions | boolean | typeof BYPASS;
+    avif?: CompressAvifOptions | boolean | typeof BYPASS;
+    jpg?: CompressJpgOptions | boolean | typeof BYPASS;
 }
 
 export interface CompressImageData
@@ -97,6 +98,11 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
 
                     return newAsset;
                 });
+
+                // bypass source asset
+                if (options[asset.extension.slice(1) as keyof CompressOptions] === BYPASS) {
+                    newAssets.push(asset);
+                }
 
                 const promises = processedImages.map((image, i) => image.sharpImage.toBuffer().then((buffer) =>
                 {
