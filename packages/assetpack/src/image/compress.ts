@@ -63,7 +63,7 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         },
         test(asset: Asset, options)
         {
-            return compress && options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nc];
+            return options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nc];
         },
         async transform(asset: Asset, options)
         {
