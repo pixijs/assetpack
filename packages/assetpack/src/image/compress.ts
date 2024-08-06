@@ -63,7 +63,7 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         },
         test(asset: Asset, options)
         {
-            return options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nc];
+            return compress && options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nc];
         },
         async transform(asset: Asset, options)
         {
@@ -97,6 +97,12 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
 
                     return newAsset;
                 });
+
+                // ensure that the original image is passed through if it is not compressed by png/jpg options
+                if ((image.format === '.png' && !options.png) || (((image.format === '.jpg') || (image.format === '.jpeg')) && !options.jpg))
+                {
+                    newAssets.push(asset);
+                }
 
                 const promises = processedImages.map((image, i) => image.sharpImage.toBuffer().then((buffer) =>
                 {
