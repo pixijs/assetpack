@@ -62,8 +62,7 @@ export function pixiPipes(config: PixiAssetPack)
     const apConfig: Required<PixiAssetPack> = merge.recursive(defaultConfig, config);
 
     // don't merge the resolutions, just overwrite them
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    apConfig.resolutions ??= config?.resolutions!;
+    apConfig.resolutions = config?.resolutions ?? apConfig.resolutions;
 
     const pipes = [
         webfont(),
