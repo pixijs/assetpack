@@ -22,6 +22,8 @@ describe('Texture Packer Compression', () =>
             png: true,
             jpg: true,
             webp: true,
+            astc: true,
+            basis: true
         };
 
         const assetpack = new AssetPack({
@@ -43,8 +45,12 @@ describe('Texture Packer Compression', () =>
 
         const sheetPng = fs.readJSONSync(`${outputDir}/sprites.png.json`);
         const sheetWebp = fs.readJSONSync(`${outputDir}/sprites.webp.json`);
+        const sheetAstc = fs.readJSONSync(`${outputDir}/sprites.astc.json`);
+        const sheetBasis = fs.readJSONSync(`${outputDir}/sprites.basis.json`);
 
         expect(sheetPng.meta.image).toEqual(`sprites.png`);
         expect(sheetWebp.meta.image).toEqual(`sprites.webp`);
+        expect(sheetAstc.meta.image).toEqual(`sprites.astc.ktx`);
+        expect(sheetBasis.meta.image).toEqual(`sprites.basis.ktx2`);
     });
 });

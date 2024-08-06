@@ -61,9 +61,14 @@ describe('Texture Packer Compression', () =>
         const outputDir = getOutputDir(pkg, testName);
 
         createTPSFolder(testName, pkg);
+        const compressOpt = {
+            astc: true,
+            basis: true
+        };
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -73,8 +78,8 @@ describe('Texture Packer Compression', () =>
                         maximumTextureSize: 512,
                     },
                 }),
-                compress(),
-                texturePackerCompress(),
+                compress(compressOpt),
+                texturePackerCompress(compressOpt),
                 pixiManifest(),
             ]
         });
@@ -91,8 +96,12 @@ describe('Texture Packer Compression', () =>
                 src: [
                     'sprites-0@0.5x.webp.json',
                     'sprites-0@0.5x.png.json',
+                    'sprites-0@0.5x.basis.json',
+                    'sprites-0@0.5x.astc.json',
                     'sprites-0.webp.json',
                     'sprites-0.png.json',
+                    'sprites-0.basis.json',
+                    'sprites-0.astc.json',
                 ],
                 data: {
                     tags: {

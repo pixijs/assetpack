@@ -16,6 +16,9 @@ export function texturePackerCompress(
                 png: true,
                 webp: true,
                 avif: false,
+                astc: false,
+                bc7: false,
+                basis: false
             },
             ..._options,
         },
@@ -33,29 +36,30 @@ export function texturePackerCompress(
         },
         async transform(asset: Asset, options)
         {
-            const formats = [];
+            const formats: Array<[format: string, extension: string]> = [];
 
-            if (options.avif) formats.push('avif');
-            if (options.png) formats.push('png');
-            if (options.webp) formats.push('webp');
+            if (options.avif) formats.push(['avif', '.avif']);
+            if (options.png) formats.push(['png', '.png']);
+            if (options.webp) formats.push(['webp', '.webp']);
+            if (options.astc) formats.push(['astc', '.astc.ktx']);
+            if (options.bc7) formats.push(['bc7', '.bc7.dds']);
+            if (options.basis) formats.push(['basis', '.basis.ktx2']);
 
             const json = JSON.parse(asset.buffer.toString());
 
-            const assets = formats.map((format) =>
+            const assets = formats.map(([format, extension]) =>
             {
-                const extension = `.${format}`;
-
-                const newFileName = swapExt(asset.filename, `${extension}.json`);
-
-                json.meta.image = swapExt(json.meta.image, extension);
+                const newFileName = swapExt(asset.filename, `.${format}.json`);
 
                 const newAsset = createNewAssetAt(asset, newFileName);
                 const newJson = JSON.parse(JSON.stringify(json));
 
+                newJson.meta.image = swapExt(newJson.meta.image, extension);
+
                 if (newJson.meta.related_multi_packs)
                 {
                     newJson.meta.related_multi_packs = (newJson.meta.related_multi_packs as string[]).map((pack) =>
-                        swapExt(pack, `${extension}.json`),
+                        swapExt(pack, `.${format}.json`),
                     );
                 }
 

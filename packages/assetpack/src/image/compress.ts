@@ -1,8 +1,10 @@
 import sharp from 'sharp';
 import { checkExt, createNewAssetAt } from '../core/index.js';
+import { compressGpuTextures } from './utils/compressGpuTextures.js';
 import { compressSharp } from './utils/compressSharp.js';
 import { resolveOptions } from './utils/resolveOptions.js';
 
+import type { AstcOptions, BasisOptions, BcOptions } from 'gpu-tex-enc';
 import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 
@@ -10,6 +12,9 @@ type CompressJpgOptions = Omit<JpegOptions, 'force'>;
 type CompressWebpOptions = Omit<WebpOptions, 'force'>;
 type CompressAvifOptions = Omit<AvifOptions, 'force'>;
 type CompressPngOptions = Omit<PngOptions, 'force'>;
+type CompressBc7Options = BcOptions;
+type CompressAstcOptions = AstcOptions;
+type CompressBasisOptions = BasisOptions;
 
 export interface CompressOptions extends PluginOptions
 {
@@ -17,6 +22,9 @@ export interface CompressOptions extends PluginOptions
     webp?: CompressWebpOptions | boolean;
     avif?: CompressAvifOptions | boolean;
     jpg?: CompressJpgOptions | boolean;
+    bc7?: CompressBc7Options | boolean;
+    astc?: CompressAstcOptions | boolean;
+    basis?: CompressBasisOptions | boolean;
 }
 
 export interface CompressImageData
@@ -26,6 +34,13 @@ export interface CompressImageData
     sharpImage: sharp.Sharp;
 }
 
+export interface CompressImageDataResult
+{
+    format: CompressImageData['format'] | '.bc7.dds' | '.astc.ktx' | '.basis.ktx2';
+    resolution: number;
+    buffer: Buffer;
+}
+
 export function compress(options: CompressOptions = {}): AssetPipe<CompressOptions, 'nc'>
 {
     const compress = resolveOptions<CompressOptions>(options, {
@@ -33,6 +48,9 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         jpg: true,
         webp: true,
         avif: false,
+        bc7: false,
+        astc: false,
+        basis: false,
     });
 
     if (compress)
@@ -48,6 +66,18 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
             alphaQuality: 80,
         });
         compress.avif = resolveOptions<CompressAvifOptions>(compress.avif, {
+
+        });
+
+        compress.bc7 = resolveOptions<CompressBc7Options>(compress.bc7, {
+
+        });
+
+        compress.astc = resolveOptions<CompressAstcOptions>(compress.astc, {
+
+        });
+
+        compress.basis = resolveOptions<CompressBasisOptions>(compress.basis, {
 
         });
     }
@@ -82,7 +112,10 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
                     sharpImage: sharp(asset.buffer),
                 };
 
-                const processedImages = await compressSharp(image, options);
+                const processedImages: CompressImageDataResult[] = [
+                    ...await compressSharp(image, options),
+                    ...await compressGpuTextures(image, options)
+                ];
 
                 const newAssets = processedImages.map((data) =>
                 {
@@ -95,15 +128,10 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
                         filename
                     );
 
+                    newAsset.buffer = data.buffer;
+
                     return newAsset;
                 });
-
-                const promises = processedImages.map((image, i) => image.sharpImage.toBuffer().then((buffer) =>
-                {
-                    newAssets[i].buffer = buffer;
-                }));
-
-                await Promise.all(promises);
 
                 return newAssets;
             }
