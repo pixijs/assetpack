@@ -30,7 +30,7 @@ export class Asset
 
     metaData: Record<string, any> = {};
     inheritedMetaData: Record<string, any> = {};
-    allMetaData: Record<string, any> = {};
+    private _allMetaData: Record<string, any> = {};
     transformData: Record<string, any> = {};
 
     settings?: Record<string, any>;
@@ -63,7 +63,7 @@ export class Asset
         asset.parent = this;
 
         asset.inheritedMetaData = { ...this.inheritedMetaData, ...this.metaData };
-        asset.allMetaData = { ...asset.inheritedMetaData, ...asset.metaData };
+        asset._allMetaData = { ...asset.inheritedMetaData, ...asset.metaData };
         asset.transformData = { ...this.transformData, ...asset.transformData };
     }
 
@@ -87,10 +87,15 @@ export class Asset
         asset.transformParent = this;
 
         asset.inheritedMetaData = { ...this.inheritedMetaData, ...this.metaData };
-        asset.allMetaData = { ...asset.inheritedMetaData, ...asset.metaData };
+        asset._allMetaData = { ...asset.inheritedMetaData, ...asset.metaData };
         asset.transformData = { ...this.transformData, ...asset.transformData };
 
         asset.settings = this.settings;
+    }
+
+    get allMetaData()
+    {
+        return { ...this.inheritedMetaData, ...this.metaData };
     }
 
     get state()
