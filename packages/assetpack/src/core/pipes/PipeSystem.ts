@@ -88,6 +88,8 @@ export class PipeSystem
         {
             asset.transformName = pipe.name;
             asset.transformChildren = [];
+            // apply the dataTags of the pipe to the asset so it can be used by pixi and other loaders
+            asset.applyManifestData(Object.values(pipe.dataTags ?? {}));
 
             const assets = await pipe.transform(asset, options, this);
 

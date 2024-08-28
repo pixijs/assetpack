@@ -57,5 +57,12 @@ Each plugin has its own set of tags, so be sure to check the documentation for t
 ### Other Tag Examples
 
 - You can also add multiple tags to a single asset, like this `asset{tag1}{tag2}`.
-- Tags can have data appended to them, like this `asset{tag1:myData}`.
-- Tags can have multiple data values, like this `asset{tag1:100,200}`.
+- Tags can have data appended to them, like this `asset{tag1=myData}`.
+- Tags can have multiple data values, like this `asset{tag1=100&200}`.
+
+### Data Tags
+
+Data tags are a special type of tag that a plugin can specify to allow for the value of that tag to be passed to the manifest.
+This can be useful for PixiJS as in the manifest you can specify certain properties for each asset.
+
+For example, the webfont plugin has a `family` tag that can be used to specify the font family name of the font file.

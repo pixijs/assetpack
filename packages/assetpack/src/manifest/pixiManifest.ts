@@ -143,7 +143,8 @@ function collectAssets(
                 .map((finalAsset) => path.relative(outputPath, finalAsset.path))
                 .sort((a, b) => b.localeCompare(a)),
             data:  options.includeMetaData ? {
-                tags: asset.allMetaData
+                tags: asset.allMetaData,
+                ...asset.manifestData
             } : undefined
         });
     }

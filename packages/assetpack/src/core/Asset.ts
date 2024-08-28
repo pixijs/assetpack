@@ -31,6 +31,7 @@ export class Asset
     metaData: Record<string, any> = {};
     inheritedMetaData: Record<string, any> = {};
     transformData: Record<string, any> = {};
+    manifestData: Record<string, any> = {};
 
     settings?: Record<string, any>;
 
@@ -251,6 +252,23 @@ export class Asset
         for (let i = 0; i < this.children.length; i++)
         {
             this.children[i].releaseChildrenBuffers();
+        }
+    }
+
+    /**
+     * Update the manifest data with certain keys from the metaData
+     * @param keys - keys to apply from the metaData to the manifestData
+     */
+    applyManifestData(keys: string[])
+    {
+        for (let i = 0; i < keys.length; i++)
+        {
+            const key = keys[i];
+
+            if (this.metaData[key] !== undefined)
+            {
+                this.manifestData[key] = this.metaData[key];
+            }
         }
     }
 }

@@ -309,36 +309,40 @@ describe('Webfont', () =>
                     alias: ['defaultFolder/ttf.ttf'],
                     src: ['defaultFolder/ttf.woff2'],
                     data: {
+                        family: 'ttf',
                         tags: {
                             wf: true,
-                        }
+                        },
                     }
                 },
                 {
                     alias: ['msdfFolder/ttf.ttf'],
                     src: ['msdfFolder/ttf.fnt'],
                     data: {
+                        family: 'ttf',
                         tags: {
                             msdf: true,
-                        }
+                        },
                     }
                 },
                 {
                     alias: ['sdfFolder/ttf.ttf'],
                     src: ['sdfFolder/ttf.fnt'],
                     data: {
+                        family: 'ttf',
                         tags: {
                             sdf: true,
-                        }
+                        },
                     }
                 },
                 {
                     alias: ['svgFolder/svg.svg'],
                     src: ['svgFolder/svg.woff2'],
                     data: {
+                        family: 'svg',
                         tags: {
                             wf: true,
-                        }
+                        },
                     }
                 },
             ],
