@@ -293,7 +293,7 @@ describe('Webfont', () =>
                 msdfFont(),
                 mipmap(),
                 compress(),
-                pixiManifest(),
+                pixiManifest({ legacyMetaDataOutput: false }),
             ]
         });
 

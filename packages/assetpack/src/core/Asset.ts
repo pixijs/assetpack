@@ -31,7 +31,6 @@ export class Asset
     metaData: Record<string, any> = {};
     inheritedMetaData: Record<string, any> = {};
     transformData: Record<string, any> = {};
-    manifestData: Record<string, any> = {};
 
     settings?: Record<string, any>;
 
@@ -256,20 +255,38 @@ export class Asset
     }
 
     /**
-     * Update the manifest data with certain keys from the metaData
-     * @param keys - keys to apply from the metaData to the manifestData
+     * Get the public meta data for this asset
+     * This will exclude any internal data
      */
-    applyManifestData(keys: string[])
+    getPublicMetaData(internalPipeData: Record<string, any>)
     {
-        for (let i = 0; i < keys.length; i++)
+        const internalKeys = new Set(Object.keys(internalPipeData));
+        const metaData = Object.keys(this.allMetaData).reduce((result: Record<string, any>, key) =>
         {
-            const key = keys[i];
-
-            if (this.metaData[key] !== undefined)
+            if (!internalKeys.has(key))
             {
-                this.manifestData[key] = this.metaData[key];
+                result[key] = this.allMetaData[key];
             }
-        }
+
+            return result;
+        }, {} as Record<string, any>);
+
+        return metaData;
+    }
+
+    getInternalMetaData(internalPipeData: Record<string, any>)
+    {
+        const res: Record<string, any> = {};
+
+        Object.keys(internalPipeData).forEach((key) =>
+        {
+            if (this.allMetaData[key])
+            {
+                res[key] = this.allMetaData[key];
+            }
+        });
+
+        return res;
     }
 }
 

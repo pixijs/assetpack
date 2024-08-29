@@ -30,10 +30,49 @@ export interface PixiManifestEntry
 
 export interface PixiManifestOptions extends PluginOptions
 {
+    /**
+     * The output location for the manifest file.
+     */
     output?: string;
+    /**
+     * if true, the alias will be created with the basename of the file.
+     */
     createShortcuts?: boolean;
+    /**
+     * if true, the extensions will be removed from the alias names.
+     */
     trimExtensions?: boolean;
+    /**
+     * if true, the metaData will be outputted in the data field of the manifest.
+     */
     includeMetaData?: boolean;
+    /**
+     * if true, the all tags will be outputted in the data.tags field of the manifest.
+     * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
+     * @example
+     * ```json
+     * {
+     *   "bundles": [
+     *     {
+     *       "name": "default",
+     *       "assets": [
+     *         {
+     *           "alias": ["test"],
+     *           "src": ["test.png"],
+     *           "data": {
+     *             "tags": {
+     *               "nc": true,
+     *               "customTag": true // this tag will be outputted to the data field directly instead of the data.tags field
+     *             }
+     *           }
+     *         }
+     *       ]
+     *     }
+     *   ]
+     * }
+     * @default true
+     */
+    legacyMetaDataOutput?: boolean;
 }
 
 export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<PixiManifestOptions, 'manifest' | 'mIgnore'>
@@ -45,6 +84,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
             createShortcuts: false,
             trimExtensions: false,
             includeMetaData: true,
+            legacyMetaDataOutput: true,
             ..._options,
         },
         tags: {
@@ -72,7 +112,8 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
                 pipeSystem.entryPath,
                 manifest.bundles,
                 defaultBundle,
-                this.tags!
+                this.tags!,
+                pipeSystem.internalMetaData
             );
             filterUniqueNames(manifest);
             await fs.writeJSON(newFileName, manifest, { spaces: 2 });
@@ -109,7 +150,8 @@ function collectAssets(
     entryPath = '',
     bundles: PixiBundle[],
     bundle: PixiBundle,
-    tags: AssetPipe<null, 'manifest' | 'mIgnore'>['tags']
+    tags: AssetPipe<null, 'manifest' | 'mIgnore'>['tags'],
+    internalTags: Record<string, any>
 )
 {
     if (asset.skip) return;
@@ -137,21 +179,28 @@ function collectAssets(
 
         if (finalManifestAssets.length === 0) return;
 
+        const metadata = {
+            tags: { ...asset.getInternalMetaData(internalTags) },
+            ...asset.getPublicMetaData(internalTags)
+        } as Record<string, any>;
+
+        if (options.legacyMetaDataOutput)
+        {
+            metadata.tags = asset.allMetaData;
+        }
+
         bundleAssets.push({
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
             src: finalManifestAssets
                 .map((finalAsset) => path.relative(outputPath, finalAsset.path))
                 .sort((a, b) => b.localeCompare(a)),
-            data:  options.includeMetaData ? {
-                tags: asset.allMetaData,
-                ...asset.manifestData
-            } : undefined
+            data:  options.includeMetaData ? metadata : undefined
         });
     }
 
     asset.children.forEach((child) =>
     {
-        collectAssets(child, options, outputPath, entryPath, bundles, localBundle, tags);
+        collectAssets(child, options, outputPath, entryPath, bundles, localBundle, tags, internalTags);
     });
 
     // for all assets.. check for atlas and remove them from the bundle..

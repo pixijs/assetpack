@@ -78,6 +78,7 @@ describe('Atlas Manifest', () =>
                                 'dragon.atlas'
                             ],
                             data: {
+                                spine: true,
                                 tags: {
                                     spine: true
                                 }
@@ -182,6 +183,7 @@ describe('Atlas Manifest', () =>
                                     'dragon.atlas'
                                 ],
                                 data: {
+                                    spine: true,
                                     tags: {
                                         spine: true
                                     }
@@ -206,6 +208,7 @@ describe('Atlas Manifest', () =>
                                     'nested/dragon.atlas'
                                 ],
                                 data: {
+                                    spine: true,
                                     tags: {
                                         spine: true
                                     }

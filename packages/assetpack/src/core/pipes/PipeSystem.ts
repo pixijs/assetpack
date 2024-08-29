@@ -28,6 +28,11 @@ export class PipeSystem
 
     assetSettings: AssetSettings[] = [];
 
+    internalMetaData: Record<string, any> = {
+        copy: 'copy',
+        ignore: 'ignore',
+    };
+
     constructor(options: PipeSystemOptions)
     {
         const pipes = [];
@@ -49,6 +54,7 @@ export class PipeSystem
         options.pipes.flat().forEach((pipe) =>
         {
             this.pipeHash[pipe.name] = pipe;
+            this.internalMetaData = { ...this.internalMetaData, ...Object.values(pipe.internalTags ?? pipe.tags ?? {}).reduce((acc, tag) => ({ ...acc, [tag]: true }), {}) };
         });
 
         this.pipes = pipes;
@@ -88,8 +94,6 @@ export class PipeSystem
         {
             asset.transformName = pipe.name;
             asset.transformChildren = [];
-            // apply the dataTags of the pipe to the asset so it can be used by pixi and other loaders
-            asset.applyManifestData(Object.values(pipe.dataTags ?? {}));
 
             const assets = await pipe.transform(asset, options, this);
 

@@ -3,7 +3,7 @@ import { fonts } from './fonts.js';
 
 import type { Asset, AssetPipe } from '../core/index.js';
 
-export function webfont(): AssetPipe<any, 'wf', 'family'>
+export function webfont(): AssetPipe<any, 'wf'>
 {
     return {
         folder: false,
@@ -11,9 +11,6 @@ export function webfont(): AssetPipe<any, 'wf', 'family'>
         defaultOptions: null,
         tags: {
             wf: 'wf',
-        },
-        dataTags: {
-            family: 'family',
         },
         test(asset: Asset)
         {
@@ -47,7 +44,7 @@ export function webfont(): AssetPipe<any, 'wf', 'family'>
             newAsset.buffer = buffer;
 
             // set the family name to the filename if it doesn't exist
-            asset.manifestData.family = asset.metaData.family ?? path.trimExt(asset.filename);
+            asset.metaData.family ??= path.trimExt(asset.filename);
 
             return [newAsset];
         }

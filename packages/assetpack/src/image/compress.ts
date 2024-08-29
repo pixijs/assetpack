@@ -67,7 +67,7 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         },
         async transform(asset: Asset, options)
         {
-            const shouldCompress = compress && !asset.metaData.nc;
+            const shouldCompress = compress && !asset.metaData[this.tags!.nc];
 
             if (!shouldCompress)
             {
