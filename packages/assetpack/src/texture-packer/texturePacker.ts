@@ -19,6 +19,8 @@ export interface TexturePackerOptions extends PluginOptions
         /** The maximum size a sprite sheet can be before its split out */
         maximumTextureSize?: number;
     }
+    /** If true, the frame names for the sprite sheet will be added to the asset meta data. */
+    addFrameNames?: boolean;
 }
 
 function checkForTexturePackerShortcutClashes(
@@ -67,6 +69,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                 nameStyle: 'relative',
                 ..._options.texturePacker,
             },
+            addFrameNames: false,
         },
         tags: {
             tps: 'tps',
@@ -130,6 +133,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             const assets: Asset[] = [];
 
             let checkedForClashes = false;
+            const imageNames: string[] = [];
 
             Object.values(resolutionHash).sort((a, b) => b - a).forEach((resolution) =>
             {
@@ -160,6 +164,8 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
                         const { json, name: jsonName } = out.jsons[i];
 
+                        imageNames.push(...Object.keys(json.frames));
+
                         const jsonAsset = createNewAssetAt(asset, jsonName);
 
                         if (!checkedForClashes)
@@ -183,6 +189,11 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             });
 
             await Promise.all(promises);
+
+            if (options.addFrameNames)
+            {
+                asset.metaData.frameNames = imageNames;
+            }
 
             return assets;
         },
