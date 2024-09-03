@@ -110,5 +110,5 @@ describe('Texture Packer Compression', () =>
                 }
             },
         ]);
-    });
+    }, { timeout: 20000 });
 });

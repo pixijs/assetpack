@@ -28,6 +28,11 @@ export class PipeSystem
 
     assetSettings: AssetSettings[] = [];
 
+    internalMetaData: Record<string, any> = {
+        copy: 'copy',
+        ignore: 'ignore',
+    };
+
     constructor(options: PipeSystemOptions)
     {
         const pipes = [];
@@ -49,6 +54,7 @@ export class PipeSystem
         options.pipes.flat().forEach((pipe) =>
         {
             this.pipeHash[pipe.name] = pipe;
+            this.internalMetaData = { ...this.internalMetaData, ...Object.values(pipe.internalTags ?? pipe.tags ?? {}).reduce((acc, tag) => ({ ...acc, [tag]: true }), {}) };
         });
 
         this.pipes = pipes;

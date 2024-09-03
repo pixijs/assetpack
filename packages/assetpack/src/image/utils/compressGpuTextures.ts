@@ -21,11 +21,11 @@ export async function compressGpuTextures(
     options: CompressOptions,
 ): Promise<CompressImageDataResult[]>
 {
-    let compressed: CompressImageDataResult[] = [];
+    let compressed: (Partial<CompressImageDataResult> & {image: Promise<string>})[] = [];
 
     if (!options.astc && !options.bc7 && !options.basis)
     {
-        return compressed;
+        return compressed as CompressImageDataResult[];
     }
 
     const tmpDir = await fs.mkdtemp(join(tmpdir(), 'assetpack-tex-'));
@@ -87,7 +87,7 @@ export async function compressGpuTextures(
         await fs.rm(tmpDir, { recursive: true, force: true });
     }
 
-    return compressed;
+    return compressed as CompressImageDataResult[];
 }
 
 async function adjustImageSize(sharpImage: sharp.Sharp, imagePath: string): Promise<string>

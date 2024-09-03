@@ -97,7 +97,7 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         },
         async transform(asset: Asset, options)
         {
-            const shouldCompress = compress && !asset.metaData.nc;
+            const shouldCompress = compress && !asset.metaData[this.tags!.nc];
 
             if (!shouldCompress)
             {
@@ -137,8 +137,8 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
                 if ((image.format === '.png' && !options.png) || (((image.format === '.jpg') || (image.format === '.jpeg')) && !options.jpg))
                 {
                     newAssets.push(asset);
-
                 }
+
                 return newAssets;
             }
             catch (error)

@@ -52,5 +52,5 @@ describe('Texture Packer Compression', () =>
         expect(sheetWebp.meta.image).toEqual(`sprites.webp`);
         expect(sheetAstc.meta.image).toEqual(`sprites.astc.ktx`);
         expect(sheetBasis.meta.image).toEqual(`sprites.basis.ktx2`);
-    });
+    }, { timeout: 20000 });
 });

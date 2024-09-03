@@ -85,6 +85,7 @@ describe('Texture Packer All', () =>
                     // remove the outputDir
                     file = file.replace(`${outputDir}/`, '');
                     const isFileHalfSize = file.includes('@0.5x');
+                    // eslint-disable-next-line no-nested-ternary
                     const isFileFileType = file.includes(isWebp ? '.webp' : isAstc ? '.astc.ktx' : '.png');
                     const shouldExist = isHalfSize === isFileHalfSize && isFileType === isFileFileType;
 

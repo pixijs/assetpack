@@ -253,5 +253,40 @@ export class Asset
             this.children[i].releaseChildrenBuffers();
         }
     }
+
+    /**
+     * Get the public meta data for this asset
+     * This will exclude any internal data
+     */
+    getPublicMetaData(internalPipeData: Record<string, any>)
+    {
+        const internalKeys = new Set(Object.keys(internalPipeData));
+        const metaData = Object.keys(this.allMetaData).reduce((result: Record<string, any>, key) =>
+        {
+            if (!internalKeys.has(key))
+            {
+                result[key] = this.allMetaData[key];
+            }
+
+            return result;
+        }, {} as Record<string, any>);
+
+        return metaData;
+    }
+
+    getInternalMetaData(internalPipeData: Record<string, any>)
+    {
+        const res: Record<string, any> = {};
+
+        Object.keys(internalPipeData).forEach((key) =>
+        {
+            if (this.allMetaData[key])
+            {
+                res[key] = this.allMetaData[key];
+            }
+        });
+
+        return res;
+    }
 }
 

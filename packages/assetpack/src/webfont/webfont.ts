@@ -43,6 +43,9 @@ export function webfont(): AssetPipe<any, 'wf'>
 
             newAsset.buffer = buffer;
 
+            // set the family name to the filename if it doesn't exist
+            asset.metaData.family ??= path.trimExt(asset.filename);
+
             return [newAsset];
         }
     };

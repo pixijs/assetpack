@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import generateBMFont from 'msdf-bmfont-xml';
-import { checkExt, createNewAssetAt, stripTags } from '../core/index.js';
+import { checkExt, createNewAssetAt, path, stripTags } from '../core/index.js';
 
 import type { BitmapFontOptions } from 'msdf-bmfont-xml';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
@@ -33,6 +33,8 @@ function signedFont(
         {
             const newFileName = stripTags(asset.filename.replace(/\.(ttf)$/i, ''));
 
+            // set the family name to the filename if it doesn't exist
+            asset.metaData.family ??= path.trimExt(asset.filename);
             const { font, textures } = await GenerateFont(asset.path, {
                 ...options.font,
                 filename: newFileName,

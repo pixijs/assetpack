@@ -17,7 +17,7 @@ export type DeepRequired<T> = T extends Primitive
     };
 export interface PluginOptions {}
 
-export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends string = string>
+export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends string = string, INTERNAL_TAGS extends string = string>
 {
     /** Whether the process runs on a folder */
     folder?: boolean;
@@ -30,6 +30,11 @@ export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends string = st
 
     /** Tags that can be used to control the plugin */
     tags?: Record<TAGS, string>;
+
+    /**
+     * Any tags here will not be placed in the manifest data.
+     */
+    internalTags?: Record<INTERNAL_TAGS, string>;
 
     /**
      * Called once at the start.

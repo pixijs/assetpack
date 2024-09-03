@@ -225,6 +225,7 @@ describe('Manifest', () =>
                     alias: ['spine/dragon.atlas'],
                     src: ['spine/dragon@0.5x.atlas', 'spine/dragon.atlas'],
                     data: {
+                        spine: true,
                         tags: {
                             spine: true,
                         },
