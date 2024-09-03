@@ -39,10 +39,12 @@ describe('Texture Packer All', () =>
                     png: true,
                     jpg: true,
                     webp: true,
+                    astc: true
                 }),
                 texturePackerCompress({
                     png: true,
                     webp: true,
+                    astc: true
                 }),
                 cacheBuster(),
                 texturePackerCacheBuster()
@@ -51,19 +53,21 @@ describe('Texture Packer All', () =>
 
         await assetpack.run();
 
-        const globPath = `${outputDir}/*.{json,png,webp}`;
+        const globPath = `${outputDir}/*.{json,png,webp,astc.ktx}`;
         const files = await glob(globPath);
 
         // need two sets of files
-        expect(files.length).toBe(8);
-        expect(files.filter((file) => file.endsWith('.json')).length).toBe(4);
+        expect(files.length).toBe(12);
+        expect(files.filter((file) => file.endsWith('.json')).length).toBe(6);
         expect(files.filter((file) => file.endsWith('.png')).length).toBe(2);
         expect(files.filter((file) => file.endsWith('.webp')).length).toBe(2);
+        expect(files.filter((file) => file.endsWith('.astc.ktx')).length).toBe(2);
         expect(files.filter((file) => file.endsWith('.jpg')).length).toBe(0);
 
         const jsonFiles = files.filter((file) => file.endsWith('.json'));
         const pngFiles = files.filter((file) => file.endsWith('.png'));
         const webpFiles = files.filter((file) => file.endsWith('.webp'));
+        const astcFiles = files.filter((file) => file.endsWith('.astc.ktx'));
 
         // check that the files are correct
         jsonFiles.forEach((jsonFile) =>
@@ -72,6 +76,7 @@ describe('Texture Packer All', () =>
             const isHalfSize = jsonFile.includes('@0.5x');
             const isWebp = jsonFile.includes('.webp');
             const isPng = jsonFile.includes('.png');
+            const isAstc = jsonFile.includes('.astc');
 
             const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) =>
             {
@@ -80,7 +85,7 @@ describe('Texture Packer All', () =>
                     // remove the outputDir
                     file = file.replace(`${outputDir}/`, '');
                     const isFileHalfSize = file.includes('@0.5x');
-                    const isFileFileType = file.includes(isWebp ? '.webp' : '.png');
+                    const isFileFileType = file.includes(isWebp ? '.webp' : isAstc ? '.astc.ktx' : '.png');
                     const shouldExist = isHalfSize === isFileHalfSize && isFileType === isFileFileType;
 
                     shouldExist ? expect(rawJson.meta.image).toEqual(file) : expect(rawJson.meta.image).not.toEqual(file);
@@ -97,6 +102,10 @@ describe('Texture Packer All', () =>
                 {
                     checkFiles(pngFiles, true, true);
                 }
+                else if (isAstc)
+                {
+                    checkFiles(astcFiles, true, true);
+                }
             }
             else
                 if (isWebp)
@@ -106,6 +115,10 @@ describe('Texture Packer All', () =>
                 else if (isPng)
                 {
                     checkFiles(pngFiles, false, true);
+                }
+                else if (isAstc)
+                {
+                    checkFiles(astcFiles, false, true);
                 }
         });
     });

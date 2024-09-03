@@ -1,13 +1,12 @@
 import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
-import type { CompressImageData, CompressOptions } from '../compress.js';
+import type { CompressImageData, CompressImageDataResult, CompressOptions } from '../compress.js';
 
 export async function compressSharp(
     image: CompressImageData,
     options: CompressOptions
-): Promise<CompressImageData[]>
+): Promise<CompressImageDataResult[]>
 {
     const compressed: CompressImageData[] = [];
-
     const sharpImage = image.sharpImage;
 
     if (image.format === '.png' && options.png)
@@ -46,5 +45,10 @@ export async function compressSharp(
         });
     }
 
-    return compressed;
+    const results = await Promise.all(compressed.map(async (result) => ({
+        ...result,
+        buffer: await result.sharpImage.toBuffer()
+    })));
+
+    return results;
 }
