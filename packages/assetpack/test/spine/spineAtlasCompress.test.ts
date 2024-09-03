@@ -45,16 +45,19 @@ describe('Spine Atlas Compress', () =>
                     png: true,
                     jpg: true,
                     webp: true,
+                    astc: true
                 }),
                 spineAtlasCompress({
                     png: true,
                     webp: true,
+                    astc: true
                 }),
             ]
         });
 
         await assetpack.run();
 
+        const rawAtlasAstc = readFileSync(`${outputDir}/dragon.astc.atlas`);
         const rawAtlasWebp = readFileSync(`${outputDir}/dragon.webp.atlas`);
         const rawAtlas = readFileSync(`${outputDir}/dragon.png.atlas`);
 
@@ -63,5 +66,8 @@ describe('Spine Atlas Compress', () =>
 
         expect(rawAtlasWebp.includes('dragon.webp')).toBeTruthy();
         expect(rawAtlasWebp.includes('dragon2.webp')).toBeTruthy();
+
+        expect(rawAtlasAstc.includes('dragon.astc.ktx')).toBeTruthy();
+        expect(rawAtlasAstc.includes('dragon2.astc.ktx')).toBeTruthy();
     });
 });
