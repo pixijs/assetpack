@@ -83,6 +83,7 @@ export default {
 ## Texture Packer Compress
 
 To compress the texture atlases you can use the `texturePackerCompress` plugin. This plugin uses the Sharp library to compress images into different formats, such as JPEG, PNG, WebP, and AVIF. This helps reduce file sizes while maintaining image quality, ensuring faster load times and better performance.
+This plugin also supports compressing images using the ASTC, ETC, ETC2, BCn (DXTn) and Basis supercompressed (ETC1S, UASTC) texture compression standard.
 
 ### Example
 
@@ -90,7 +91,7 @@ To compress the texture atlases you can use the `texturePackerCompress` plugin. 
 
 ```js
 import { compress } from "@assetpack/core/image";
-import { compress } from "@assetpack/core/texture-packer";
+import { texturePackerCompress } from "@assetpack/core/texture-packer";
 
 // these options are the default values, all options shown here are optional
 const options = {
@@ -98,6 +99,9 @@ const options = {
   png: { quality: 90 },
   webp: { quality: 80, alphaQuality: 80, },
   avif: false,
+  bc7: false,
+  astc: false,
+  basis: false,
 };
 
 export default {

@@ -15,6 +15,9 @@ export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetP
                 png: true,
                 webp: true,
                 avif: false,
+                astc: false,
+                bc7: false,
+                basis: false
             },
             ..._options,
         },
@@ -28,23 +31,24 @@ export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetP
         },
         async transform(asset: Asset, options)
         {
-            const formats = [];
+            const formats: Array<[format: string, extension: string]> = [];
 
-            if (options.avif)formats.push('avif');
-            if (options.png)formats.push('png');
-            if (options.webp)formats.push('webp');
+            if (options.avif) formats.push(['avif', '.avif']);
+            if (options.png) formats.push(['png', '.png']);
+            if (options.webp) formats.push(['webp', '.webp']);
+            if (options.astc) formats.push(['astc', '.astc.ktx']);
+            if (options.bc7) formats.push(['bc7', '.bc7.dds']);
+            if (options.basis) formats.push(['basis', '.basis.ktx2']);
 
             const atlas = new AtlasView(asset.buffer);
 
             const textures = atlas.getTextures();
 
-            const assets = formats.map((format) =>
+            const assets = formats.map(([format, extension]) =>
             {
-                const extension = `.${format}`;
-
                 const newAtlas = new AtlasView(asset.buffer);
 
-                const newFileName = swapExt(asset.filename, `${extension}.atlas`);
+                const newFileName = swapExt(asset.filename, `.${format}.atlas`);
 
                 textures.forEach((texture) =>
                 {

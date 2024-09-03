@@ -10,6 +10,7 @@ AssetPack provides several plugins for transforming spine files that utilise `at
 ## Spine Atlas Compress
 
 The `spineAtlasCompress` plugin uses the Sharp library to compress images into different formats, such as JPEG, PNG, WebP, and AVIF. This helps reduce file sizes while maintaining image quality, ensuring faster load times and better performance.
+This plugin also supports compressing images using the ASTC, ETC, ETC2, BCn (DXTn) and Basis supercompressed (ETC1S, UASTC) texture compression standard.
 
 This plugin should be used in conjunction with the [compress](/docs/guide/pipes/compress) plugin to ensure that the atlas file is compressed as well as the images.
 
@@ -27,6 +28,9 @@ const options = {
   png: { quality: 90 },
   webp: { quality: 80, alphaQuality: 80, },
   avif: false,
+  bc7: false,
+  astc: false,
+  basis: false,
 };
 
 export default {

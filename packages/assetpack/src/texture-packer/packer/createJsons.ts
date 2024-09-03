@@ -7,7 +7,7 @@ function convertName(pth: string, nameStyle: 'short' | 'relative', removeFileExt
 {
     const name = nameStyle === 'short' ? path.basename(pth) : pth;
 
-    return removeFileExtension ? path.parse(name).name : name;
+    return removeFileExtension ? path.trimExt(name) : name;
 }
 
 export function createJsons(

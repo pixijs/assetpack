@@ -129,8 +129,9 @@ describe('Manifest', () =>
                     jpg: true,
                     webp: true,
                     avif: false,
+                    astc: true,
                 }),
-                texturePackerCompress(),
+                texturePackerCompress({ astc: true }),
                 pixiManifest(),
                 spineAtlasManifestMod(),
             ],
@@ -167,8 +168,10 @@ describe('Manifest', () =>
                     src: [
                         'bundle/sprite@0.5x.webp',
                         'bundle/sprite@0.5x.png',
+                        'bundle/sprite@0.5x.astc.ktx',
                         'bundle/sprite.webp',
                         'bundle/sprite.png',
+                        'bundle/sprite.astc.ktx'
                     ],
                     data: {
                         tags: {
@@ -178,10 +181,14 @@ describe('Manifest', () =>
                 },
                 {
                     alias: ['bundle/tps'],
-                    src: ['bundle/tps-0@0.5x.webp.json',
+                    src: [
+                        'bundle/tps-0@0.5x.webp.json',
                         'bundle/tps-0@0.5x.png.json',
+                        'bundle/tps-0@0.5x.astc.json',
                         'bundle/tps-0.webp.json',
-                        'bundle/tps-0.png.json'],
+                        'bundle/tps-0.png.json',
+                        'bundle/tps-0.astc.json'
+                    ],
                     data: {
                         tags: {
                             m: true,
@@ -302,6 +309,7 @@ describe('Manifest', () =>
                     jpg: true,
                     webp: true,
                     avif: false,
+                    astc: true,
                 }),
                 pixiManifest(),
             ],
@@ -330,8 +338,10 @@ describe('Manifest', () =>
                     src: [
                         'defaultFolder/mip/sprite0@0.5x.webp',
                         'defaultFolder/mip/sprite0@0.5x.png',
+                        'defaultFolder/mip/sprite0@0.5x.astc.ktx',
                         'defaultFolder/mip/sprite0.webp',
                         'defaultFolder/mip/sprite0.png',
+                        'defaultFolder/mip/sprite0.astc.ktx',
                     ],
                     data: {
                         tags: {},
@@ -342,8 +352,10 @@ describe('Manifest', () =>
                     src: [
                         'defaultFolder/mip/sprite1@0.5x.webp',
                         'defaultFolder/mip/sprite1@0.5x.png',
+                        'defaultFolder/mip/sprite1@0.5x.astc.ktx',
                         'defaultFolder/mip/sprite1.webp',
                         'defaultFolder/mip/sprite1.png',
+                        'defaultFolder/mip/sprite1.astc.ktx',
                     ],
                     data: {
                         tags: {},
@@ -354,8 +366,10 @@ describe('Manifest', () =>
                     src: [
                         'defaultFolder/mip/sprite2@0.5x.webp',
                         'defaultFolder/mip/sprite2@0.5x.png',
+                        'defaultFolder/mip/sprite2@0.5x.astc.ktx',
                         'defaultFolder/mip/sprite2.webp',
                         'defaultFolder/mip/sprite2.png',
+                        'defaultFolder/mip/sprite2.astc.ktx',
                     ],
                     data: {
                         tags: {},
@@ -483,6 +497,7 @@ describe('Manifest', () =>
                 compress({
                     webp: true,
                     png: true,
+                    astc: true,
                 }),
                 pixiManifest({
                     createShortcuts: true,
@@ -514,8 +529,10 @@ describe('Manifest', () =>
                     src: [
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@0.5x.png',
+                        'folder/sprite@0.5x.astc.ktx',
                         'folder/sprite.webp',
                         'folder/sprite.png',
+                        'folder/sprite.astc.ktx',
                     ],
                 },
                 {
@@ -697,6 +714,7 @@ describe('Manifest', () =>
                 compress({
                     webp: true,
                     png: true,
+                    astc: true,
                 }),
                 pixiManifest({
                     createShortcuts: true,
@@ -728,8 +746,10 @@ describe('Manifest', () =>
                     src: [
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@0.5x.png',
+                        'folder/sprite@0.5x.astc.ktx',
                         'folder/sprite.webp',
                         'folder/sprite.png',
+                        'folder/sprite.astc.ktx',
                     ],
                 },
                 {
@@ -843,6 +863,7 @@ describe('Manifest', () =>
                 compress({
                     webp: true,
                     png: true,
+                    astc: true,
                 }),
                 pixiManifest({
                     createShortcuts: false,
@@ -874,8 +895,10 @@ describe('Manifest', () =>
                     src: [
                         'folder/sprite@0.5x.webp',
                         'folder/sprite@0.5x.png',
+                        'folder/sprite@0.5x.astc.ktx',
                         'folder/sprite.webp',
                         'folder/sprite.png',
+                        'folder/sprite.astc.ktx',
                     ],
                 },
                 {
