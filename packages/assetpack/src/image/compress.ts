@@ -133,6 +133,12 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
                     return newAsset;
                 });
 
+                // ensure that the original image is passed through if it is not compressed by png/jpg options
+                if ((image.format === '.png' && !options.png) || (((image.format === '.jpg') || (image.format === '.jpeg')) && !options.jpg))
+                {
+                    newAssets.push(asset);
+
+                }
                 return newAssets;
             }
             catch (error)
