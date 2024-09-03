@@ -69,7 +69,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                 nameStyle: 'relative',
                 ..._options.texturePacker,
             },
-            addFrameNames: false,
+            addFrameNames: _options.addFrameNames ?? false,
         },
         tags: {
             tps: 'tps',
@@ -133,7 +133,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             const assets: Asset[] = [];
 
             let checkedForClashes = false;
-            const imageNames: string[] = [];
+            const imageNames = new Set();
 
             Object.values(resolutionHash).sort((a, b) => b - a).forEach((resolution) =>
             {
@@ -151,6 +151,14 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                         resolution,
                     });
 
+                    if (options.addFrameNames)
+                    {
+                        out.jsons.forEach(({ json }) =>
+                        {
+                            Object.keys(json.frames).forEach((frame) => imageNames.add(frame));
+                        });
+                    }
+
                     const outPromises: Promise<void>[] = [];
 
                     for (let i = 0; i < out.textures.length; i++)
@@ -163,8 +171,6 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                         textureAsset.metaData.mIgnore = true;
 
                         const { json, name: jsonName } = out.jsons[i];
-
-                        imageNames.push(...Object.keys(json.frames));
 
                         const jsonAsset = createNewAssetAt(asset, jsonName);
 
@@ -192,7 +198,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
             if (options.addFrameNames)
             {
-                asset.metaData.frameNames = imageNames;
+                asset.metaData.frameNames = Array.from(imageNames);
             }
 
             return assets;
