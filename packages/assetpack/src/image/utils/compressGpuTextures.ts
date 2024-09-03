@@ -21,7 +21,7 @@ export async function compressGpuTextures(
     options: CompressOptions,
 ): Promise<CompressImageDataResult[]>
 {
-    const compressed: CompressImageDataResult[] = [];
+    let compressed: CompressImageDataResult[] = [];
 
     if (!options.astc && !options.bc7 && !options.basis)
     {
@@ -48,7 +48,7 @@ export async function compressGpuTextures(
             compressed.push({
                 format: '.astc.ktx',
                 resolution: 1,
-                buffer: await fs.readFile(await astc(imagePath, astcOpts.blocksize, astcOpts.quality, astcOpts.colorProfile, astcOpts.options)),
+                image: astc(imagePath, astcOpts.blocksize, astcOpts.quality, astcOpts.colorProfile, astcOpts.options),
             });
         }
 
@@ -59,7 +59,7 @@ export async function compressGpuTextures(
             compressed.push({
                 format: '.bc7.dds',
                 resolution: 1,
-                buffer: await fs.readFile(await bc(imagePath, 'BC7', true, bc7Opts.options)),
+                image: bc(imagePath, 'BC7', true, bc7Opts.options),
             });
         }
 
@@ -71,9 +71,16 @@ export async function compressGpuTextures(
             compressed.push({
                 format: '.basis.ktx2',
                 resolution: 1,
-                buffer: await fs.readFile(await basis(adjustedImagePath, 'UASTC', true, basisOpts.options)),
+                image: basis(adjustedImagePath, 'UASTC', true, basisOpts.options),
             });
         }
+
+        const results = await Promise.all(compressed.map(async (result) => ({
+            ...result,
+            buffer: await fs.readFile(await result.image)
+        })));
+
+        compressed = results;
     }
     finally
     {

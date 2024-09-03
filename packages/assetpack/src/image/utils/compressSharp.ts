@@ -6,8 +6,7 @@ export async function compressSharp(
     options: CompressOptions
 ): Promise<CompressImageDataResult[]>
 {
-    const compressed: CompressImageDataResult[] = [];
-
+    const compressed: CompressImageData[] = [];
     const sharpImage = image.sharpImage;
 
     if (image.format === '.png' && options.png)
@@ -15,7 +14,7 @@ export async function compressSharp(
         compressed.push({
             format: '.png',
             resolution: image.resolution,
-            buffer: await sharpImage.clone().png({ ...options.png as PngOptions, force: true }).toBuffer(),
+            sharpImage: sharpImage.clone().png({ ...options.png as PngOptions, force: true }),
         });
     }
 
@@ -24,7 +23,7 @@ export async function compressSharp(
         compressed.push({
             format: '.webp',
             resolution: image.resolution,
-            buffer: await sharpImage.clone().webp(options.webp as WebpOptions).toBuffer()
+            sharpImage: sharpImage.clone().webp(options.webp as WebpOptions)
         });
     }
 
@@ -33,7 +32,7 @@ export async function compressSharp(
         compressed.push({
             format: '.jpg',
             resolution: image.resolution,
-            buffer: await sharpImage.clone().jpeg(options.jpg as JpegOptions).toBuffer()
+            sharpImage: sharpImage.clone().jpeg(options.jpg as JpegOptions)
         });
     }
 
@@ -42,9 +41,14 @@ export async function compressSharp(
         compressed.push({
             format: '.avif',
             resolution: image.resolution,
-            buffer: await sharpImage.clone().avif(options.avif as AvifOptions).toBuffer()
+            sharpImage: sharpImage.clone().avif(options.avif as AvifOptions)
         });
     }
 
-    return compressed;
+    const results = await Promise.all(compressed.map(async (result) => ({
+        ...result,
+        buffer: await result.sharpImage.toBuffer()
+    })));
+
+    return results;
 }
