@@ -34,8 +34,7 @@ export function webfont(): AssetPipe<any, 'wf'>
                     buffer = fonts.svg.to.woff2(asset.path);
                     break;
                 default:
-                    throw new Error(`{Assetpack] Unsupported font type: ${ext}`);
-                    break;
+                    throw new Error(`{AssetPack] Unsupported font type: ${ext}`);
             }
 
             const newFileName = asset.filename.replace(/\.(otf|ttf|svg)$/i, '.woff2');
