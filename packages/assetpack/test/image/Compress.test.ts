@@ -84,9 +84,9 @@ describe('Compress', () =>
             cache: false,
             pipes: [
                 compress({
-                    png: true,
+                    png: false,
                     webp: true,
-                    jpg: true,
+                    jpg: false,
                     avif: true,
                 }),
             ],
