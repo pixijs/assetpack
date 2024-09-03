@@ -121,6 +121,7 @@ describe('Manifest', () =>
                     resolutionOptions: {
                         maximumTextureSize: 512,
                     },
+                    addFrameNames: true,
                 }),
                 mipmap(),
                 compress({
@@ -190,10 +191,34 @@ describe('Manifest', () =>
                     ],
                     data: {
                         tags: {
-                            tps: true,
                             m: true,
+                            tps: true,
+                            frameNames: [
+                                'sprite9.png',
+                                'sprite8.png',
+                                'sprite7.png',
+                                'sprite6.png',
+                                'sprite5.png',
+                                'sprite4.png',
+                                'sprite3.png',
+                                'sprite2.png',
+                                'sprite1.png',
+                                'sprite0.png'
+                            ]
                         },
-                    },
+                        frameNames: [
+                            'sprite9.png',
+                            'sprite8.png',
+                            'sprite7.png',
+                            'sprite6.png',
+                            'sprite5.png',
+                            'sprite4.png',
+                            'sprite3.png',
+                            'sprite2.png',
+                            'sprite1.png',
+                            'sprite0.png'
+                        ]
+                    }
                 },
             ],
         });
