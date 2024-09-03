@@ -137,8 +137,8 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
                 if ((image.format === '.png' && !options.png) || (((image.format === '.jpg') || (image.format === '.jpeg')) && !options.jpg))
                 {
                     newAssets.push(asset);
-
                 }
+
                 return newAssets;
             }
             catch (error)
