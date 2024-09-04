@@ -69,7 +69,7 @@
     "fluent-ffmpeg": "^2.1.3",
     "fs-extra": "^11.2.0",
     "glob": "^10.4.1",
-    "gpu-tex-enc": "^1.2.4",
+    "gpu-tex-enc": "^1.2.5",
     "maxrects-packer": "^2.7.3",
     "merge": "^2.1.1",
     "minimatch": "9.0.4",
