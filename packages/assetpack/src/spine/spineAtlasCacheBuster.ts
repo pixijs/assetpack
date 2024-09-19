@@ -1,9 +1,7 @@
 import fs from 'fs-extra';
+import type { Asset, AssetPipe } from '../core/index.js';
 import { checkExt, findAssets } from '../core/index.js';
 import { AtlasView } from './AtlasView.js';
-
-import type { Asset, AssetPipe } from '../core/index.js';
-import { persistMessage } from '../core/logger/render.js';
 
 type SpinsAsset = {
     name: string;
@@ -11,6 +9,14 @@ type SpinsAsset = {
     atlas?: Asset;
     json?: Asset;
 };
+
+export interface SpineAtlasCacheBusterOptions {
+    /**
+     * Set this value to true if .atlas file and .json file must have the same file names (including the HASH in the name).
+     * This is important for the Pixi spineTextureAtlasLoader function
+     */
+    jasonAndAltasHasTheSameNames?: boolean;
+}
 
 /**
  * This should be used after the cache buster plugin in the pipes.
@@ -26,10 +32,14 @@ type SpinsAsset = {
  * @param _options
  * @returns
  */
-export function spineAtlasCacheBuster(): AssetPipe {
-    const defaultOptions = {};
+export function spineAtlasCacheBuster(
+    _options: SpineAtlasCacheBusterOptions = {},
+): AssetPipe<SpineAtlasCacheBusterOptions> {
+    const defaultOptions = {
+        jasonAndAltasHasTheSameNames: false,
+        ..._options,
+    };
 
-    const atlasFileToFix: Asset[] = [];
     const potentialSpineAssetsToFix: SpinsAsset[] = [];
     const atlasExt = '.atlas';
     const jsonExt = '.json';
@@ -39,15 +49,10 @@ export function spineAtlasCacheBuster(): AssetPipe {
         name: 'spine-cache-buster',
         defaultOptions,
         test(asset: Asset, _options) {
-            persistMessage(`TEST: (${asset.path}): isSuitable=${checkExt(asset.path, '.atlas')}`);
-
             return checkExt(asset.path, atlasExt) || checkExt(asset.path, jsonExt);
         },
 
         async transform(asset: Asset, _options) {
-            persistMessage(
-                `TRANSFORM: (${asset.filename}) (${getAssetFileNameWithoutHashAndExtension(asset)}) ${asset.directory}`,
-            );
             const name = getAssetFileNameWithoutHashAndExtension(asset);
             let spineAsset: SpinsAsset | undefined = potentialSpineAssetsToFix.find(
                 (item) => item.name === name && item.directory === asset.directory,
@@ -68,26 +73,13 @@ export function spineAtlasCacheBuster(): AssetPipe {
                 spineAsset.json = asset;
             }
 
-            if (asset.extension === '.atlas') {
-                atlasFileToFix.push(asset);
-            }
             return [asset];
         },
 
-        async finish(asset: Asset) {
-            persistMessage(`FINISH: (${asset.path})`);
-
-            persistMessage('PRINTING POTENTIAL SPINE');
-            persistMessage('-----------------------');
+        async finish(asset: Asset, options) {
             const spineAssetsToFix = potentialSpineAssetsToFix.filter(
                 (item) => item.atlas !== undefined && item.json !== undefined,
             );
-            spineAssetsToFix.forEach((item) =>
-                persistMessage(`${item.name}: ${item.atlas?.filename} ${item.json?.filename}`),
-            );
-            persistMessage('++++++++++++++++++++++++');
-
-          
 
             spineAssetsToFix.forEach((spineAsset) => {
                 // we are going to replace the textures in the atlas file with the new cache busted textures
@@ -117,11 +109,11 @@ export function spineAtlasCacheBuster(): AssetPipe {
 
                 atlasAsset.buffer = atlasView.buffer;
 
-                // TODO CHECK FOR OPTIONS
-
-
-                // atlasAsset.path = atlasAsset.path.replace(originalHash, atlasAsset.hash);
-                atlasAsset.path = atlasAsset.path.replace(originalHash, jsonAsset.hash);
+                if (options.jasonAndAltasHasTheSameNames) {
+                    atlasAsset.path = atlasAsset.path.replace(originalHash, jsonAsset.hash);
+                } else {
+                    atlasAsset.path = atlasAsset.path.replace(originalHash, atlasAsset.hash);
+                }
 
                 (fs as any).removeSync(originalPath);
 
@@ -129,7 +121,7 @@ export function spineAtlasCacheBuster(): AssetPipe {
                 fs.writeFileSync(atlasAsset.path, atlasAsset.buffer);
             });
 
-            atlasFileToFix.length = 0;
+            potentialSpineAssetsToFix.length = 0;
         },
     };
 }
