@@ -15,7 +15,7 @@ export interface SpineAtlasCacheBusterOptions {
      * Set this value to true if .atlas file and .json file must have the same file names (including the HASH in the name).
      * This is important for the Pixi spineTextureAtlasLoader function
      */
-    jasonAndAltasHasTheSameNames?: boolean;
+    jsonAndAltasHasTheSameNames?: boolean;
 }
 
 /**
@@ -36,7 +36,7 @@ export function spineAtlasCacheBuster(
     _options: SpineAtlasCacheBusterOptions = {},
 ): AssetPipe<SpineAtlasCacheBusterOptions> {
     const defaultOptions = {
-        jasonAndAltasHasTheSameNames: false,
+        jsonAndAltasHasTheSameNames: false,
         ..._options,
     };
 
@@ -109,7 +109,7 @@ export function spineAtlasCacheBuster(
 
                 atlasAsset.buffer = atlasView.buffer;
 
-                if (options.jasonAndAltasHasTheSameNames) {
+                if (options.jsonAndAltasHasTheSameNames) {
                     atlasAsset.path = atlasAsset.path.replace(originalHash, jsonAsset.hash);
                 } else {
                     atlasAsset.path = atlasAsset.path.replace(originalHash, atlasAsset.hash);
