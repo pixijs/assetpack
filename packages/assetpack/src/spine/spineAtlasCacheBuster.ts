@@ -87,50 +87,41 @@ export function spineAtlasCacheBuster(): AssetPipe {
             );
             persistMessage('++++++++++++++++++++++++');
 
-            // first we retrieve the final transformed children - so the atlas files that have been copied
-            // to the output folder.
-            const atlasAssets = atlasFileToFix.map((asset) => asset.getFinalTransformedChildren()[0]);
+          
 
-            atlasAssets.forEach((atlasAsset) => {
+            spineAssetsToFix.forEach((spineAsset) => {
                 // we are going to replace the textures in the atlas file with the new cache busted textures
                 // as we do this, the hash of the atlas file will change, so we need to update the path
                 // and also remove the original file.
+                // first we retrieve the final transformed children - so the atlas files that have been copied
+                // to the output folder.
+                const atlasAsset = spineAsset.atlas?.getFinalTransformedChildren()[0];
+                const jsonAsset = spineAsset.json?.getFinalTransformedChildren()[0];
+                if (atlasAsset === undefined) {
+                    return;
+                }
+                if (jsonAsset === undefined) {
+                    return;
+                }
 
                 const originalHash = atlasAsset.hash;
                 const originalPath = atlasAsset.path;
-
-                persistMessage(`${atlasAsset.filename}: HASH=${originalHash} PATH=${originalPath}`);
-
                 const atlasView = new AtlasView(atlasAsset.buffer);
 
                 atlasView.getTextures().forEach((texture) => {
                     const textureAssets = findAssets((asset) => asset.filename === texture, asset, true);
-                    // const jsons = findAssets((asset) => asset.extension === '.json', asset, true);
-
-                    // persistMessage(`Textures ${textureAssets.length}`);
-                    // textureAssets.forEach((t) =>
-                    //     persistMessage(`${t.filename}: HASH=${t.hash} PATH=${t.path} EXT=${t.extension}`),
-                    // );
-
-                    // persistMessage(`jsons ${jsons.length}`);
-                    // jsons.forEach((t) =>
-                    //     persistMessage(`${t.filename}: HASH=${t.hash} PATH=${t.path} EXT=${t.extension}`),
-                    // );
-
-                    // persistMessage(
-                    //     `FIRST TEXTURE: HASH=${textureAssets[0].hash} PATH=${textureAssets[0].path} EXT=${textureAssets[0].extension}`,
-                    // );
-
                     // last transformed child is the renamed texture
                     const cacheBustedTexture = textureAssets[0].getFinalTransformedChildren()[0];
-                    // persistMessage(
-                    //     `cacheBustedTexture: HASH=${cacheBustedTexture.hash} PATH=${cacheBustedTexture.path} EXT=${cacheBustedTexture.extension}`,
-                    // );
                     atlasView.replaceTexture(texture, cacheBustedTexture.filename);
                 });
 
                 atlasAsset.buffer = atlasView.buffer;
-                atlasAsset.path = atlasAsset.path.replace(originalHash, atlasAsset.hash);
+
+                // TODO CHECK FOR OPTIONS
+
+
+                // atlasAsset.path = atlasAsset.path.replace(originalHash, atlasAsset.hash);
+                atlasAsset.path = atlasAsset.path.replace(originalHash, jsonAsset.hash);
 
                 (fs as any).removeSync(originalPath);
 
