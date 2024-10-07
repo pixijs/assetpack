@@ -1,3 +1,4 @@
+import { readJSONSync } from 'fs-extra';
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { AssetPack } from '../../src/core/index.js';
@@ -123,5 +124,47 @@ describe('Json', () =>
         const data = readFileSync(`${outputDir}/json/json.json`, 'utf8');
 
         expect(data.replace(/\\/g, '').trim()).toEqual(`{"hello":"world","Im":"not broken"}`);
+    });
+
+    it('should support json5 format', async () =>
+    {
+        const testName = 'json5';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [
+                    {
+                        name: 'json5.json',
+                        content: assetPath('json/json5.json'),
+                    },
+                    {
+                        name: 'other-json-5.json5',
+                        content: assetPath('json/json5.json'),
+                    },
+                ],
+                folders: [],
+            }
+        );
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                json()
+            ]
+        });
+
+        await assetpack.run();
+
+        const json5Data = readJSONSync(`${outputDir}/json5.json`, 'utf8');
+
+        expect(json5Data).toEqual({ hello: 'world', Im: 'not broken' });
+
+        expect(existsSync(`${outputDir}/other-json-5.json`)).toBe(true);
     });
 });
