@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { path, stripTags } from '../core/index.js';
+import { Logger, path, stripTags } from '../core/index.js';
 
 import type {
     Asset,
@@ -11,6 +11,7 @@ export interface PixiBundle
 {
     name: string;
     assets: PixiManifestEntry[];
+    relativeName?: string;
 }
 
 export interface PixiManifest
@@ -46,6 +47,11 @@ export interface PixiManifestOptions extends PluginOptions
      * if true, the metaData will be outputted in the data field of the manifest.
      */
     includeMetaData?: boolean;
+    /**
+     * The name style for assets in the manifest file.
+     * When set to relative, assets will use their relative paths as names.
+     */
+    nameStyle?: 'short' | 'relative';
     /**
      * if true, the all tags will be outputted in the data.tags field of the manifest.
      * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
@@ -85,6 +91,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
             trimExtensions: false,
             includeMetaData: true,
             legacyMetaDataOutput: true,
+            nameStyle: 'short',
             ..._options,
         },
         tags: {
@@ -115,18 +122,36 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
                 this.tags!,
                 pipeSystem.internalMetaData
             );
-            filterUniqueNames(manifest);
+            filterUniqueNames(manifest, options);
             await fs.writeJSON(newFileName, manifest, { spaces: 2 });
         }
     };
 }
 
-function filterUniqueNames(manifest: PixiManifest)
+function filterUniqueNames(manifest: PixiManifest, options: PixiManifestOptions)
 {
     const nameMap = new Map<PixiManifestEntry, string[]>();
+    const isNameStyleShort = options.nameStyle !== 'relative';
+    const bundleNames = new Set<string>();
+    const duplicateBundleNames = new Set<string>();
 
     manifest.bundles.forEach((bundle) =>
-        bundle.assets.forEach((asset) => nameMap.set(asset, asset.alias as string[])));
+    {
+        if (isNameStyleShort)
+        {
+            if (bundleNames.has(bundle.name))
+            {
+                duplicateBundleNames.add(bundle.name);
+                Logger.warn(`[AssetPack][manifest] Duplicate bundle name '${bundle.name}'. All bundles with that name will be renamed to their relative name instead.`);
+            }
+            else
+            {
+                bundleNames.add(bundle.name);
+            }
+        }
+
+        bundle.assets.forEach((asset) => nameMap.set(asset, asset.alias as string[]));
+    });
 
     const arrays = Array.from(nameMap.values());
     const sets = arrays.map((arr) => new Set(arr));
@@ -134,6 +159,15 @@ function filterUniqueNames(manifest: PixiManifest)
 
     manifest.bundles.forEach((bundle) =>
     {
+        if (isNameStyleShort)
+        {
+            // Switch to relative bundle name to avoid duplications
+            if (duplicateBundleNames.has(bundle.name))
+            {
+                bundle.name = bundle.relativeName ?? bundle.name;
+            }
+        }
+
         bundle.assets.forEach((asset) =>
         {
             const names = nameMap.get(asset) as string[];
@@ -141,6 +175,21 @@ function filterUniqueNames(manifest: PixiManifest)
             asset.alias = uniqueArrays.find((arr) => arr.every((x) => names.includes(x))) as string[];
         });
     });
+}
+
+function getRelativeBundleName(asset: Asset, entryPath: string): string
+{
+    let name = asset.filename;
+    let parent = asset.parent;
+
+    // Exclude assets the paths of which equal to the entry path
+    while (parent && parent.path !== entryPath)
+    {
+        name = `${parent.filename}/${name}`;
+        parent = parent.parent;
+    }
+
+    return stripTags(name);
 }
 
 function collectAssets(
@@ -163,9 +212,22 @@ function collectAssets(
     if (asset.metaData[tags!.manifest!])
     {
         localBundle = {
-            name: stripTags(asset.filename),
+            name: options.nameStyle === 'relative' ? getRelativeBundleName(asset, entryPath) : stripTags(asset.filename),
             assets: []
         };
+
+        // This property helps rename duplicate bundle declarations
+        // Also, mark it as non-enumerable to prevent fs from including it into output
+        if (options.nameStyle !== 'relative')
+        {
+            Object.defineProperty(localBundle, 'relativeName', {
+                enumerable: false,
+                get()
+                {
+                    return getRelativeBundleName(asset, entryPath);
+                }
+            });
+        }
 
         bundles.push(localBundle);
     }
