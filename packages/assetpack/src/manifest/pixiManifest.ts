@@ -48,8 +48,8 @@ export interface PixiManifestOptions extends PluginOptions
      */
     includeMetaData?: boolean;
     /**
-     * The name style for assets in the manifest file.
-     * When set to relative, assets will use their relative paths as names.
+     * The name style for asset bundles in the manifest file.
+     * When set to relative, asset bundles will use their relative paths as names.
      */
     nameStyle?: 'short' | 'relative';
     /**
