@@ -40,6 +40,7 @@ export default {
       createShortcuts: false,
       trimExtensions: false,
       includeMetaData: true,
+      nameStyle: 'short'
     })
   ],
 };
@@ -47,12 +48,13 @@ export default {
 
 ## API
 
-| Option          | Type      | Description                                                                                    |
-| --------------- | --------- | ---------------------------------------------------------------------------------------------- |
-| output          | `string`  | The path to the manifest file.<br />Defaults to the output folder defined in your config.      |
-| createShortcuts | `boolean` | Whether to create the shortest possible alias for an asset.<br />Defaults to `false`.          |
-| trimExtensions  | `boolean` | Whether to trim the extensions from the asset aliases. <br />Defaults to `false`.              |
-| includeMetaData | `boolean` | Whether to include the tags the asset has used in the manifest file. <br />Defaults to `true`. |
+| Option          | Type              | Description                                                                                    |
+| --------------- | ----------------- | ---------------------------------------------------------------------------------------------- |
+| output          | `string`          | The path to the manifest file.<br />Defaults to the output folder defined in your config.      |
+| createShortcuts | `boolean`         | Whether to create the shortest possible alias for an asset.<br />Defaults to `false`.          |
+| trimExtensions  | `boolean`         | Whether to trim the extensions from the asset aliases. <br />Defaults to `false`.              |
+| includeMetaData | `boolean`         | Whether to include the tags the asset has used in the manifest file. <br />Defaults to `true`. |
+| nameStyle       | `short\|relative` | The name style for the bundle names in the manifest file.<br />Defaults to `short`.            |
 
 ## Tags
 
