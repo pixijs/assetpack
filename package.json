@@ -54,8 +54,5 @@
     "lint": [
       "**/*.{ts,tsx}"
     ]
-  },
-  "dependencies": {
-    "json5": "^2.2.3"
   }
 }
