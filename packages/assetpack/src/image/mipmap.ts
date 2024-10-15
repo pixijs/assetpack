@@ -66,7 +66,7 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
                         ? fixedResolutions
                         : resolutions;
 
-                    const largestResolution = Math.max(...Object.values(resolutionHash));
+                    const largestResolution = Math.max(...Object.values(resolutions));
 
                     image.resolution = largestResolution;
 
