@@ -45,6 +45,7 @@ export interface PackTexturesOptions
     resolution?: number;
     nameStyle?: 'short' | 'relative';
     removeFileExtension?: boolean;
+    exporter?: "Phaser3" | "Pixi";
     // prependFolderName
 }
 
@@ -72,6 +73,7 @@ export async function packTextures(
         resolution: 1,
         nameStyle: 'relative',
         removeFileExtension: false,
+        exporter: 'Pixi',
         ..._options,
     };
 
