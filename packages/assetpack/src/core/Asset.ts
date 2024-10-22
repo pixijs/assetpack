@@ -4,6 +4,8 @@ import { extractTagsFromFileName } from './utils/extractTagsFromFileName.js';
 import { getHash } from './utils/getHash.js';
 import { path } from './utils/path.js';
 
+import type { CachedAsset } from './AssetCache.js';
+
 export interface AssetOptions
 {
     path: string;
@@ -287,6 +289,25 @@ export class Asset
         });
 
         return res;
+    }
+
+    toCacheData(saveHash: boolean): CachedAsset
+    {
+        const data: CachedAsset = {
+            isFolder: this.isFolder,
+            parent: this.parent?.path,
+            transformParent: this.transformParent?.path,
+            metaData: { ...this.metaData },
+            inheritedMetaData: { ...this.inheritedMetaData },
+            transformData: { ...this.transformData }
+        };
+
+        if (!this.isFolder && saveHash)
+        {
+            data.hash = this.hash;
+        }
+
+        return data;
     }
 }
 

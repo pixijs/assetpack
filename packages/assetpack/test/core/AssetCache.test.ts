@@ -37,6 +37,7 @@ describe('AssetCache', () =>
 
         expect(cachedAssetData).toEqual({
             test: {
+                inheritedMetaData: {},
                 isFolder: true,
                 metaData: {},
                 transformData: {},
@@ -44,9 +45,10 @@ describe('AssetCache', () =>
             'test/test.json': {
                 isFolder: false,
                 hash: '12345',
+                inheritedMetaData: {},
                 parent: 'test',
                 transformData: {},
-                metaData: {}
+                metaData: {},
             }
         });
     });
