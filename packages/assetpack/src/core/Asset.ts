@@ -290,24 +290,5 @@ export class Asset
 
         return res;
     }
-
-    toCacheData(saveHash: boolean): CachedAsset
-    {
-        const data: CachedAsset = {
-            isFolder: this.isFolder,
-            parent: this.parent?.path,
-            transformParent: this.transformParent?.path,
-            metaData: { ...this.metaData },
-            inheritedMetaData: { ...this.inheritedMetaData },
-            transformData: { ...this.transformData }
-        };
-
-        if (!this.isFolder && saveHash)
-        {
-            data.hash = this.hash;
-        }
-
-        return data;
-    }
 }
 
