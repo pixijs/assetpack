@@ -18,7 +18,7 @@ export interface AssetWatcherOptions
     assetSettingsData?: AssetSettings[];
     ignore?: string | string[];
     onUpdate: (root: Asset) => Promise<void>;
-    onComplete: (root: Asset) => Promise<void>;
+    onComplete: (root: Asset) => void;
 }
 
 interface ChangeData

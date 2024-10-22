@@ -4,6 +4,8 @@ import { extractTagsFromFileName } from './utils/extractTagsFromFileName.js';
 import { getHash } from './utils/getHash.js';
 import { path } from './utils/path.js';
 
+import type { CachedAsset } from './AssetCache.js';
+
 export interface AssetOptions
 {
     path: string;
