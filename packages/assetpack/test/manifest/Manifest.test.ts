@@ -1038,6 +1038,236 @@ describe('Manifest', () =>
         });
     });
 
+    it('should ensure sub-manifests are created correctly with short names', async () =>
+    {
+        const testName = 'manifest-sub-manifest-short';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sound{m}',
+                    files: [
+                        {
+                            name: '1.mp3',
+                            content: assetPath('audio/1.mp3'),
+                        },
+                    ],
+                    folders: [],
+                },
+                {
+                    name: 'sound2{m}',
+                    files: [
+                        {
+                            name: '2.mp3',
+                            content: assetPath('audio/1.mp3'),
+                        },
+                    ],
+                    folders: [],
+                },
+                {
+                    name: 'sound3{m}',
+                    files: [
+                        {
+                            name: '3.mp3',
+                            content: assetPath('audio/1.mp3'),
+                        },
+                    ],
+                    folders: [
+                        {
+                            name: 'sound2{m}',
+                            files: [
+                                {
+                                    name: '2.mp3',
+                                    content: assetPath('audio/1.mp3'),
+                                },
+                            ],
+                            folders: [],
+                        },
+                    ],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                pixiManifest({
+                    includeMetaData: false,
+                }),
+            ],
+        });
+
+        await assetpack.run();
+
+        expect(fs.readJSONSync(`${outputDir}/manifest.json`)).toEqual({
+            bundles: [
+                {
+                    name: 'default',
+                    assets: [],
+                },
+                {
+                    name: 'sound2',
+                    assets: [
+                        {
+                            alias: ['sound2/2.mp3'],
+                            src: ['sound2/2.mp3'],
+                        },
+                    ],
+                },
+                {
+                    name: 'sound3',
+                    assets: [
+                        {
+                            alias: ['sound3/3.mp3'],
+                            src: ['sound3/3.mp3'],
+                        },
+                    ],
+                },
+                {
+                    name: 'sound3/sound2',
+                    assets: [
+                        {
+                            alias: ['sound3/sound2/2.mp3'],
+                            src: ['sound3/sound2/2.mp3'],
+                        },
+                    ],
+                },
+                {
+                    name: 'sound',
+                    assets: [
+                        {
+                            alias: ['sound/1.mp3'],
+                            src: ['sound/1.mp3'],
+                        },
+                    ],
+                },
+            ],
+        });
+    });
+
+    it('should ensure sub-manifests are created correctly with relative names', async () =>
+    {
+        const testName = 'manifest-sub-manifest-relative';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sound{m}',
+                    files: [
+                        {
+                            name: '1.mp3',
+                            content: assetPath('audio/1.mp3'),
+                        },
+                    ],
+                    folders: [
+                        {
+                            name: 'sound2{m}',
+                            files: [
+                                {
+                                    name: '2.mp3',
+                                    content: assetPath('audio/1.mp3'),
+                                },
+                            ],
+                            folders: [],
+                        },
+                    ],
+                },
+                {
+                    name: 'sound3{m}',
+                    files: [
+                        {
+                            name: '3.mp3',
+                            content: assetPath('audio/1.mp3'),
+                        },
+                    ],
+                    folders: [
+                        {
+                            name: 'sound2{m}',
+                            files: [
+                                {
+                                    name: '2.mp3',
+                                    content: assetPath('audio/1.mp3'),
+                                },
+                            ],
+                            folders: [],
+                        },
+                    ],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                pixiManifest({
+                    includeMetaData: false,
+                    nameStyle: 'relative',
+                }),
+            ],
+        });
+
+        await assetpack.run();
+
+        expect(fs.readJSONSync(`${outputDir}/manifest.json`)).toEqual({
+            bundles: [
+                {
+                    name: 'default',
+                    assets: [],
+                },
+                {
+                    name: 'sound3',
+                    assets: [
+                        {
+                            alias: ['sound3/3.mp3'],
+                            src: ['sound3/3.mp3'],
+                        },
+                    ],
+                },
+                {
+                    name: 'sound3/sound2',
+                    assets: [
+                        {
+                            alias: ['sound3/sound2/2.mp3'],
+                            src: ['sound3/sound2/2.mp3'],
+                        },
+                    ],
+                },
+                {
+                    name: 'sound',
+                    assets: [
+                        {
+                            alias: ['sound/1.mp3'],
+                            src: ['sound/1.mp3'],
+                        },
+                    ],
+                },
+                {
+                    name: 'sound/sound2',
+                    assets: [
+                        {
+                            alias: ['sound/sound2/2.mp3'],
+                            src: ['sound/sound2/2.mp3'],
+                        },
+                    ],
+                },
+            ],
+        });
+    });
+
     it('should ignore files with the mIgnore tag', async () =>
     {
         const testName = 'manifest-ignore';

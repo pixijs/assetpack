@@ -51,18 +51,7 @@ export class AssetCache
 
     private _serializeAsset(asset: Asset, schema: AssetCacheData['assets'], saveHash = false)
     {
-        const serializeAsset: CachedAsset = {
-            isFolder: asset.isFolder,
-            parent: asset.parent?.path,
-            transformParent: asset.transformParent?.path,
-            metaData: asset.metaData,
-            transformData: asset.transformData
-        };
-
-        if (!asset.isFolder && saveHash)
-        {
-            serializeAsset.hash = asset.hash;
-        }
+        const serializeAsset: CachedAsset = this.toCacheData(asset, saveHash);
 
         schema[asset.path] = serializeAsset;
 
@@ -77,6 +66,25 @@ export class AssetCache
             this._serializeAsset(child, schema);
         });
     }
+
+    private toCacheData(asset: Asset, saveHash: boolean): CachedAsset
+    {
+        const data: CachedAsset = {
+            isFolder: asset.isFolder,
+            parent: asset.parent?.path,
+            transformParent: asset.transformParent?.path,
+            metaData: { ...asset.metaData },
+            inheritedMetaData: { ...asset.inheritedMetaData },
+            transformData: { ...asset.transformData }
+        };
+
+        if (!asset.isFolder && saveHash)
+        {
+            data.hash = asset.hash;
+        }
+
+        return data;
+    }
 }
 
 export interface CachedAsset
@@ -85,6 +93,7 @@ export interface CachedAsset
     hash?: string;
     parent: string | undefined;
     metaData: Record<string, any>;
+    inheritedMetaData: Record<string, any>;
     transformData: Record<string, any>;
     transformParent: string | undefined;
 }

@@ -129,7 +129,7 @@ export class AssetPack
                 if (cache)
                 {
                     // write back to the cache...
-                    await (assetCache as AssetCache).write(root);
+                    (assetCache as AssetCache).write(root);
 
                     // release the buffers from the cache
                     root.releaseChildrenBuffers();

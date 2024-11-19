@@ -1,15 +1,15 @@
 {
   "name": "@assetpack/core",
-  "version": "1.1.1",
-  "license": "MIT",
-  "type": "module",
+  "version": "1.2.1",
+  "keywords": [],
   "homepage": "https://pixijs.io/assetpack/",
   "bugs": "https://github.com/pixijs/assetpack/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/pixijs/assetpack.git"
   },
-  "keywords": [],
+  "license": "MIT",
+  "type": "module",
   "exports": {
     ".": "./dist/core/index.js",
     "./cache-buster": "./dist/cache-buster/index.js",
@@ -35,8 +35,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "release": "xs bump,git-push",
     "publish-ci": "xs publish",
+    "release": "xs bump,git-push",
     "watch": "tsc -w"
   },
   "husky": {
@@ -70,6 +70,7 @@
     "fs-extra": "^11.2.0",
     "glob": "^10.4.1",
     "gpu-tex-enc": "^1.2.5",
+    "json5": "^2.2.3",
     "maxrects-packer": "^2.7.3",
     "merge": "^2.1.1",
     "minimatch": "9.0.4",
