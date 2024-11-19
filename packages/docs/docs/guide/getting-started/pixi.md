@@ -16,7 +16,7 @@ This setup also abstracts away some of the more complex features of AssetPack, t
 | cacheBust     | `boolean`                    | Whether to append a cache-busting query string to the asset URLs. Defaults to `true`             |
 | resolutions   | `Record<string, number>`     | A map of resolution names to scaling factors. Defaults to `{ default: 1, low: 0.5 }`             |
 | compression   | `CompressOptions` \| `false` | Options for compressing the output files. Defaults to `{ jpg: true, png: true, webp: true }`     |
-| texturePacker | `TexturePackerOptions`       | Options for generating texture atlases. Defaults to `{{ texturePacker: { nameStyle: 'short' }}}` |
+| texturePacker | `TexturePackerOptions`       | Options for generating texture atlases. Defaults to `{ texturePacker: { nameStyle: 'short' }}` |
 | audio         | `Partial<FfmpegOptions>`     | Options for compressing audio files. Defaults to `{}`                                            |
 | manifest      | `PixiManifestOptions`        | Options for generating a PixiJS manifest file. Defaults to `{ createShortcuts: true }`           |
 
