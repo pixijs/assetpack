@@ -1,5 +1,6 @@
 import chokidar from 'chokidar';
 import fs from 'fs-extra';
+import upath from 'upath';
 import { Asset } from './Asset.js';
 import { AssetIgnore } from './AssetIgnore.js';
 import { deleteAssetFiles } from './AssetPack.js';
@@ -47,7 +48,7 @@ export class AssetWatcher
 
     constructor(options: AssetWatcherOptions)
     {
-        const entryPath = options.entryPath;
+        const entryPath = upath.toUnix(options.entryPath);
 
         this._onUpdate = options.onUpdate;
         this._onComplete = options.onComplete;
@@ -188,6 +189,8 @@ export class AssetWatcher
     {
         changes.forEach(({ type, file }) =>
         {
+            file = upath.toUnix(file);
+
             let asset = this._assetHash[file];
 
             if (type === 'unlink' || type === 'unlinkDir')
@@ -272,6 +275,8 @@ export class AssetWatcher
 
         files.forEach((file) =>
         {
+            file = upath.toUnix(file);
+            
             const fullPath = path.joinSafe(asset.path, file);
 
             if (fullPath.includes('DS_Store')) return;
