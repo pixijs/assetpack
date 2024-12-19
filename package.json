@@ -17,7 +17,7 @@
     "publish-ci": "npm run publish-ci --workspace @assetpack/core",
     "pretest": "npm run clean",
     "test": "vitest run",
-    "test:lint": "xs lint",
+    "test:lint": "xs lint --max-warnings 0",
     "test:types": "xs types",
     "test:watch": "vitest",
     "watch": "npm run --ws watch --if-present",
