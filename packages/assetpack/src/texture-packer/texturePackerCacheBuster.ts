@@ -39,7 +39,7 @@ export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
             return [asset];
         },
 
-        async finish(asset: Asset)
+        async finish(asset: Asset, options, pipeSystem)
         {
             // first we retrieve the final transformed children - so the atlas files that have been copied
             // to the output folder.
@@ -59,8 +59,17 @@ export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
 
                 const texture = json.meta.image;
 
-                const textureAssets = findAssets((asset) =>
-                    asset.filename === texture, asset, true);
+                const textureAssets = findAssets((assetObj) =>{
+                    if(assetObj.filename !== texture)return false;
+                    
+                    // check json & image file directory
+                    let jsonDir = jsonAsset.directory.replaceAll(pipeSystem.outputPath, "");
+                    jsonDir = jsonDir.replaceAll(/(^[\\\/])|([\\\/]$)/ig, "")
+                    
+                    let dirName = assetObj.directory.replaceAll(/\.?assetpack[\/\\]texture-packer\//ig, "");
+                    dirName = dirName.replaceAll(/{.*}/ig, "");
+                    return jsonDir == dirName
+                }, asset, true);
 
                 // last transformed child is the renamed texture
                 const cacheBustedTexture = textureAssets[0].getFinalTransformedChildren()[0];
