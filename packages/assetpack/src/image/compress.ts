@@ -4,7 +4,7 @@ import { compressGpuTextures } from './utils/compressGpuTextures.js';
 import { compressSharp } from './utils/compressSharp.js';
 import { resolveOptions } from './utils/resolveOptions.js';
 
-import type { AstcOptions, BasisOptions, BcOptions } from 'gpu-tex-enc';
+import type { AstcOptions, BasisOptions, BcOptions, EtcOptions } from 'gpu-tex-enc';
 import type { AvifOptions, JpegOptions, PngOptions, WebpOptions } from 'sharp';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 
@@ -15,6 +15,7 @@ type CompressPngOptions = Omit<PngOptions, 'force'>;
 type CompressBc7Options = BcOptions;
 type CompressAstcOptions = AstcOptions;
 type CompressBasisOptions = BasisOptions;
+type CompressEtcOptions = EtcOptions;
 
 export interface CompressOptions extends PluginOptions
 {
@@ -25,6 +26,7 @@ export interface CompressOptions extends PluginOptions
     bc7?: CompressBc7Options | boolean;
     astc?: CompressAstcOptions | boolean;
     basis?: CompressBasisOptions | boolean;
+    etc?: CompressEtcOptions | boolean;
 }
 
 export interface CompressImageData
@@ -36,7 +38,7 @@ export interface CompressImageData
 
 export interface CompressImageDataResult
 {
-    format: CompressImageData['format'] | '.bc7.dds' | '.astc.ktx' | '.basis.ktx2';
+    format: CompressImageData['format'] | '.bc7.dds' | '.astc.ktx' | '.basis.ktx2' | '.etc.ktx';
     resolution: number;
     buffer: Buffer;
 }
@@ -51,6 +53,7 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         bc7: false,
         astc: false,
         basis: false,
+        etc: false,
     });
 
     if (compress)
@@ -78,6 +81,10 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         });
 
         compress.basis = resolveOptions<CompressBasisOptions>(compress.basis, {
+
+        });
+
+        compress.etc = resolveOptions<CompressEtcOptions>(compress.etc, {
 
         });
     }
