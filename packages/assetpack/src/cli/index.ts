@@ -52,7 +52,9 @@ async function main()
     try
     {
         /* eslint-disable @typescript-eslint/no-var-requires, global-require */
-        config = require(configPath) as AssetPackConfig;
+        const configModule = require(configPath);
+
+        config = (configModule.__esModule ? configModule.default : configModule);
         AssetPack = require('@assetpack/core').AssetPack;
         /* eslint-enable @typescript-eslint/no-var-requires, global-require */
     }

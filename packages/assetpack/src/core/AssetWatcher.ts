@@ -276,7 +276,7 @@ export class AssetWatcher
         files.forEach((file) =>
         {
             file = upath.toUnix(file);
-            
+
             const fullPath = path.joinSafe(asset.path, file);
 
             if (fullPath.includes('DS_Store')) return;
