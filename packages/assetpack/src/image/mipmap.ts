@@ -51,30 +51,34 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
                 sharpImage: sharp(asset.buffer),
             };
 
+            const { resolutions, fixedResolution } = options as Required<MipmapOptions>
+                || this.defaultOptions;
+
+            const fixedResolutions = {
+                [fixedResolution]: resolutions[fixedResolution]
+            };
+
+            const largestResolution = Math.max(...Object.values(resolutions));
+
             try
             {
                 if (shouldMipmap)
                 {
-                    const { resolutions, fixedResolution } = options as Required<MipmapOptions>
-                        || this.defaultOptions;
-
-                    const fixedResolutions: {[x: string]: number} = {};
-
-                    fixedResolutions[fixedResolution] = resolutions[fixedResolution];
-
                     const resolutionHash = asset.allMetaData[this.tags!.fix]
                         ? fixedResolutions
                         : resolutions;
 
-                    const largestResolution = Math.max(...Object.values(resolutionHash));
-
                     image.resolution = largestResolution;
 
-                    processedImages = shouldMipmap ? await mipmapSharp(image, resolutionHash, largestResolution) : [image];
+                    processedImages = await mipmapSharp(image, resolutionHash, largestResolution);
                 }
                 else
                 {
-                    processedImages = [image];
+                    image.resolution = fixedResolutions[fixedResolution];
+
+                    processedImages = image.resolution === 1
+                        ? [image]
+                        : processedImages = await mipmapSharp(image, fixedResolutions, largestResolution);
                 }
             }
             catch (error)

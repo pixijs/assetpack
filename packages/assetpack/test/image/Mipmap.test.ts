@@ -77,7 +77,7 @@ describe('Mipmap', () =>
                 name: testName,
                 files: [
                     {
-                        name: 'testPng.png',
+                        name: 'testPng{fix}.png',
                         content: assetPath('image/png-1.png'),
                     },
                 ],
@@ -85,7 +85,7 @@ describe('Mipmap', () =>
             });
 
         const mipmapOpts = {
-            resolutions: { low: 0.5 },
+            resolutions: { low: 0.5, default: 1 },
             fixedResolution: 'low'
         };
 
@@ -147,7 +147,7 @@ describe('Mipmap', () =>
 
     it('should prevent mipmaps on file when tagged with fix', async () =>
     {
-        const testName = 'mip-fixed';
+        const testName = 'mip-fixed-prevent';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
