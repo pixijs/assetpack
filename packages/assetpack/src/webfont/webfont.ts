@@ -1,4 +1,4 @@
-import { checkExt, createNewAssetAt, path } from '../core/index.js';
+import { checkExt, createNewAssetAt, path, stripTags } from '../core/index.js';
 import { fonts } from './fonts.js';
 
 import type { Asset, AssetPipe } from '../core/index.js';
@@ -44,7 +44,7 @@ export function webfont(): AssetPipe<any, 'wf'>
             newAsset.buffer = buffer;
 
             // set the family name to the filename if it doesn't exist
-            asset.metaData.family ??= path.trimExt(asset.filename);
+            asset.metaData.family ??= stripTags(path.trimExt(asset.filename));
 
             return [newAsset];
         }

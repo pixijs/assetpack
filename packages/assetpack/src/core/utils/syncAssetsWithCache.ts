@@ -26,6 +26,8 @@ function syncAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Recor
             });
 
             assetToDelete.metaData = cachedAsset.metaData;
+            assetToDelete.transformData = cachedAsset.transformData;
+            assetToDelete.inheritedMetaData = cachedAsset.inheritedMetaData;
 
             assetToDelete.state = 'deleted';
 
@@ -87,22 +89,24 @@ function syncTransformedAssetsFromCache(assetHash: Record<string, Asset>, cached
     for (const i in cachedData)
     {
         const cachedAssetData = cachedData[i];
+        let asset = assetHash[i];
 
-        if (cachedAssetData.transformParent)
+        if (!asset)
         {
-            const transformedAsset = new Asset({
+            asset = new Asset({
                 path: i,
                 isFolder: cachedAssetData.isFolder
             });
 
-            transformedAsset.metaData = cachedAssetData.metaData;
-            transformedAsset.transformData = cachedAssetData.transformData;
+            transformedAssets[i] = asset;
+            assetHash[i] = asset;
 
-            transformedAssets[i] = transformedAsset;
-            assetHash[i] = transformedAsset;
-
-            transformedAsset.transformParent = assetHash[cachedAssetData.transformParent];
+            asset.transformParent = assetHash[cachedAssetData.transformParent!];
         }
+
+        asset.inheritedMetaData = cachedAssetData.inheritedMetaData;
+        asset.transformData = cachedAssetData.transformData;
+        asset.metaData = cachedAssetData.metaData;
     }
 
     for (const i in transformedAssets)
