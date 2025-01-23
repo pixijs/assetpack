@@ -241,10 +241,10 @@ describe('Webfont', () =>
             files: [],
             folders: [
                 {
-                    name: 'defaultFolder{wf}',
+                    name: 'defaultFolder',
                     files: [
                         {
-                            name: 'ttf.ttf',
+                            name: 'ttf{wf}.ttf',
                             content: assetPath('font/Roboto-Regular.ttf'),
                         },
                     ],
