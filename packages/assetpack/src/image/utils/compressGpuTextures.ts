@@ -2,6 +2,7 @@ import {
     generateASTC as astc,
     generateBasis as basis,
     generateBC as bc,
+    generateETC as etc
 } from 'gpu-tex-enc';
 import crypto from 'node:crypto';
 import { promises as fs } from 'node:fs';
@@ -11,7 +12,8 @@ import { extname, join } from 'node:path';
 import type {
     AstcOptions,
     BasisOptions,
-    BcOptions
+    BcOptions,
+    EtcOptions
 } from 'gpu-tex-enc';
 import type sharp from 'sharp';
 import type { CompressImageData, CompressImageDataResult, CompressOptions } from '../compress.js';
@@ -72,6 +74,17 @@ export async function compressGpuTextures(
                 format: '.basis.ktx2',
                 resolution: 1,
                 image: basis(adjustedImagePath, 'UASTC', true, basisOpts.options),
+            });
+        }
+
+        if (options.etc)
+        {
+            const etcOpts = typeof options.etc === 'boolean' ? {} : options.etc as EtcOptions;
+
+            compressed.push({
+                format: '.etc.ktx',
+                resolution: 1,
+                image: etc(imagePath, 'RGBA8', etcOpts.effort, etcOpts.errormetric, etcOpts.options),
             });
         }
 
