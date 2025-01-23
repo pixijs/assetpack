@@ -27,21 +27,25 @@ export function fitTextureToPacker(bin: PixiPacker, { width, height, fixedSize, 
         height += padding ?? 0;
         width += padding ?? 0;
 
-        if (powerOfTwo) 
+        if (powerOfTwo)
         {
             height = nearestPowerOf2(height);
             width = nearestPowerOf2(width);
         }
-    }    
+    }
 
     return { width, height } as { width: number, height: number};
 }
 
-function nearestPowerOf2(x: number) {
+function nearestPowerOf2(x: number)
+{
     if (x <= 1) return 1;
     let power = 1;
-    while (power < x) {
+
+    while (power < x)
+    {
         power <<= 1;
     }
+
     return power;
 }
