@@ -59,16 +59,21 @@ export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
 
                 const texture = json.meta.image;
 
-                const textureAssets = findAssets((assetObj) =>{
-                    if(assetObj.filename !== texture)return false;
-                    
+                const textureAssets = findAssets((assetObj) =>
+                {
+                    if (assetObj.filename !== texture) return false;
+
                     // check json & image file directory
-                    let jsonDir = jsonAsset.directory.replaceAll(pipeSystem.outputPath, "");
-                    jsonDir = jsonDir.replaceAll(/(^[\\\/])|([\\\/]$)/ig, "")
-                    
-                    let dirName = assetObj.directory.replaceAll(/\.?assetpack[\/\\]texture-packer\//ig, "");
-                    dirName = dirName.replaceAll(/{.*}/ig, "");
-                    return jsonDir == dirName
+                    let jsonDir = jsonAsset.directory.replaceAll(pipeSystem.outputPath, '');
+
+                    jsonDir = jsonDir.replaceAll(/(^[\\\/])|([\\\/]$)/ig, '');
+
+                    let dirName = assetObj.directory.replaceAll(/^.*(texture-packer|compress)[\/\\]?/ig, '');
+                    // dirName = dirName.replaceAll(/^.*assetpack[\/\\]texture-packer[\/\\]/ig, '');
+
+                    dirName = dirName.replaceAll(/{.*}/ig, '');
+
+                    return jsonDir === dirName;
                 }, asset, true);
 
                 // last transformed child is the renamed texture
