@@ -17,7 +17,8 @@ export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetP
                 avif: false,
                 astc: false,
                 bc7: false,
-                basis: false
+                basis: false,
+                etc: false
             },
             ..._options,
         },
@@ -39,6 +40,7 @@ export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetP
             if (options.astc) formats.push(['astc', '.astc.ktx']);
             if (options.bc7) formats.push(['bc7', '.bc7.dds']);
             if (options.basis) formats.push(['basis', '.basis.ktx2']);
+            if (options.etc) formats.push(['etc', '.etc.ktx']);
 
             const atlas = new AtlasView(asset.buffer);
 

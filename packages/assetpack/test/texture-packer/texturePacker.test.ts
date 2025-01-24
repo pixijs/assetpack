@@ -52,6 +52,48 @@ describe('Texture Packer', () =>
         expect(existsSync(`${outputDir}/sprites`)).toBe(false);
     });
 
+    it('should create a sprite sheet: power of two', async () =>
+    {
+        const testName = 'tp-pot';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createTPSFolder(testName, pkg);
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                texturePacker({
+                    texturePacker: {
+                        powerOfTwo: true,
+                    },
+                    resolutionOptions: {
+                        resolutions: { default: 1 },
+                    },
+                })
+            ]
+        });
+
+        await assetpack.run();
+
+        const sheet1 = fs.readJSONSync(`${outputDir}/sprites.json`);
+
+        const expectedSize = {
+            w: 1024,
+            h: 512,
+        };
+
+        expect(sheet1.meta.size).toEqual(expectedSize);
+
+        const sheet2Exists = existsSync(`${outputDir}/sprites-1.json`);
+
+        expect(sheet2Exists).toBe(false);
+
+        expect(existsSync(`${outputDir}/sprites`)).toBe(false);
+    });
+
     it('should adjust the size of the textures outputted based on maximumTextureSize', async () =>
     {
         const testName = 'tp-max-size';
