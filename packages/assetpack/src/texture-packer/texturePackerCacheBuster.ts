@@ -52,7 +52,7 @@ export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
                 // as we do this, the hash of the atlas file will change, so we need to update the path
                 // and also remove the original file.
                 const jsonAsset = jsonAssets[i];
-                const originalHash = jsonAsset.hash;
+                const originalHash = jsonAsset.hash!;
                 const originalPath = jsonAsset.path;
 
                 const json = JSON.parse(jsonAsset.buffer.toString());
@@ -79,7 +79,7 @@ export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
                 }
 
                 jsonAsset.buffer = Buffer.from(JSON.stringify(json));
-                jsonAsset.path = jsonAsset.path.replace(originalHash, jsonAsset.hash);
+                jsonAsset.path = jsonAsset.path.replace(originalHash, jsonAsset.hash!);
                 fs.removeSync(originalPath);
 
                 // rewrite..
