@@ -127,6 +127,8 @@ export class AssetPack
                     // write back to the cache...
                     (assetCache as AssetCache).write(root);
 
+                    root.releaseChildrenBuffers();
+
                     Logger.info('cache updated.');
                 }
 
