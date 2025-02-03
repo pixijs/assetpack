@@ -60,7 +60,7 @@ class LoggerClass
 
     public report(event: ReporterEvent)
     {
-        // this._reporter.report(event);
+        this._reporter.report(event);
     }
 }
 

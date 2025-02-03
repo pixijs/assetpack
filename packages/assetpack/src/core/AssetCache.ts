@@ -73,13 +73,8 @@ export class AssetCache implements IAssetCache
 
         fs.writeJSONSync(`${AssetCache.location}/${this._cacheName}.json`, schema, { spaces: 4 });
 
-        console.log('wrote cache');
-
+        // assign the schema to the cache data
         this._assetCacheData = schema;
-        for (const i in schema.assets)
-        {
-            console.log(`${i} : `, schema.assets[i].hash);
-        }
     }
 
     private _serializeAsset(asset: Asset, schema: AssetCacheData['assets'], saveHash = false)
