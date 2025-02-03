@@ -379,7 +379,7 @@ describe('Core', () =>
 
         await assetpack.run();
 
-        const stats = assetpack.root.children[0].stats!;
+        const stats = assetpack.rootAsset.children[0].stats!;
 
         expect(stats.date).toBeGreaterThan(0);
         expect(stats.duration).toBeGreaterThan(0);
