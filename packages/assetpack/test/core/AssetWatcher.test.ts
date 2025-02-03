@@ -29,7 +29,6 @@ describe('AssetWatcher', () =>
 
         const assetWatcher = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: null,
             onUpdate: async (root: Asset) =>
             {
                 expect(root.state).toBe('added');
@@ -69,7 +68,6 @@ describe('AssetWatcher', () =>
 
         const assetWatcher = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: null,
             onUpdate: async (root: Asset) =>
             {
                 expect(root.state).toBe('added');
@@ -90,7 +88,7 @@ describe('AssetWatcher', () =>
 
         const assetWatcherWithCacheData = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: await assetCache.read(),
+            assetCache,
             onUpdate: async (root: Asset) =>
             {
                 expect(root.state).toBe('normal');
@@ -110,7 +108,7 @@ describe('AssetWatcher', () =>
         // and a final time to check that a warm cache is working
         const assetWatcherWithCacheDataWarm = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: await assetCache.read(),
+            assetCache,
             onUpdate: async (root: Asset) =>
             {
                 expect(root.state).toBe('normal');
@@ -187,7 +185,7 @@ describe('AssetWatcher', () =>
 
         const assetWatcher = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: null,
+            assetCache,
             onUpdate,
             onComplete
         });
@@ -196,7 +194,7 @@ describe('AssetWatcher', () =>
 
         const assetWatcherFromCache = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: await assetCache.read(),
+            assetCache,
             onUpdate: async () =>
             {
                 // nothing to do! as it SHOULD be cached :D
@@ -242,7 +240,6 @@ describe('AssetWatcher', () =>
 
         const assetWatcher = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: null,
             onUpdate: async (root: Asset) =>
             {
                 expect(root.children.length).toBe(1);
@@ -291,7 +288,6 @@ describe('AssetWatcher', () =>
 
         const assetWatcher = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: null,
             ignore: '**/*.json',
             onUpdate: async (root: Asset) =>
             {
@@ -353,7 +349,6 @@ describe('AssetWatcher', () =>
 
         const assetWatcher = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: null,
             assetSettingsData: [
                 {
                     files: ['**/*.json'],
@@ -422,7 +417,6 @@ describe('AssetWatcher', () =>
 
         const assetWatcher = new AssetWatcher({
             entryPath: inputDir,
-            assetCacheData: null,
             assetSettingsData: [
                 {
                     files: ['**/*.json'],

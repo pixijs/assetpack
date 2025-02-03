@@ -4,6 +4,14 @@ import { extractTagsFromFileName } from './utils/extractTagsFromFileName.js';
 import { getHash } from './utils/getHash.js';
 import { path } from './utils/path.js';
 
+export interface TransformStats
+{
+    duration: number; // Duration of the transformation process
+    date: number; // The last time the asset was transformed
+    success: boolean; // Whether the transformation was successful
+    error?: string; // Error message if the transformation failed
+}
+
 export interface AssetOptions
 {
     path: string;
@@ -37,6 +45,8 @@ export class Asset
     isFolder: boolean;
     path = '';
     skip = false;
+
+    stats?: TransformStats;
 
     private _state: 'deleted' | 'added' | 'modified' | 'normal' = 'added';
     private _buffer?: Buffer | null = null;

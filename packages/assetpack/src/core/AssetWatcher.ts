@@ -9,13 +9,13 @@ import { applySettingToAsset } from './utils/applySettingToAsset.js';
 import { path } from './utils/path.js';
 import { syncAssetsWithCache } from './utils/syncAssetsWithCache.js';
 
-import type { CachedAsset } from './AssetCache.js';
+import type { IAssetCache } from './AssetCache.js';
 import type { AssetSettings } from './pipes/PipeSystem.js';
 
 export interface AssetWatcherOptions
 {
     entryPath: string;
-    assetCacheData?: Record<string, CachedAsset> | null;
+    assetCache?: IAssetCache;
     assetSettingsData?: AssetSettings[];
     ignore?: string | string[];
     onUpdate: (root: Asset) => Promise<void>;
@@ -43,8 +43,8 @@ export class AssetWatcher
     private _onComplete: (root: Asset) => void;
     private _ignore: AssetIgnore;
     private _assetSettingsData: AssetSettings[];
-    private _assetCacheData: Record<string, CachedAsset> | undefined | null;
     private _initialised = false;
+    private _assetCache: IAssetCache | undefined;
 
     constructor(options: AssetWatcherOptions)
     {
@@ -59,35 +59,42 @@ export class AssetWatcher
             entryPath
         });
 
-        this._assetCacheData = options.assetCacheData;
+        this._assetCache = options.assetCache;
         this._assetSettingsData = options.assetSettingsData ?? [];
+    }
+
+    get root()
+    {
+        return this._root;
     }
 
     private _init()
     {
-        if (this._initialised) return;
-        this._initialised = true;
-
         Logger.report({
             type: 'buildStart',
             message: this._entryPath,
         });
 
-        const asset = new Asset({
-            path: this._entryPath,
-            isFolder: true,
-        });
+        if (!this._initialised)
+        {
+            this._initialised = true;
 
-        this._assetHash[asset.path] = asset;
+            const asset = new Asset({
+                path: this._entryPath,
+                isFolder: true,
+            });
 
-        this._root = asset;
+            this._assetHash[asset.path] = asset;
 
-        this._collectAssets(asset);
+            this._root = asset;
 
-        if (this._assetCacheData)
+            this._collectAssets(this._root);
+        }
+
+        if (this._assetCache)
         {
             // now compare the cached asset with the current asset
-            syncAssetsWithCache(this._assetHash, this._assetCacheData);
+            syncAssetsWithCache(this._assetHash, this._assetCache.read());
         }
     }
 
