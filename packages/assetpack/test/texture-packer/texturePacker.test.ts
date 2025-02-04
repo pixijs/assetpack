@@ -364,7 +364,7 @@ describe('Texture Packer', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                texturePacker()
+                texturePacker({ resolutionOptions: { fixedResolution: 'low' } }),
             ]
         });
 
@@ -373,10 +373,16 @@ describe('Texture Packer', () =>
         const sheet1 = existsSync(`${outputDir}/sprites/sprites.json`);
         const sheet2 = existsSync(`${outputDir}/sprites/sprites@0.5x.json`);
         const sheet3 = existsSync(`${outputDir}/sprites/sprites@2x.json`);
+        const img = existsSync(`${outputDir}/sprites/sprites.png`);
+        const img2 = existsSync(`${outputDir}/sprites/sprites@0.5x.png`);
+        const img3 = existsSync(`${outputDir}/sprites/sprites@2x.png`);
 
-        expect(sheet1).toBe(true);
-        expect(sheet2).toBe(false);
+        expect(sheet1).toBe(false);
+        expect(sheet2).toBe(true);
         expect(sheet3).toBe(false);
+        expect(img).toBe(false);
+        expect(img2).toBe(true);
+        expect(img3).toBe(false);
     });
 
     it('should create jpg spritesheets', async () =>

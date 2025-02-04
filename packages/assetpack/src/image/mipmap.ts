@@ -22,7 +22,7 @@ const defaultMipmapOptions: Required<MipmapOptions> = {
     fixedResolution: 'default',
 };
 
-export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, 'fix'>
+export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, 'fix' | 'nomip'>
 {
     const mipmap = resolveOptions(_options, defaultMipmapOptions);
 
@@ -34,14 +34,15 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
         },
         tags: {
             fix: 'fix',
+            nomip: 'nomip',
         },
         test(asset: Asset, options)
         {
-            return options && checkExt(asset.path, '.png', '.jpg', '.jpeg');
+            return options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nomip];
         },
         async transform(asset: Asset, options)
         {
-            const shouldMipmap = mipmap && !asset.metaData[this.tags!.fix];
+            const shouldMipmap = mipmap && !asset.allMetaData[this.tags!.fix];
 
             let processedImages: CompressImageData[];
 

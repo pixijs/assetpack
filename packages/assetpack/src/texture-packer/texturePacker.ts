@@ -49,7 +49,7 @@ function checkForTexturePackerShortcutClashes(
     }
 }
 
-export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<TexturePackerOptions, 'tps' | 'fix' | 'jpg'>
+export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<TexturePackerOptions, 'tps' | 'fix' | 'jpg' | 'nomip'>
 {
     let shortcutClash: Record<string, boolean> = {};
 
@@ -75,6 +75,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             tps: 'tps',
             fix: 'fix',
             jpg: 'jpg',
+            nomip: 'nomip',
         },
         test(asset: Asset)
         {
@@ -183,7 +184,8 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
                         jsonAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
 
-                        textureAsset.metaData[this.tags!.fix] = true;
+                        // don't mipmap the texture again, we have already done that
+                        textureAsset.metaData[this.tags!.nomip] = true;
 
                         jsonAsset.transformData.page = i;
 

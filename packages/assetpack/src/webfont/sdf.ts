@@ -14,7 +14,7 @@ export interface SDFFontOptions extends PluginOptions
 
 function signedFont(
     defaultOptions: SDFFontOptions
-): AssetPipe<SDFFontOptions, 'font' | 'nc' | 'fix'>
+): AssetPipe<SDFFontOptions, 'font' | 'nc' | 'nomip'>
 {
     return {
         folder: false,
@@ -23,7 +23,7 @@ function signedFont(
         tags: {
             font: 'font',
             nc: 'nc',
-            fix: 'fix',
+            nomip: 'nomip',
         },
         test(asset: Asset)
         {
@@ -51,9 +51,9 @@ function signedFont(
 
                 const newTextureAsset = createNewAssetAt(asset, newTextureName);
 
-                // don't compress!
+                // don't compress or mipmap the font texture, we can't resize or update image paths
                 newTextureAsset.metaData[this.tags!.nc] = true;
-                newTextureAsset.metaData[this.tags!.fix] = true;
+                newTextureAsset.metaData[this.tags!.nomip] = true;
                 newTextureAsset.metaData.mIgnore = true;
 
                 assets.push(newTextureAsset);

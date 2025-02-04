@@ -214,7 +214,45 @@ describe('Mipmap', () =>
             entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [mipmap()]
+            pipes: [mipmap({ fixedResolution: 'low' })]
+        });
+
+        await assetpack.run();
+
+        expect(existsSync(`${outputDir}/assets/test.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/test@0.5x.png`)).toBe(true);
+    });
+
+    it('should prevent mipmaps', async () =>
+    {
+        const testName = 'mip-nomip';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'assets{nomip}',
+                        files: [
+                            {
+                                name: 'test.png',
+                                content: assetPath('image/png-1.png'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                ],
+            });
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [mipmap({ fixedResolution: 'low' })]
         });
 
         await assetpack.run();
