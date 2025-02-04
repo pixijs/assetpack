@@ -25,6 +25,12 @@ export interface IAssetCache
      * @param {Asset} asset - The asset to be written to the cache.
      */
     write(asset: Asset): void;
+
+    /**
+     * Checks if the asset cache exists.
+     * @returns {boolean} Whether the asset cache exists.
+     */
+    exists(): boolean;
 }
 
 export class AssetCache implements IAssetCache

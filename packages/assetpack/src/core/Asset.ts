@@ -6,10 +6,14 @@ import { path } from './utils/path.js';
 
 export interface TransformStats
 {
-    duration: number; // Duration of the transformation process
-    date: number; // The last time the asset was transformed
-    success: boolean; // Whether the transformation was successful
-    error?: string; // Error message if the transformation failed
+    /* The duration of the transformation */
+    duration: number;
+    /* The last time the asset was transformed */
+    date: number;
+    /* Whether the transformation was successful */
+    success: boolean;
+    /* Error message if the transformation failed */
+    error?: string;
 }
 
 export interface AssetOptions

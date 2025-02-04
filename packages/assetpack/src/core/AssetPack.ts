@@ -153,6 +153,9 @@ export class AssetPack
         return this._assetWatcher.watch();
     }
 
+    /**
+     * Stop the asset pack, this will stop the watcher
+     */
     public stop()
     {
         return this._assetWatcher.stop();
