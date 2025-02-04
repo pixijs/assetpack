@@ -179,7 +179,7 @@ export class AssetPack
      * @param onComplete - optional callback that will be called after each time asset pack has finished transforming the assets
      * @returns a promise that will resolve when the first time asset pack has finished transforming the assets
      */
-    public watch(onComplete: (root: Asset) => void)
+    public watch(onComplete?: (root: Asset) => void)
     {
         this._onWatchTransformComplete = onComplete;
 

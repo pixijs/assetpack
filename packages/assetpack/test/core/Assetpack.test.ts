@@ -352,7 +352,7 @@ describe('Core', () =>
         expect(rootAsset.settings).toBeUndefined();
     });
 
-    it.only('should call onComplete when the asset pack run is complete when watching', async () =>
+    it('should call onComplete when the asset pack run is complete when watching', async () =>
     {
         const testName = 'watch-onComplete';
         const inputDir = `${getInputDir(pkg, testName)}/`;
