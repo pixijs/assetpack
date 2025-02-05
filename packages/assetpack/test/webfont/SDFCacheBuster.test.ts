@@ -79,13 +79,6 @@ describe('Webfont', () =>
                     resolutions: { default: 1, low: 0.5 },
                     compression: { jpg: true, png: true, webp: true },
                 })
-                // compress(compression),
-                // sdfCompress(compression),
-                // cacheBuster(),
-                // SDFCacheBuster(),
-                // pixiManifest({
-                //     createShortcuts: true,
-                // }),
             ],
         });
 
