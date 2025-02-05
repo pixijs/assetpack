@@ -279,7 +279,7 @@ describe('Atlas Mipmap', () =>
 
     it('should create no mipmaps', async () =>
     {
-        const testName = 'mip-fixed-res';
+        const testName = 'mip-nomip';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
