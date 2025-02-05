@@ -33,6 +33,18 @@ export class AssetPack
     private _entryPath = '';
     private _outputPath = '';
 
+    /**
+     * Holds onto the optional onComplete callback passed in by the watch method
+     * will be called after each time asset pack has finished transforming the assets
+     */
+    private _onWatchTransformComplete: ((root: Asset) => void) | undefined;
+
+    /**
+     * Holds a promise resolve function that will be called after the first time
+     * asset pack has finished transforming the assets when the watch method is called
+     */
+    private _onWatchInitialTransformComplete: ((value: unknown) => void) | undefined;
+
     constructor(config: AssetPackConfig = {})
     {
         this.config = merge.recursive(true, this._defaultConfig, config);
@@ -131,6 +143,18 @@ export class AssetPack
                 Logger.report({
                     type: 'buildSuccess',
                 });
+
+                this._onWatchTransformComplete?.(root);
+
+                // if the watch method was called, we need to resolve the promise
+                // that was created when the watch method was called
+                if (this._onWatchInitialTransformComplete)
+                {
+                    this._onWatchInitialTransformComplete(root);
+
+                    // clear the promise resolve function, so it only gets resolved once
+                    this._onWatchInitialTransformComplete = undefined;
+                }
             }
         });
     }
@@ -146,10 +170,22 @@ export class AssetPack
     /**
      * Watch the asset pack, this will watch the file system for changes and transform the assets.
      * you can enable this when in development mode
+     *
+     * @param onComplete - optional callback that will be called after each time asset pack has finished transforming the assets
+     * @returns a promise that will resolve when the first time asset pack has finished transforming the assets
      */
-    public watch()
+    public watch(onComplete?: (root: Asset) => void)
     {
-        return this._assetWatcher.watch();
+        this._onWatchTransformComplete = onComplete;
+
+        const onCompletePromise = new Promise((resolve) =>
+        {
+            this._onWatchInitialTransformComplete = resolve;
+        });
+
+        this._assetWatcher.watch();
+
+        return onCompletePromise;
     }
 
     /**

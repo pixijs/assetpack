@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { existsSync } from 'node:fs';
 import { join } from 'path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { cacheBuster } from '../../src/cache-buster/cacheBuster.js';
 import { AssetPack } from '../../src/core/AssetPack.js';
 import { getHash } from '../../src/core/index.js';
@@ -459,6 +459,51 @@ describe('Core', () =>
         });
 
         expect(assetpack.rootAsset).toBeDefined();
+    });
+
+    it('should call onComplete when the asset pack run is complete when watching', async () =>
+    {
+        const testName = 'watch-onComplete';
+        const inputDir = `${getInputDir(pkg, testName)}/`;
+        const outputDir = getOutputDir(pkg, testName);
+
+        fs.removeSync(inputDir);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [{
+                    name: 'json.json',
+                    content: assetPath('json/json.json'),
+                }],
+                folders: [],
+            });
+
+        const testFile = join(inputDir, 'json.json');
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: true
+        });
+
+        const onComplete = vi.fn();
+
+        await assetpack.watch(onComplete);
+
+        expect(onComplete).toHaveBeenCalledTimes(1);
+
+        fs.writeJSONSync(testFile, { nice: `old value!` });
+
+        await new Promise((resolve) =>
+        {
+            setTimeout(resolve, 1500);
+        });
+
+        expect(onComplete).toHaveBeenCalledTimes(2);
+
+        assetpack.stop();
     });
 
     it('should not copy to output if transformed', () =>
