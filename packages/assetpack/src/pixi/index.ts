@@ -12,6 +12,8 @@ import { spineAtlasMipmap } from '../spine/spineAtlasMipmap.js';
 import { texturePacker } from '../texture-packer/texturePacker.js';
 import { texturePackerCacheBuster } from '../texture-packer/texturePackerCacheBuster.js';
 import { texturePackerCompress } from '../texture-packer/texturePackerCompress.js';
+import { SDFCacheBuster } from '../webfont/sdfCacheBuster.js';
+import { sdfCompress } from '../webfont/sdfCompress.js';
 import { webfont } from '../webfont/webfont.js';
 
 import type { AssetPipe } from '../core/index.js';
@@ -91,6 +93,7 @@ export function pixiPipes(config: PixiAssetPack)
             compress(apConfig.compression),
             spineAtlasCompress(apConfig.compression),
             texturePackerCompress(apConfig.compression),
+            sdfCompress(apConfig.compression),
         );
     }
 
@@ -98,7 +101,7 @@ export function pixiPipes(config: PixiAssetPack)
 
     if (apConfig.cacheBust)
     {
-        pipes.push(cacheBuster(), spineAtlasCacheBuster(), texturePackerCacheBuster());
+        pipes.push(cacheBuster(), spineAtlasCacheBuster(), texturePackerCacheBuster(), SDFCacheBuster());
     }
 
     const manifestOptions = {
