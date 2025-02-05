@@ -24,6 +24,7 @@ export class AssetPack
         cacheLocation: '.assetpack',
         logLevel: 'info',
         pipes: [],
+        strict: false,
     };
 
     readonly config: AssetPackConfig;
@@ -125,6 +126,11 @@ export class AssetPack
 
                 await this._transform(root).catch((e) =>
                 {
+                    if (this.config.strict)
+                    {
+                        throw e;
+                    }
+
                     Logger.error(`[AssetPack] Transform failed: ${e.message}`);
                 });
             },
