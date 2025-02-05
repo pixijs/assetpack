@@ -78,6 +78,11 @@ export default {
 | font.square          | `boolean`                   | Output atlas size shall be square.<br />Defaults to `false                                                                  |
 | font.rot             | `boolean`                   | Allow 90-degree rotation while packing.<br />Defaults to `false`                                                            |
 | font.rtl             | `boolean`                   | Use RTL (Arabic/Persian) characters fix.<br />Defaults to `false`                                                           |
+|                                      |                   |                                                                                                                          |
+| resolutionOptions                    | `object`          | Options for generating resolutions.                                                                                      |
+| resolutionOptions.template           | `string`          | A template for denoting the resolution of the images.<br />Defaults to `@%%x`.                                           |
+| resolutionOptions.resolutions        | `object`          | An object containing the resolutions that the images will be resized to.<br />Defaults to `{ default: 1 }`.    |
+| resolutionOptions.fixedResolution    | `string`          | A resolution used if the fix tag is applied. Resolution must match one found in resolutions.<br />Defaults to `default`. |
 
 ### Tags
 
