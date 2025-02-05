@@ -119,10 +119,6 @@ export class AssetPack
                 {
                     Logger.error(`[AssetPack] Transform failed: ${e.message}`);
                 });
-
-                Logger.report({
-                    type: 'buildSuccess',
-                });
             },
             onComplete: async (root: Asset) =>
             {
@@ -131,11 +127,14 @@ export class AssetPack
                     // write back to the cache...
                     (assetCache as AssetCache).write(root);
 
-                    // release the buffers from the cache
                     root.releaseChildrenBuffers();
 
                     Logger.info('cache updated.');
                 }
+
+                Logger.report({
+                    type: 'buildSuccess',
+                });
             }
         });
     }
