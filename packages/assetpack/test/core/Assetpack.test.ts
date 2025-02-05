@@ -352,6 +352,115 @@ describe('Core', () =>
         expect(rootAsset.settings).toBeUndefined();
     });
 
+    it('should generate correct stats', async () =>
+    {
+        const testName = 'core-stats';
+        const inputDir = `${getInputDir(pkg, testName)}/`;
+        const outputDir = getOutputDir(pkg, testName);
+
+        fs.removeSync(inputDir);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [{
+                    name: 'json.json',
+                    content: assetPath('json/json.json'),
+                }],
+                folders: [],
+            });
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false
+        });
+
+        await assetpack.run();
+
+        const stats = assetpack.rootAsset.children[0].stats!;
+
+        expect(stats.date).toBeGreaterThan(0);
+        expect(stats.duration).toBeGreaterThan(0);
+        expect(stats.success).toBe(true);
+    });
+
+    it('should generate correct stats when cacheing', async () =>
+    {
+        const testName = 'core-stats-cache';
+        const inputDir = `${getInputDir(pkg, testName)}/`;
+        const outputDir = getOutputDir(pkg, testName);
+
+        fs.removeSync(inputDir);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [{
+                    name: 'json.json',
+                    content: assetPath('json/json.json'),
+                }],
+                folders: [],
+            });
+
+        const testFile = join(inputDir, 'json.json');
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: true
+        });
+
+        fs.writeJSONSync(testFile, { nice: `old value!` });
+
+        await assetpack.run();
+
+        const stats = assetpack.rootAsset.children[0].stats!;
+
+        expect(stats.date).toBeGreaterThan(0);
+        expect(stats.duration).toBeGreaterThan(0);
+        expect(stats.success).toBe(true);
+
+        //
+
+        const date = stats.date;
+
+        await assetpack.run();
+
+        // // should maintain the same stats..
+        const stats2 = assetpack.rootAsset.children[0].stats!;
+
+        expect(stats2.date).toBe(date);
+        expect(stats2.duration).toBe(stats.duration);
+        expect(stats2.success).toBe(true);
+
+        fs.writeJSONSync(testFile, { nice: 'new value!' });
+
+        await assetpack.run();
+
+        const stats3 = assetpack.rootAsset.children[0].stats!;
+
+        expect(stats3.date).toBeGreaterThan(stats.date);
+        expect(stats3.success).toBe(true);
+    });
+
+    it('should return the root asset', () =>
+    {
+        const testName = 'root-asset';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false
+        });
+
+        expect(assetpack.rootAsset).toBeDefined();
+    });
+
     it('should not copy to output if transformed', () =>
     {
         //
