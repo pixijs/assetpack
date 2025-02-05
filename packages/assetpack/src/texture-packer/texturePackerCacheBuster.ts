@@ -59,8 +59,9 @@ export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
 
                 const texture = json.meta.image;
 
-                const textureAssets = findAssets((asset) =>
-                    asset.filename === texture, asset, true);
+                const textureAssets = findAssets((assetObj) =>
+                    assetObj.filename === texture && jsonAsset.rootTransformAsset.directory === assetObj.rootTransformAsset.directory,
+                asset, true);
 
                 // last transformed child is the renamed texture
                 const cacheBustedTexture = textureAssets[0].getFinalTransformedChildren()[0];
@@ -72,7 +73,8 @@ export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
                     json.meta.related_multi_packs = (json.meta.related_multi_packs as string[]).map((pack) =>
                     {
                         const foundAssets = findAssets((asset) =>
-                            asset.filename === pack, asset, true);
+                            asset.filename === pack && jsonAsset.rootTransformAsset.directory === asset.rootTransformAsset.directory,
+                        asset, true);
 
                         return foundAssets[0].getFinalTransformedChildren()[0].filename;
                     });
