@@ -91,3 +91,11 @@ export default {
 | `sdf`    | `both`      | If present the file(s) will be converted to a SDF font.  |
 | `msdf`   | `both`      | If present the file(s) will be converted to a MSDF font. |
 | `family` | `file`      | The font family name.                                    |
+
+### Custom Config
+
+The JSON file with the same name as the TTF can be used to configure settings for this specific font.
+
+The `font.charset` in the JSON will be merged with the global `font.charset`, while other fields will be replaced by the JSON.
+
+Please refer to the fields in the JSON [Here](#api).
