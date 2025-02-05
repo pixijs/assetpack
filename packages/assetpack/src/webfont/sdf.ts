@@ -1,7 +1,8 @@
 import fs from 'fs-extra';
 import generateBMFont from 'msdf-bmfont-xml';
+import { removeExt } from 'upath';
 import { json2xml, xml2json } from 'xml-js';
-import { checkExt, createNewAssetAt, path, stripTags } from '../core/index.js';
+import { checkExt, createNewAssetAt, findAssets, merge, path, stripTags } from '../core/index.js';
 
 import type { BitmapFontOptions } from 'msdf-bmfont-xml';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
@@ -43,17 +44,43 @@ function signedFont(
         },
         test(asset: Asset)
         {
-            return asset.allMetaData[this.tags!.font] && checkExt(asset.path, '.ttf', '.fnt', '.xml', '.png');
+            return asset.allMetaData[this.tags!.font] && checkExt(asset.path, '.ttf', '.json', '.fnt', '.xml', '.png');
         },
         async transform(asset: Asset, options)
         {
             if (!checkExt(asset.filename, '.ttf'))
             {
+                if (checkExt(asset.filename, '.json')) return [];
                 asset.metaData[this.tags!.fix] = true;
 
                 return [asset];
             }
-            const { resolutionOptions } = options;
+
+            const customOption = merge.clone(options);
+
+            const fileName = stripTags(removeExt(asset.filename, path.extname(asset.filename)));
+
+            const configAssets = findAssets((assetObj) =>
+            {
+                const name = stripTags(assetObj.filename);
+
+                if (!checkExt(name, '.json')) return false;
+
+                const a = stripTags(removeExt(assetObj.filename, path.extname(assetObj.filename)));
+
+                return a === fileName // check filename
+                    && asset.rootTransformAsset.directory === assetObj.rootTransformAsset.directory;
+            }, asset.rootAsset as Asset, true);
+
+            if (configAssets.length > 0)
+            {
+                const custom = JSON.parse(configAssets[0].buffer.toString());
+
+                custom.font.charset = mergeCharset(customOption.font.charset, custom.font.charset);
+                merge.recursive(customOption, custom);
+            }
+
+            const { resolutionOptions } = customOption;
 
             const fixedResolutions: { [x: string]: number } = {};
 
@@ -84,12 +111,12 @@ function signedFont(
                             textures,
                         } = await GenerateFont(asset.path, {
 
-                            ...options.font,
+                            ...customOption.font,
                             filename: `${newFileName}.png`,
-                            fieldType: options.type,
+                            fieldType: customOption.type,
                             outputType: 'xml',
-                            fontSize: Math.round(options.font.fontSize * scale),
-                            textureSize: [Math.round(options.font.textureSize[0] * scale), Math.round(options.font.textureSize[1] * scale)],
+                            fontSize: Math.round(customOption.font.fontSize * scale),
+                            textureSize: [Math.round(customOption.font.textureSize[0] * scale), Math.round(customOption.font.textureSize[1] * scale)],
                         });
 
                         textures.forEach(({
@@ -196,6 +223,23 @@ export function createName(
     return `${name}${scaleLabel}`;
 }
 
+function mergeCharset(...oldCharset: (string | string[])[]): string[]
+{
+    const charsetArr: string[] = [];
+
+    for (let i: number = 0; i < oldCharset.length; i++)
+    {
+        const c = oldCharset[i];
+
+        for (let j: number = 0; j < c.length; j++)
+        {
+            charsetArr.push(c[j]);
+        }
+    }
+
+    return charsetArr;
+}
+
 export type jsonType = {
     font: {
         info: {
@@ -207,8 +251,17 @@ export type jsonType = {
         },
         pages: {
             page: pageType | pageType[]
+        },
+        chars: {
+            char: charType[]
         }
     }
+};
+export type charType = {
+    _attributes: {
+        id: string,
+        char: string
+    },
 };
 export type pageType = {
     _attributes: {
