@@ -91,17 +91,23 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
         async transform(asset: Asset, options)
         {
             const { resolutionOptions, texturePacker } = options;
+            const { resolutions, fixedResolution } = resolutionOptions!;
 
-            const fixedResolutions: {[x: string]: number} = {};
-
-            // eslint-disable-next-line max-len
-            fixedResolutions[resolutionOptions.fixedResolution] = resolutionOptions.resolutions[resolutionOptions.fixedResolution];
+            const fixedResolutions = { [fixedResolution]: resolutions[fixedResolution] };
 
             // skip the children so that they do not get processed!
             asset.skipChildren();
 
-            const largestResolution = Math.max(...Object.values(resolutionOptions.resolutions));
-            const resolutionHash = asset.allMetaData[this.tags!.fix] ? fixedResolutions : resolutionOptions.resolutions;
+            const largestResolution = Math.max(...Object.values(resolutions));
+            let resolutionHash = asset.allMetaData[this.tags!.fix] ? fixedResolutions : resolutions;
+
+            // if nomip is set, then we want to use the largest resolution to avoid any scaling
+            if (asset.allMetaData[this.tags!.nomip])
+            {
+                resolutionHash = {
+                    default: largestResolution
+                };
+            }
 
             const globPath = `${asset.path}/**/*.{jpg,png,gif}`;
             const files = await glob(globPath);

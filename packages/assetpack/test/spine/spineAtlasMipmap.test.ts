@@ -171,9 +171,9 @@ describe('Atlas Mipmap', () =>
         expect(existsSync(`${outputDir}/dragon2@0.5x.png`)).toBe(true);
     });
 
-    it('should prevent mipmaps on file when tagged with fix', async () =>
+    it('should resize atlas to fixed resolution when tagged with fix', async () =>
     {
-        const testName = 'mip-fixed';
+        const testName = 'mip-fixed-prevent';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
@@ -189,6 +189,14 @@ describe('Atlas Mipmap', () =>
                             {
                                 name: 'dragon{spine}{fix}.atlas',
                                 content: assetPath('spine/dragon.atlas'),
+                            },
+                            {
+                                name: 'dragon{fix}.png',
+                                content: assetPath('spine/dragon.png'),
+                            },
+                            {
+                                name: 'dragon2{fix}.png',
+                                content: assetPath('spine/dragon2.png'),
                             },
                         ],
                         folders: [],
@@ -210,5 +218,115 @@ describe('Atlas Mipmap', () =>
 
         expect(existsSync(`${outputDir}/assets/dragon.atlas`)).toBe(true);
         expect(existsSync(`${outputDir}/assets/dragon@0.5x.atlas`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon@0.5x.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon2@0.5x.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/dragon2.png`)).toBe(true);
+    });
+
+    it('should resize atlas to low fixed resolution when tagged with fix', async () =>
+    {
+        const testName = 'mip-fixed-res';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'assets',
+                        files: [
+                            {
+                                name: 'dragon{spine}{fix}.atlas',
+                                content: assetPath('spine/dragon.atlas'),
+                            },
+                            {
+                                name: 'dragon{fix}.png',
+                                content: assetPath('spine/dragon.png'),
+                            },
+                            {
+                                name: 'dragon2{fix}.png',
+                                content: assetPath('spine/dragon2.png'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                ],
+            });
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                mipmap({ fixedResolution: 'low' }),
+                spineAtlasMipmap({ fixedResolution: 'low' }),
+            ]
+        });
+
+        await assetpack.run();
+
+        expect(existsSync(`${outputDir}/assets/dragon.atlas`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon@0.5x.atlas`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/dragon@0.5x.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/dragon2@0.5x.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/dragon.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon2.png`)).toBe(false);
+    });
+
+    it('should create no mipmaps', async () =>
+    {
+        const testName = 'mip-fixed-res';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'assets',
+                        files: [
+                            {
+                                name: 'dragon{spine}{nomip}.atlas',
+                                content: assetPath('spine/dragon.atlas'),
+                            },
+                            {
+                                name: 'dragon{nomip}.png',
+                                content: assetPath('spine/dragon.png'),
+                            },
+                            {
+                                name: 'dragon2{nomip}.png',
+                                content: assetPath('spine/dragon2.png'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                ],
+            });
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                mipmap({ fixedResolution: 'low' }),
+                spineAtlasMipmap({ fixedResolution: 'low' }),
+            ]
+        });
+
+        await assetpack.run();
+
+        expect(existsSync(`${outputDir}/assets/dragon.atlas`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/dragon@0.5x.atlas`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon@0.5x.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon2@0.5x.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/assets/dragon.png`)).toBe(true);
+        expect(existsSync(`${outputDir}/assets/dragon2.png`)).toBe(true);
     });
 });

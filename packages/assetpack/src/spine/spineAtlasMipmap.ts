@@ -5,7 +5,7 @@ import type { MipmapOptions } from '../image/index.js';
 
 export type SpineOptions = PluginOptions & MipmapOptions;
 
-export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOptions, 'fix'>
+export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOptions, 'fix' | 'nomip'>
 {
     return {
         folder: false,
@@ -18,10 +18,11 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
         },
         tags: {
             fix: 'fix',
+            nomip: 'nomip',
         },
         test(asset: Asset)
         {
-            return !asset.allMetaData[this.tags!.fix] && checkExt(asset.path, '.atlas');
+            return !asset.allMetaData[this.tags!.nomip] && checkExt(asset.path, '.atlas');
         },
         async transform(asset: Asset, options)
         {
