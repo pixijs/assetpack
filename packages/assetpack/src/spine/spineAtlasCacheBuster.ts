@@ -52,7 +52,7 @@ export function spineAtlasCacheBuster(): AssetPipe
                 // as we do this, the hash of the atlas file will change, so we need to update the path
                 // and also remove the original file.
 
-                const originalHash = atlasAsset.hash;
+                const originalHash = atlasAsset.hash!;
                 const originalPath = atlasAsset.path;
 
                 const atlasView = new AtlasView(atlasAsset.buffer);
@@ -70,7 +70,7 @@ export function spineAtlasCacheBuster(): AssetPipe
 
                 atlasAsset.buffer = atlasView.buffer;
 
-                atlasAsset.path = atlasAsset.path.replace(originalHash, atlasAsset.hash);
+                atlasAsset.path = atlasAsset.path.replace(originalHash, atlasAsset.hash!);
 
                 fs.removeSync(originalPath);
 

@@ -77,6 +77,7 @@ function syncAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Recor
         else
         {
             asset.state = 'normal';
+            asset.stats = cachedData[i].stats;
         }
     }
 }

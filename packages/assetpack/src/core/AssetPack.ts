@@ -9,8 +9,7 @@ import { generateCacheName } from './utils/generateCacheName.js';
 import { path } from './utils/path.js';
 import { promiseAllConcurrent } from './utils/promiseAllConcurrent.js';
 
-import type { Asset } from './Asset.js';
-import type { CachedAsset } from './AssetCache.js';
+import type { Asset, TransformStats } from './Asset.js';
 import type { AssetPackConfig } from './config.js';
 import type { AssetPipe } from './pipes/AssetPipe.js';
 import type { AssetSettings } from './pipes/PipeSystem.js';
@@ -59,8 +58,7 @@ export class AssetPack
         const { pipes, cache, cacheLocation } = this.config;
 
         AssetCache.location = cacheLocation!;
-        let assetCacheData: Record<string, CachedAsset> | null = null;
-        let assetCache: AssetCache | null = null;
+        let assetCache: AssetCache | undefined;
 
         // if there is no cache, lets just go ahead and remove the output folder
         // and the cached info folder
@@ -79,9 +77,7 @@ export class AssetPack
 
             // read the cache data, this will be used to restore the asset graph
             // by the AssetWatcher
-            assetCacheData = assetCache.read();
-
-            if (assetCacheData)
+            if (assetCache.exists())
             {
                 Logger.info('[AssetPack] cache found.');
             }
@@ -116,7 +112,7 @@ export class AssetPack
         // so it can be restored even if the process is terminated
         this._assetWatcher = new AssetWatcher({
             entryPath: this._entryPath,
-            assetCacheData,
+            assetCache,
             ignore: this.config.ignore,
             assetSettingsData: this.config.assetSettings as AssetSettings[] || [],
             onUpdate: async (root: Asset) =>
@@ -131,10 +127,6 @@ export class AssetPack
                 {
                     Logger.error(`[AssetPack] Transform failed: ${e.message}`);
                 });
-
-                Logger.report({
-                    type: 'buildSuccess',
-                });
             },
             onComplete: async (root: Asset) =>
             {
@@ -143,11 +135,14 @@ export class AssetPack
                     // write back to the cache...
                     (assetCache as AssetCache).write(root);
 
-                    // release the buffers from the cache
                     root.releaseChildrenBuffers();
 
                     Logger.info('cache updated.');
                 }
+
+                Logger.report({
+                    type: 'buildSuccess',
+                });
 
                 this._onWatchTransformComplete?.(root);
 
@@ -193,9 +188,17 @@ export class AssetPack
         return onCompletePromise;
     }
 
+    /**
+     * Stop the asset pack, this will stop the watcher
+     */
     public stop()
     {
         return this._assetWatcher.stop();
+    }
+
+    public get rootAsset()
+    {
+        return this._assetWatcher.root;
     }
 
     private async _transform(asset: Asset)
@@ -213,11 +216,25 @@ export class AssetPack
             {
                 if (asset.skip) return;
 
+                const stats = asset.stats = {
+                    date: Date.now(),
+                    duration: 0,
+                    success: true,
+                } as TransformStats;
+
+                const now = performance.now();
+
                 await this._pipeSystem.transform(asset).catch((e) =>
                 {
+                    stats.success = false;
+                    stats.error = e.message;
+
                     // eslint-disable-next-line max-len
                     Logger.error(`[AssetPack] Transform failed:\ntransform: ${e.name}\nasset:${asset.path}\nerror:${e.message}`);
                 });
+
+                stats.duration = performance.now() - now;
+
                 index++;
 
                 const percent = Math.round((index / assetsToTransform.length) * 100);
