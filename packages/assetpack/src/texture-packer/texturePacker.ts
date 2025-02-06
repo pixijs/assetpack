@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import { glob } from 'glob';
-import { createNewAssetAt, Logger, path, stripTags } from '../core/index.js';
+import { BuildReporter, createNewAssetAt, path, stripTags } from '../core/index.js';
 import { packTextures } from './packer/packTextures.js';
 
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
@@ -45,7 +45,7 @@ function checkForTexturePackerShortcutClashes(
     if (clashes.length > 0)
     {
         // eslint-disable-next-line max-len
-        Logger.warn(`[AssetPack][texturePacker] Texture Packer Shortcut clash detected for ${clashes.join(', ')}. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`);
+        BuildReporter.warn(`[AssetPack][texturePacker] Texture Packer Shortcut clash detected for ${clashes.join(', ')}. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`);
     }
 }
 

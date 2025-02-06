@@ -1,6 +1,6 @@
 import { MaxRectsPacker } from 'maxrects-packer';
 import sharp from 'sharp';
-import { Logger } from '../../core/index.js';
+import { BuildReporter } from '../../core/index.js';
 
 import type { PackTexturesOptions, PixiRectData, TextureData } from './packTextures.js';
 
@@ -57,7 +57,7 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
         let result = await sharpImage.toBuffer({ resolveWithObject: true }).catch((error) =>
         {
             // eslint-disable-next-line max-len
-            Logger.error(`[AssetPack][packTextures] Failed to process texture: ${texture.path} - ${error}, using empty pixel texture instead.`);
+            BuildReporter.error(`[AssetPack][packTextures] Failed to process texture: ${texture.path} - ${error}, using empty pixel texture instead.`);
 
             return { data: null, info: null };
         });

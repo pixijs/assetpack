@@ -4,7 +4,7 @@ import upath from 'upath';
 import { Asset } from './Asset.js';
 import { AssetIgnore } from './AssetIgnore.js';
 import { deleteAssetFiles } from './AssetPack.js';
-import { Logger } from './logger/Logger.js';
+import { BuildReporter } from './logger/BuildReporter.js';
 import { applySettingToAsset } from './utils/applySettingToAsset.js';
 import { path } from './utils/path.js';
 import { syncAssetsWithCache } from './utils/syncAssetsWithCache.js';
@@ -70,7 +70,7 @@ export class AssetWatcher
 
     private _init()
     {
-        Logger.report({
+        BuildReporter.report({
             type: 'buildStart',
             message: this._entryPath,
         });

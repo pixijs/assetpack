@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { Logger, path, stripTags } from '../core/index.js';
+import { BuildReporter, path, stripTags } from '../core/index.js';
 
 import type {
     Asset,
@@ -142,7 +142,7 @@ function filterUniqueNames(manifest: PixiManifest, options: PixiManifestOptions)
             if (bundleNames.has(bundle.name))
             {
                 duplicateBundleNames.add(bundle.name);
-                Logger.warn(`[AssetPack][manifest] Duplicate bundle name '${bundle.name}'. All bundles with that name will be renamed to their relative name instead.`);
+                BuildReporter.warn(`[AssetPack][manifest] Duplicate bundle name '${bundle.name}'. All bundles with that name will be renamed to their relative name instead.`);
             }
             else
             {
