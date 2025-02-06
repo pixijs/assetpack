@@ -18,6 +18,7 @@ describe('AssetPack Config', () =>
             cacheLocation: '.assetpack',
             logLevel: 'info',
             pipes: [],
+            strict: false,
         });
     });
 
@@ -45,6 +46,7 @@ describe('AssetPack Config', () =>
             pipes: [
                 plugin
             ],
+            strict: false,
         });
     });
 });

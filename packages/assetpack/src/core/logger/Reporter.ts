@@ -79,7 +79,7 @@ export class Reporter
 
                 stopProgress();
                 resetWindow();
-                persistMessage(chalk.green.bold(`✖ AssetPack Build Failed`));
+                persistMessage(chalk.red.bold(`✖ AssetPack Build Failed`));
 
                 break;
             case 'log': {

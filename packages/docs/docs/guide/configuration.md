@@ -46,6 +46,14 @@ An optional boolean to enable or disable caching.
 
 An optional string to set the location of the cache.
 
+### strict
+
+| Type      | Default | Required |
+| --------- | ------- | -------- |
+| `boolean` | `false` | No       |
+
+If set to `true`, AssetPack will throw an error if any of the assets fail to be processed. This is can be useful for CI/CD pipelines.
+
 ### logLevel
 
 | Type     | Default  | Required |
@@ -56,8 +64,8 @@ An optional string to set the log level.
 
 ### pipes
 
-| Type     | Default | Required |
-| -------- | ------- | -------- |
+| Type       | Default | Required |
+| ---------- | ------- | -------- |
 | `Plugin[]` |         | No       |
 
 An array of pipes to use. For examples of pipes, see [Plugins](/docs/guide/pipes/overview#plugins).

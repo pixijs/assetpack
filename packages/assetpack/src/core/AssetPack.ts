@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import merge from 'merge';
 import { AssetCache } from './AssetCache.js';
 import { AssetWatcher } from './AssetWatcher.js';
-import { Logger } from './logger/Logger.js';
+import { BuildReporter } from './logger/BuildReporter.js';
 import { finalCopyPipe } from './pipes/finalCopyPipe.js';
 import { PipeSystem } from './pipes/PipeSystem.js';
 import { generateCacheName } from './utils/generateCacheName.js';
@@ -24,6 +24,7 @@ export class AssetPack
         cacheLocation: '.assetpack',
         logLevel: 'info',
         pipes: [],
+        strict: false,
     };
 
     readonly config: AssetPackConfig;
@@ -51,8 +52,9 @@ export class AssetPack
         this._entryPath = normalizePath(this.config.entry as string);
         this._outputPath = normalizePath(this.config.output as string);
 
-        Logger.init({
+        BuildReporter.init({
             level: this.config.logLevel || 'info',
+            strict: this.config.strict || false,
         });
 
         const { pipes, cache, cacheLocation } = this.config;
@@ -79,11 +81,11 @@ export class AssetPack
             // by the AssetWatcher
             if (assetCache.exists())
             {
-                Logger.info('[AssetPack] cache found.');
+                BuildReporter.info('[AssetPack] cache found.');
             }
             else
             {
-                Logger.warn('[AssetPack] cache not found, clearing output folder');
+                BuildReporter.warn('[AssetPack] cache not found, clearing output folder');
 
                 // to be safe - lets nuke the folder as the cache is empty
                 fs.removeSync(this._outputPath);
@@ -117,7 +119,7 @@ export class AssetPack
             assetSettingsData: this.config.assetSettings as AssetSettings[] || [],
             onUpdate: async (root: Asset) =>
             {
-                Logger.report({
+                BuildReporter.report({
                     type: 'buildProgress',
                     phase: 'transform',
                     message: '0'
@@ -125,7 +127,7 @@ export class AssetPack
 
                 await this._transform(root).catch((e) =>
                 {
-                    Logger.error(`[AssetPack] Transform failed: ${e.message}`);
+                    BuildReporter.error(`[AssetPack] Transform failed: ${e.message}`);
                 });
             },
             onComplete: async (root: Asset) =>
@@ -137,10 +139,10 @@ export class AssetPack
 
                     root.releaseChildrenBuffers();
 
-                    Logger.info('cache updated.');
+                    BuildReporter.info('cache updated.');
                 }
 
-                Logger.report({
+                BuildReporter.report({
                     type: 'buildSuccess',
                 });
 
@@ -230,7 +232,7 @@ export class AssetPack
                     stats.error = e.message;
 
                     // eslint-disable-next-line max-len
-                    Logger.error(`[AssetPack] Transform failed:\ntransform: ${e.name}\nasset:${asset.path}\nerror:${e.message}`);
+                    BuildReporter.error(`[AssetPack] Transform failed:\ntransform: ${e.name}\nasset:${asset.path}\nerror:${e.message}`);
                 });
 
                 stats.duration = performance.now() - now;
@@ -239,7 +241,7 @@ export class AssetPack
 
                 const percent = Math.round((index / assetsToTransform.length) * 100);
 
-                Logger.report({
+                BuildReporter.report({
                     type: 'buildProgress',
                     phase: 'transform',
                     message: percent.toString()

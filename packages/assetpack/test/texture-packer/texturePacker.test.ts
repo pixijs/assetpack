@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { existsSync } from 'node:fs';
 import sharp from 'sharp';
 import { describe, expect, it, vi } from 'vitest';
-import { AssetPack, Logger } from '../../src/core/index.js';
+import { AssetPack, BuildReporter } from '../../src/core/index.js';
 import { texturePacker } from '../../src/texture-packer/texturePacker.js';
 import { createTPSFolder } from '../utils/createTPSFolder.js';
 import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
@@ -660,14 +660,14 @@ describe('Texture Packer', () =>
         });
 
         // Mock console.warn
-        const mockWarn = vi.spyOn(Logger, 'warn').mockImplementation(() => { /**/ });
+        const mockWarn = vi.spyOn(BuildReporter, 'warn').mockImplementation(() => { /**/ });
 
         await assetpack.run();
 
         // Check if console.warn was called
         expect(mockWarn).toHaveBeenCalled();
         // eslint-disable-next-line max-len
-        expect(mockWarn).toHaveBeenCalledWith(`[AssetPack][texturePacker] Texture Packer Shortcut clash detected for between sprite9.png, sprite8.png, sprite7.png, sprite6.png, sprite5.png, sprite4.png, sprite3.png, sprite2.png, sprite1.png, sprite0.png. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`); // Adjust this line based on expected message
+        expect(mockWarn).toHaveBeenCalledWith(`[AssetPack][texturePacker] Texture Packer Shortcut clash detected for sprite9.png, sprite8.png, sprite7.png, sprite6.png, sprite5.png, sprite4.png, sprite3.png, sprite2.png, sprite1.png, sprite0.png. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`); // Adjust this line based on expected message
 
         // Restore console.warn
         mockWarn.mockRestore();

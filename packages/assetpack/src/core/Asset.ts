@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { Logger } from './logger/Logger.js';
+import { BuildReporter } from './logger/BuildReporter.js';
 import { extractTagsFromFileName } from './utils/extractTagsFromFileName.js';
 import { getHash } from './utils/getHash.js';
 import { path } from './utils/path.js';
@@ -126,7 +126,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            Logger.warn('[AssetPack] folders should not have buffers!. Contact the developer of AssetPack');
+            BuildReporter.error('[AssetPack] folders should not have buffers!. Contact the developer of AssetPack');
         }
 
         if (!this._buffer)
@@ -148,7 +148,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            Logger.warn('[AssetPack] folders should not have hashes. Contact the developer of the AssetPack');
+            BuildReporter.error('[AssetPack] folders should not have hashes. Contact the developer of the AssetPack');
         }
 
         try

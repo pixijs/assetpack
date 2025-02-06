@@ -1,5 +1,5 @@
 import json5 from 'json5';
-import { checkExt, createNewAssetAt, Logger } from '../core/index.js';
+import { BuildReporter, checkExt, createNewAssetAt } from '../core/index.js';
 
 import type { Asset, AssetPipe } from '../core/index.js';
 
@@ -33,7 +33,7 @@ export function json(): AssetPipe<any, 'nc'>
             }
             catch (e)
             {
-                Logger.warn(`[AssetPack][json] Failed to compress json file: ${asset.path}`);
+                BuildReporter.error(`[AssetPack][json] Failed to compress json file: ${asset.path}`);
 
                 return [asset];
             }

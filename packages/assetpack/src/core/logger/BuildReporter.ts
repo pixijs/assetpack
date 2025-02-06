@@ -3,18 +3,23 @@ import { Reporter } from './Reporter.js';
 import type { LogLevelKeys } from './logLevel.js';
 import type { ReporterEvent } from './Reporter.js';
 
-export interface LoggerOptions
+export interface BuildReporterOptions
 {
     level: LogLevelKeys;
+    strict: boolean;
 }
+/** @deprecated Use BuildReporterOptions instead */
+export interface LoggerOptions extends BuildReporterOptions {}
 
-class LoggerClass
+class BuildReporterClass
 {
     private _reporter: Reporter = new Reporter();
+    private strict = false;
 
-    public init(options: LoggerOptions)
+    public init(options: BuildReporterOptions)
     {
         this._reporter.level = options.level || 'info';
+        this.strict = options.strict;
     }
 
     public verbose(message: string)
@@ -47,6 +52,12 @@ class LoggerClass
             level: 'error',
             message,
         });
+
+        if (this.strict)
+        {
+            this.report({ type: 'buildFailure' });
+            process.exit(1);
+        }
     }
 
     public warn(message: string)
@@ -64,4 +75,8 @@ class LoggerClass
     }
 }
 
-export const Logger = new LoggerClass();
+export const BuildReporter = new BuildReporterClass();
+/**
+ * @deprecated Use BuildReporter instead
+ */
+export const Logger = BuildReporter;
