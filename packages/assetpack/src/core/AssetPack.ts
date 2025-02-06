@@ -9,8 +9,7 @@ import { generateCacheName } from './utils/generateCacheName.js';
 import { path } from './utils/path.js';
 import { promiseAllConcurrent } from './utils/promiseAllConcurrent.js';
 
-import type { Asset } from './Asset.js';
-import type { CachedAsset } from './AssetCache.js';
+import type { Asset, TransformStats } from './Asset.js';
 import type { AssetPackConfig } from './config.js';
 import type { AssetPipe } from './pipes/AssetPipe.js';
 import type { AssetSettings } from './pipes/PipeSystem.js';
@@ -34,6 +33,18 @@ export class AssetPack
     private _entryPath = '';
     private _outputPath = '';
 
+    /**
+     * Holds onto the optional onComplete callback passed in by the watch method
+     * will be called after each time asset pack has finished transforming the assets
+     */
+    private _onWatchTransformComplete: ((root: Asset) => void) | undefined;
+
+    /**
+     * Holds a promise resolve function that will be called after the first time
+     * asset pack has finished transforming the assets when the watch method is called
+     */
+    private _onWatchInitialTransformComplete: ((value: unknown) => void) | undefined;
+
     constructor(config: AssetPackConfig = {})
     {
         this.config = merge.recursive(true, this._defaultConfig, config);
@@ -47,8 +58,7 @@ export class AssetPack
         const { pipes, cache, cacheLocation } = this.config;
 
         AssetCache.location = cacheLocation!;
-        let assetCacheData: Record<string, CachedAsset> | null = null;
-        let assetCache: AssetCache | null = null;
+        let assetCache: AssetCache | undefined;
 
         // if there is no cache, lets just go ahead and remove the output folder
         // and the cached info folder
@@ -67,9 +77,7 @@ export class AssetPack
 
             // read the cache data, this will be used to restore the asset graph
             // by the AssetWatcher
-            assetCacheData = assetCache.read();
-
-            if (assetCacheData)
+            if (assetCache.exists())
             {
                 Logger.info('[AssetPack] cache found.');
             }
@@ -104,7 +112,7 @@ export class AssetPack
         // so it can be restored even if the process is terminated
         this._assetWatcher = new AssetWatcher({
             entryPath: this._entryPath,
-            assetCacheData,
+            assetCache,
             ignore: this.config.ignore,
             assetSettingsData: this.config.assetSettings as AssetSettings[] || [],
             onUpdate: async (root: Asset) =>
@@ -119,10 +127,6 @@ export class AssetPack
                 {
                     Logger.error(`[AssetPack] Transform failed: ${e.message}`);
                 });
-
-                Logger.report({
-                    type: 'buildSuccess',
-                });
             },
             onComplete: async (root: Asset) =>
             {
@@ -131,10 +135,25 @@ export class AssetPack
                     // write back to the cache...
                     (assetCache as AssetCache).write(root);
 
-                    // release the buffers from the cache
                     root.releaseChildrenBuffers();
 
                     Logger.info('cache updated.');
+                }
+
+                Logger.report({
+                    type: 'buildSuccess',
+                });
+
+                this._onWatchTransformComplete?.(root);
+
+                // if the watch method was called, we need to resolve the promise
+                // that was created when the watch method was called
+                if (this._onWatchInitialTransformComplete)
+                {
+                    this._onWatchInitialTransformComplete(root);
+
+                    // clear the promise resolve function, so it only gets resolved once
+                    this._onWatchInitialTransformComplete = undefined;
                 }
             }
         });
@@ -151,15 +170,35 @@ export class AssetPack
     /**
      * Watch the asset pack, this will watch the file system for changes and transform the assets.
      * you can enable this when in development mode
+     *
+     * @param onComplete - optional callback that will be called after each time asset pack has finished transforming the assets
+     * @returns a promise that will resolve when the first time asset pack has finished transforming the assets
      */
-    public watch()
+    public watch(onComplete?: (root: Asset) => void)
     {
-        return this._assetWatcher.watch();
+        this._onWatchTransformComplete = onComplete;
+
+        const onCompletePromise = new Promise((resolve) =>
+        {
+            this._onWatchInitialTransformComplete = resolve;
+        });
+
+        this._assetWatcher.watch();
+
+        return onCompletePromise;
     }
 
+    /**
+     * Stop the asset pack, this will stop the watcher
+     */
     public stop()
     {
         return this._assetWatcher.stop();
+    }
+
+    public get rootAsset()
+    {
+        return this._assetWatcher.root;
     }
 
     private async _transform(asset: Asset)
@@ -177,11 +216,25 @@ export class AssetPack
             {
                 if (asset.skip) return;
 
+                const stats = asset.stats = {
+                    date: Date.now(),
+                    duration: 0,
+                    success: true,
+                } as TransformStats;
+
+                const now = performance.now();
+
                 await this._pipeSystem.transform(asset).catch((e) =>
                 {
+                    stats.success = false;
+                    stats.error = e.message;
+
                     // eslint-disable-next-line max-len
                     Logger.error(`[AssetPack] Transform failed:\ntransform: ${e.name}\nasset:${asset.path}\nerror:${e.message}`);
                 });
+
+                stats.duration = performance.now() - now;
+
                 index++;
 
                 const percent = Math.round((index / assetsToTransform.length) * 100);
