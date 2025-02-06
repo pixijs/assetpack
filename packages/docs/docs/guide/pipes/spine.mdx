@@ -97,9 +97,10 @@ export default {
 
 ### Tags
 
-| Tag   | Folder/File | Description                                                                            |
-| ----- | ------ | -------------------------------------------------------------------------------------- |
-| `fix` | `both` | If present the `fixedResolution` will be used. No other resolutions will be generated. |
+| Tag     | Folder/File | Description                                                                                                                                                                                                                                        |
+| ------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fix`   | `both`      | If present the `fixedResolution` will be used. No other resolutions will be generated. Note that the image will be resized to the resolution specified in `fixedResolution`. If you don't want the image to be resized please use the `nomip` tag. |
+| `nomip` | `both`      | If present mipmaps will not be generated.                                                                                                                                                                                                          |
 
 ---
 
