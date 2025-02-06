@@ -323,7 +323,7 @@ describe('Texture Packer', () =>
         expect(sheetJson.meta.size).toEqual(expectedSize);
     });
 
-    it('should not create mip spritesheets', async () =>
+    it('should resize spritesheet to fixed resolution', async () =>
     {
         const testName = 'tp-fix';
         const inputDir = getInputDir(pkg, testName);
@@ -364,7 +364,7 @@ describe('Texture Packer', () =>
             output: outputDir,
             cache: false,
             pipes: [
-                texturePacker()
+                texturePacker({ resolutionOptions: { fixedResolution: 'low' } }),
             ]
         });
 
@@ -373,10 +373,78 @@ describe('Texture Packer', () =>
         const sheet1 = existsSync(`${outputDir}/sprites/sprites.json`);
         const sheet2 = existsSync(`${outputDir}/sprites/sprites@0.5x.json`);
         const sheet3 = existsSync(`${outputDir}/sprites/sprites@2x.json`);
+        const img = existsSync(`${outputDir}/sprites/sprites.png`);
+        const img2 = existsSync(`${outputDir}/sprites/sprites@0.5x.png`);
+        const img3 = existsSync(`${outputDir}/sprites/sprites@2x.png`);
+
+        expect(sheet1).toBe(false);
+        expect(sheet2).toBe(true);
+        expect(sheet3).toBe(false);
+        expect(img).toBe(false);
+        expect(img2).toBe(true);
+        expect(img3).toBe(false);
+    });
+
+    it('should not create any mipmaps for the spritesheet', async () =>
+    {
+        const testName = 'tp-nomip';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        const sprites: File[] = [];
+
+        for (let i = 0; i < 10; i++)
+        {
+            sprites.push({
+                name: `sprite${i}.png`,
+                content: assetPath(`image/sp-${i + 1}.png`),
+            });
+        }
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [],
+                folders: [
+                    {
+                        name: 'sprites{nomip}',
+                        files: [],
+                        folders: [
+                            {
+                                name: 'sprites{tps}',
+                                files: sprites,
+                                folders: [],
+                            },
+                        ],
+                    },
+                ],
+            });
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                texturePacker({ resolutionOptions: { fixedResolution: 'low' } }),
+            ]
+        });
+
+        await assetpack.run();
+
+        const sheet1 = existsSync(`${outputDir}/sprites/sprites.json`);
+        const sheet2 = existsSync(`${outputDir}/sprites/sprites@0.5x.json`);
+        const sheet3 = existsSync(`${outputDir}/sprites/sprites@2x.json`);
+        const img = existsSync(`${outputDir}/sprites/sprites.png`);
+        const img2 = existsSync(`${outputDir}/sprites/sprites@0.5x.png`);
+        const img3 = existsSync(`${outputDir}/sprites/sprites@2x.png`);
 
         expect(sheet1).toBe(true);
         expect(sheet2).toBe(false);
         expect(sheet3).toBe(false);
+        expect(img).toBe(true);
+        expect(img2).toBe(false);
+        expect(img3).toBe(false);
     });
 
     it('should create jpg spritesheets', async () =>

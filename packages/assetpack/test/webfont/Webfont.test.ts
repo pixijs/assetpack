@@ -189,6 +189,46 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/sdf.png`)).toBe(true);
     });
 
+    it('should generate a sdf font from ttf file at 1 resolution', async () =>
+    {
+        const testName = 'sdf-resolution';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(
+            pkg,
+            {
+                name: testName,
+                files: [
+                    {
+                        name: 'sdf{sdf}.ttf',
+                        content: assetPath('font/Roboto-Regular.ttf'),
+                    },
+                ],
+                folders: [],
+            }
+        );
+
+        const assetpack = new AssetPack({
+            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                sdfFont(),
+                mipmap({
+                    fixedResolution: 'high',
+                    resolutions: { high: 2, default: 1 },
+                })
+            ]
+        });
+
+        await assetpack.run();
+
+        // expect webfont file to be generated
+        expect(existsSync(`${outputDir}/sdf.fnt`)).toBe(true);
+        expect(existsSync(`${outputDir}/sdf.png`)).toBe(true);
+    });
+
     it('should generate a split sdf font from ttf file', async () =>
     {
         const testName = 'sdf-split';

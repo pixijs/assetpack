@@ -68,15 +68,16 @@ export default {
 | resolutionOptions.fixedResolution    | `string`          | A resolution used if the fix tag is applied. Resolution must match one found in resolutions.<br />Defaults to `default`. |
 | resolutionOptions.maximumTextureSize | `number`          | The maximum size a sprite sheet can be before its split out.<br />Defaults to `4096`.                                    |
 |                                      |                   |                                                                                                                          |
-| addFrameNames                        | `boolean`         | Whether to add frame names to the data in the manifest<br />Defaults to `false`.                                               |
+| addFrameNames                        | `boolean`         | Whether to add frame names to the data in the manifest<br />Defaults to `false`.                                         |
 
 ## Tags
 
-| Tag   | Folder/File | Description                                                        |
-| ----- | ----------- | ------------------------------------------------------------------ |
-| `tps` | `folder`    | If present the folder will be processed by Texture Packer.         |
-| `jpg` | `folder`    | If present the spritesheet will be saved as a jpg.                 |
-| `fix` | `folder`    | If present the spritesheet will be fixed to a specific resolution. |
+| Tag     | Folder/File | Description                                                                                                                                                                                                                                        |
+| ------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tps`   | `folder`    | If present the folder will be processed by Texture Packer.                                                                                                                                                                                         |
+| `jpg`   | `folder`    | If present the spritesheet will be saved as a jpg.                                                                                                                                                                                                 |
+| `fix`   | `both`      | If present the `fixedResolution` will be used. No other resolutions will be generated. Note that the image will be resized to the resolution specified in `fixedResolution`. If you don't want the image to be resized please use the `nomip` tag. |
+| `nomip` | `both`      | If present mipmaps will not be generated.                                                                                                                                                                                                          |
 
 ---
 

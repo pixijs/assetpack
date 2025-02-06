@@ -46,7 +46,7 @@ describe('AssetWatcher', () =>
 
     it('should have correct file state with a cache', async () =>
     {
-        const testName = 'asset-watcher';
+        const testName = 'asset-watcher-file';
         const inputDir = getInputDir(pkg, testName);
 
         createFolder(
