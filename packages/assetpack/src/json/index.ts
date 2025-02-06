@@ -33,7 +33,7 @@ export function json(): AssetPipe<any, 'nc'>
             }
             catch (e)
             {
-                Logger.warn(`[AssetPack][json] Failed to compress json file: ${asset.path}`);
+                Logger.error(`[AssetPack][json] Failed to compress json file: ${asset.path}`);
 
                 return [asset];
             }

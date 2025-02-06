@@ -126,7 +126,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            Logger.warn('[AssetPack] folders should not have buffers!. Contact the developer of AssetPack');
+            Logger.error('[AssetPack] folders should not have buffers!. Contact the developer of AssetPack');
         }
 
         if (!this._buffer)
@@ -148,7 +148,7 @@ export class Asset
     {
         if (this.isFolder)
         {
-            Logger.warn('[AssetPack] folders should not have hashes. Contact the developer of the AssetPack');
+            Logger.error('[AssetPack] folders should not have hashes. Contact the developer of the AssetPack');
         }
 
         try

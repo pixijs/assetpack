@@ -54,6 +54,7 @@ export class AssetPack
 
         Logger.init({
             level: this.config.logLevel || 'info',
+            strict: this.config.strict || false,
         });
 
         const { pipes, cache, cacheLocation } = this.config;
@@ -126,11 +127,6 @@ export class AssetPack
 
                 await this._transform(root).catch((e) =>
                 {
-                    if (this.config.strict)
-                    {
-                        throw e;
-                    }
-
                     Logger.error(`[AssetPack] Transform failed: ${e.message}`);
                 });
             },

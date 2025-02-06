@@ -6,15 +6,18 @@ import type { ReporterEvent } from './Reporter.js';
 export interface LoggerOptions
 {
     level: LogLevelKeys;
+    strict: boolean;
 }
 
 class LoggerClass
 {
     private _reporter: Reporter = new Reporter();
+    private strict = false;
 
     public init(options: LoggerOptions)
     {
         this._reporter.level = options.level || 'info';
+        this.strict = options.strict;
     }
 
     public verbose(message: string)
@@ -47,6 +50,12 @@ class LoggerClass
             level: 'error',
             message,
         });
+
+        if (this.strict)
+        {
+            this.report({ type: 'buildFailure' });
+            process.exit(1);
+        }
     }
 
     public warn(message: string)

@@ -57,7 +57,7 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
         let result = await sharpImage.toBuffer({ resolveWithObject: true }).catch((error) =>
         {
             // eslint-disable-next-line max-len
-            Logger.warn(`[AssetPack][packTextures] Failed to process texture: ${texture.path} - ${error}, using empty pixel texture instead.`);
+            Logger.error(`[AssetPack][packTextures] Failed to process texture: ${texture.path} - ${error}, using empty pixel texture instead.`);
 
             return { data: null, info: null };
         });
