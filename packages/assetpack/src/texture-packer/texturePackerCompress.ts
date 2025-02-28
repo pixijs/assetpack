@@ -43,7 +43,7 @@ export function texturePackerCompress(
             if (options.png) formats.push(['png', '.png']);
             if (options.webp) formats.push(['webp', '.webp']);
             if (options.astc) formats.push(['astc', '.astc.ktx']);
-            if (options.bc7) formats.push(['bc7', '.bc7.dds']);
+            if (options.bc7) formats.push(['bptc', '.bptc.dds']);
             if (options.basis) formats.push(['basis', '.basis.ktx2']);
             if (options.etc) formats.push(['etc', '.etc.ktx']);
 
