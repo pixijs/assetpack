@@ -4,6 +4,7 @@ import { createTextures } from './createTextures.js';
 import { fitTextureToPacker } from './fitTextureToPacker.js';
 
 import type { MaxRectsPacker, Rectangle } from 'maxrects-packer';
+import type { ResizeOptions } from 'sharp';
 
 export interface PixiRectData extends Rectangle
 {
@@ -45,6 +46,7 @@ export interface PackTexturesOptions
     resolution?: number;
     nameStyle?: 'short' | 'relative';
     removeFileExtension?: boolean;
+    resizeOptions?: Omit<ResizeOptions, 'width' | 'height'>;
     // prependFolderName
 }
 
@@ -72,6 +74,7 @@ export async function packTextures(
         resolution: 1,
         nameStyle: 'relative',
         removeFileExtension: false,
+        resizeOptions: {},
         ..._options,
     };
 

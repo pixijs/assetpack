@@ -37,6 +37,7 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
                 .resize({
                     width: newWidth,
                     height: newHeight,
+                    ...options.resizeOptions
                 });
 
             if (allowTrim)
