@@ -1,12 +1,14 @@
+import type { ResizeOptions } from 'sharp';
 import type { CompressImageData } from '../compress.js';
+
+export type SharpResizeOptions = Omit<ResizeOptions, 'width' | 'height'>;
 
 export async function mipmapSharp(
     image: CompressImageData,
     resolutionHash: {[x: string]: number},
-    largestResolution: number
-
-): Promise<CompressImageData[]>
-{
+    largestResolution: number,
+    sharpResizeOptions: SharpResizeOptions,
+): Promise<CompressImageData[]> {
     const sharpImage = image.sharpImage;
 
     const metadata = await sharpImage.metadata();
@@ -33,8 +35,9 @@ export async function mipmapSharp(
                 resolution: resolutionHash[i],
                 sharpImage: sharpImage.clone().resize({
                     width: Math.round(width * scale),
-                    height: Math.round(height * scale)
-                })
+                    height: Math.round(height * scale),
+                    ...sharpResizeOptions,
+                }),
             });
         }
     }

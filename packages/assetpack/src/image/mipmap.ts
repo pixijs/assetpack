@@ -5,21 +5,24 @@ import { resolveOptions } from './utils/resolveOptions.js';
 
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 import type { CompressImageData } from './compress.js';
+import type { SharpResizeOptions } from './utils/mipmapSharp.js';
 
-export interface MipmapOptions extends PluginOptions
-{
+export interface MipmapOptions extends PluginOptions {
     /** A template for denoting the resolution of the images. */
     template?: string;
     /** An object containing the resolutions that the images will be resized to. */
     resolutions?: {[x: string]: number};
     /** A resolution used if the fixed tag is applied. Resolution must match one found in resolutions. */
     fixedResolution?: string;
+    /** Options to pass to sharp when resizing images. */
+    sharpResizeOptions?: SharpResizeOptions;
 }
 
 const defaultMipmapOptions: Required<MipmapOptions> = {
     template: '@%%x',
     resolutions: { default: 1, low: 0.5 },
     fixedResolution: 'default',
+    sharpResizeOptions: {},
 };
 
 export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, 'fix' | 'nomip'>
@@ -71,7 +74,7 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
 
                     image.resolution = largestResolution;
 
-                    processedImages = await mipmapSharp(image, resolutionHash, largestResolution);
+                    processedImages = await mipmapSharp(image, resolutionHash, largestResolution, options.sharpResizeOptions);
                 }
                 else
                 {
@@ -79,7 +82,7 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
 
                     processedImages = image.resolution === 1
                         ? [image]
-                        : processedImages = await mipmapSharp(image, fixedResolutions, largestResolution);
+                        : processedImages = await mipmapSharp(image, fixedResolutions, largestResolution, options.sharpResizeOptions);
                 }
             }
             catch (error)
