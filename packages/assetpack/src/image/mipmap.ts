@@ -7,7 +7,8 @@ import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 import type { CompressImageData } from './compress.js';
 import type { SharpResizeOptions } from './utils/mipmapSharp.js';
 
-export interface MipmapOptions extends PluginOptions {
+export interface MipmapOptions extends PluginOptions
+{
     /** A template for denoting the resolution of the images. */
     template?: string;
     /** An object containing the resolutions that the images will be resized to. */

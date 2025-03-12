@@ -8,7 +8,8 @@ export async function mipmapSharp(
     resolutionHash: {[x: string]: number},
     largestResolution: number,
     sharpResizeOptions: SharpResizeOptions,
-): Promise<CompressImageData[]> {
+): Promise<CompressImageData[]>
+{
     const sharpImage = image.sharpImage;
 
     const metadata = await sharpImage.metadata();
