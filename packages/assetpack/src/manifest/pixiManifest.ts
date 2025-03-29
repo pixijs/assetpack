@@ -98,6 +98,10 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
             manifest: 'm',
             mIgnore: 'mIgnore'
         },
+        test(asset: Asset)
+        {
+            return asset.isFolder;
+        },
         async finish(asset: Asset, options, pipeSystem: PipeSystem)
         {
             const newFileName = path.dirname(options.output) === '.'
