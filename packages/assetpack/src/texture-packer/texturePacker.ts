@@ -88,7 +88,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             shortcutClash = {};
         },
 
-        async transform(asset: Asset, options)
+        async transform(asset: Asset, options, pipeSystem)
         {
             const { resolutionOptions, texturePacker } = options;
             const { resolutions, fixedResolution } = resolutionOptions!;
@@ -119,9 +119,10 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
             const texturesToPack = await Promise.all(files.map(async (f) =>
             {
+                const assetPath = texturePacker.nameStyle === 'relative' ? pipeSystem.entryPath : asset.path;
                 const contents = await fs.readFile(f);
 
-                return { path: stripTags(path.relative(asset.path, f)), contents };
+                return { path: stripTags(path.relative(assetPath, f)), contents };
             }));
 
             const textureFormat = (asset.metaData[this.tags!.jpg] ? 'jpg' : 'png') as TexturePackerFormat;
