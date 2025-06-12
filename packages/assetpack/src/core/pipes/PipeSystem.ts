@@ -5,6 +5,8 @@ import { multiPipe } from './multiPipe.js';
 import type { Asset } from '../Asset.js';
 import type { AssetPipe } from './AssetPipe.js';
 
+export type Tags = 'tps' | 'fix' | 'jpg' | 'nomip' | 'm' | 'mIgnore' | 'copy' | 'nc';
+
 export interface PipeSystemOptions
 {
     pipes: (AssetPipe | AssetPipe[])[];
@@ -16,7 +18,7 @@ export interface AssetSettings
 {
     files: string[],
     settings?: Record<string, any>,
-    metaData?: Record<string, any>
+    metaData?: Record<Tags, boolean> | Record<string, any>,
 }
 
 export class PipeSystem
