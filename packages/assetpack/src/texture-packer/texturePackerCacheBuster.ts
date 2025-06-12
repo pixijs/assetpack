@@ -3,6 +3,8 @@ import { checkExt, findAssets } from '../core/index.js';
 
 import type { Asset, AssetPipe } from '../core/index.js';
 
+export type TexturePackerCacheBusterTags = 'tps';
+
 /**
  * This should be used after the cache buster plugin in the pipes.
  * As it relies on the cache buster plugin to have already cache busted all files.
@@ -16,7 +18,7 @@ import type { Asset, AssetPipe } from '../core/index.js';
  *
  * @returns
  */
-export function texturePackerCacheBuster(): AssetPipe<any, 'tps'>
+export function texturePackerCacheBuster(): AssetPipe<any, TexturePackerCacheBusterTags>
 {
     const textureJsonFilesToFix: Asset[] = [];
 

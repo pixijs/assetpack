@@ -3,9 +3,7 @@ import { mergePipeOptions } from './mergePipeOptions.js';
 import { multiPipe } from './multiPipe.js';
 
 import type { Asset } from '../Asset.js';
-import type { AssetPipe } from './AssetPipe.js';
-
-export type Tags = 'tps' | 'fix' | 'jpg' | 'nomip' | 'm' | 'mIgnore' | 'copy' | 'nc';
+import type { AssetPipe, Tags } from './AssetPipe.js';
 
 export interface PipeSystemOptions
 {

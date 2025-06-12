@@ -1,3 +1,14 @@
+import type { CompressTags } from 'src/image/compress.js';
+import type { MipmapTags } from 'src/image/mipmap.js';
+import type { JsonTags } from 'src/json/index.js';
+import type { PixiManifestTags } from 'src/manifest/pixiManifest.js';
+import type { SpineAtlasCompressTags } from 'src/spine/spineAtlasCompress.js';
+import type { SpineAtlasMipmapTags } from 'src/spine/spineAtlasMipmap.js';
+import type { TexturePackerTags } from 'src/texture-packer/texturePacker.js';
+import type { TexturePackerCacheBusterTags } from 'src/texture-packer/texturePackerCacheBuster.js';
+import type { TexturePackerCompressTags } from 'src/texture-packer/texturePackerCompress.js';
+import type { SigntedFontTags } from 'src/webfont/sdf.js';
+import type { WebfontTags } from 'src/webfont/webfont.js';
 import type { Asset } from '../Asset.js';
 import type { PipeSystem } from './PipeSystem.js';
 
@@ -17,7 +28,21 @@ export type DeepRequired<T> = T extends Primitive
     };
 export interface PluginOptions {}
 
-export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends string = string, INTERNAL_TAGS extends string = string>
+export type Tags =
+    | CompressTags
+    | MipmapTags
+    | JsonTags
+    | PixiManifestTags
+    | SpineAtlasCompressTags
+    | SpineAtlasMipmapTags
+    | TexturePackerTags
+    | TexturePackerCacheBusterTags
+    | TexturePackerCompressTags
+    | WebfontTags
+    | SigntedFontTags
+    | string & NonNullable<unknown>;
+
+export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends Tags = string, INTERNAL_TAGS extends Tags = string>
 {
     /** Whether the process runs on a folder */
     folder?: boolean;
