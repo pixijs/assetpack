@@ -1,6 +1,6 @@
 import stringWidth from 'string-width';
 import stripAnsi from 'strip-ansi';
-import termSize from 'term-size';
+import termSize from 'terminal-size';
 
 let terminalSize = termSize();
 

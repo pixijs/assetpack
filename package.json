@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspace @assetpack/core",
-    "clean": "xs clean",
+    "clean": "rimraf dist **/*/.testInput **/*/.testOutput .assetpack packages/assetpack/test/cache/**/*",
     "lint:fix": "xs lint --fix",
     "prepare": "husky",
     "prerelease": "npm run test:lint && npm run build",
@@ -31,7 +31,6 @@
     ]
   },
   "devDependencies": {
-    "@pixi/extension-scripts": "^4.0.0",
     "@tsconfig/node20": "^20.1.6",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
@@ -40,15 +39,7 @@
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
-  "extensionConfig": {
-    "clean": [
-      "**/*/.testInput",
-      "**/*/.testOutput",
-      ".assetpack",
-      "packages/assetpack/test/cache/**/*"
-    ],
-    "lint": [
-      "**/*.{ts,tsx}"
-    ]
+  "overrides": {
+    "rimraf": "^6.0.1"
   }
 }

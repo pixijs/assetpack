@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
-import generateBMFont from 'msdf-bmfont-xml';
+import generateBMFont from '@pixi/msdf-bmfont-xml';
 import { checkExt, createNewAssetAt, path, stripTags } from '../core/index.js';
 
-import type { BitmapFontOptions } from 'msdf-bmfont-xml';
+import type { BitmapFontOptions } from '@pixi/msdf-bmfont-xml';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 
 export interface SDFFontOptions extends PluginOptions {

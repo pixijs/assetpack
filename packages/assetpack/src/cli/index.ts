@@ -22,6 +22,7 @@ program.description('AssetPack CLI - A tool for building and transforming assets
 program.version('0.2.0');
 program.option('-c, --config <path>', 'config file to use');
 program.option('-w, --watch', 'watch for changes');
+program.allowExcessArguments();
 
 async function main() {
     await program.parseAsync();

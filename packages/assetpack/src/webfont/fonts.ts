@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import otf2svg from 'otf2svg';
-import svg2ttf from 'svg2ttf';
+import svg2ttf from '@pixi/svg2ttf';
 import { convertTTFToWOFF2 } from '@napi-rs/woff-build';
 
 export const fonts = {
