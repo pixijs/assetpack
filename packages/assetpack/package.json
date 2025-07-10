@@ -35,7 +35,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "publish-ci": "xs publish",
+    "publish-ci": "node ../../scripts/publish.js",
     "release": "xs bump,git-push",
     "watch": "tsc -w"
   },
@@ -60,7 +60,6 @@
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/fs-extra": "^11.0.4",
     "@types/object-hash": "^3.0.6",
-    "@types/svg2ttf": "^5.0.3",
     "chalk": "^5.4.1",
     "chokidar": "^4.0.3",
     "cli-progress": "^3.12.0",

@@ -1,10 +1,10 @@
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
-import config from '@pixi/extension-scripts/eslint';
+import config from '@pixi/eslint-config';
 
 export default tseslint.config(
     {
-        ignores: ['**/dist/**'],
+        ignores: ['**/dist/**', '**/.docusaurus/**', '**/build/**', '**/node_modules/**'],
     },
     config,
     eslintPluginPrettierRecommended,

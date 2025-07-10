@@ -8,10 +8,10 @@ export const fonts = {
         to: {
             woff2: (inFile: string | Buffer): Buffer => {
                 if (Buffer.isBuffer(inFile)) {
-                    return convertTTFToWOFF2(inFile);
+                    return convertTTFToWOFF2(inFile) as Buffer;
                 }
 
-                return convertTTFToWOFF2(fs.readFileSync(inFile));
+                return convertTTFToWOFF2(fs.readFileSync(inFile)) as Buffer;
             },
         },
     },

@@ -92,7 +92,10 @@ async function convert(ffmpegOptions: FfmpegData, input: string, output: string,
         });
 
         // run the command
-        command.on('error', reject).on('end', resolve).run();
+        command
+            .on('error', reject)
+            .on('end', (_stdout: string | null, _stderr: string | null) => resolve())
+            .run();
     });
 }
 

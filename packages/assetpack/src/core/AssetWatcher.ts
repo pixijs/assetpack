@@ -1,4 +1,4 @@
-import chokidar from 'chokidar';
+import chokidar, { type FSWatcher } from 'chokidar';
 import fs from 'fs-extra';
 import upath from 'upath';
 import { Asset } from './Asset.js';
@@ -27,7 +27,7 @@ interface ChangeData {
 }
 
 export class AssetWatcher {
-    private _watcher: chokidar.FSWatcher | undefined;
+    private _watcher: FSWatcher | undefined;
     private _assetHash: Record<string, Asset> = {};
 
     private _changes: ChangeData[] = [];
