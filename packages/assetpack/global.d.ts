@@ -1,13 +1,10 @@
-declare module 'otf2svg'
-{
+declare module 'otf2svg' {
     export function convertToFile(input: string, out: string): void;
     export function convert(input: string, codePoints?: number[]): string;
 }
 
-declare module 'msdf-bmfont-xml'
-{
-    interface BitmapFontOptions
-    {
+declare module 'msdf-bmfont-xml' {
+    interface BitmapFontOptions {
         /**
          * Type of output font file. Defaults to `xml`.
          * - `xml` a BMFont standard .fnt file which is widely supported.
@@ -62,8 +59,8 @@ declare module 'msdf-bmfont-xml'
 
     type CallbackType = (
         error: Error | null | undefined,
-        textures: { filename: string, texture: Buffer }[],
-        font: { filename: string, data: string }
+        textures: { filename: string; texture: Buffer }[],
+        font: { filename: string; data: string },
     ) => void;
 
     export default function (input: string | Buffer, cb: CallbackType): string;

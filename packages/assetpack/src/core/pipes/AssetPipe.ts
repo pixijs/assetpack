@@ -3,22 +3,27 @@ import type { PipeSystem } from './PipeSystem.js';
 
 export type NotNull<T> = T extends null | undefined ? never : T;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type Primitive = undefined | null | boolean | string | number | Function;
 
 export type DeepRequired<T> = T extends Primitive
     ? NotNull<T>
     : {
-        [P in keyof T]-?: T[P] extends Array<infer U>
-            ? Array<DeepRequired<U>>
-            : T[P] extends ReadonlyArray<infer U2>
+          [P in keyof T]-?: T[P] extends Array<infer U>
+              ? Array<DeepRequired<U>>
+              : T[P] extends ReadonlyArray<infer U2>
                 ? DeepRequired<U2>
-                : DeepRequired<T[P]>
-    };
+                : DeepRequired<T[P]>;
+      };
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PluginOptions {}
 
-export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends string = string, INTERNAL_TAGS extends string = string>
-{
+export interface AssetPipe<
+    OPTIONS = Record<string, any>,
+    TAGS extends string = string,
+    INTERNAL_TAGS extends string = string,
+> {
     /** Whether the process runs on a folder */
     folder?: boolean;
 
@@ -41,7 +46,7 @@ export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends string = st
      * @param asser - the root asset
      * @param processor - Processor that called the function.
      */
-    start?(asset: Asset, options: DeepRequired<OPTIONS>, pipeSystem: PipeSystem): Promise<void>
+    start?(asset: Asset, options: DeepRequired<OPTIONS>, pipeSystem: PipeSystem): Promise<void>;
 
     /**
      * Returns a boolean on whether or not the process should affect this tree.
@@ -55,13 +60,12 @@ export interface AssetPipe<OPTIONS=Record<string, any>, TAGS extends string = st
      * @param tree -
      * @param processor - Processor that called the function.
      */
-    transform?(asset: Asset, options: DeepRequired<OPTIONS>, pipeSystem: PipeSystem): Promise<Asset[]>
+    transform?(asset: Asset, options: DeepRequired<OPTIONS>, pipeSystem: PipeSystem): Promise<Asset[]>;
 
     /**
      * Called once after tree has been processed.
      * @param asset - the root asset
      * @param processor - Processor that called the function.
      */
-    finish?(asset: Asset, options: DeepRequired<OPTIONS>, pipeSystem: PipeSystem): Promise<void>
+    finish?(asset: Asset, options: DeepRequired<OPTIONS>, pipeSystem: PipeSystem): Promise<void>;
 }
-

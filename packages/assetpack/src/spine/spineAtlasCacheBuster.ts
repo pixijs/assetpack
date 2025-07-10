@@ -18,8 +18,7 @@ import type { Asset, AssetPipe } from '../core/index.js';
  * @param _options
  * @returns
  */
-export function spineAtlasCacheBuster(): AssetPipe
-{
+export function spineAtlasCacheBuster(): AssetPipe {
     const defaultOptions = {};
 
     const atlasFileToFix: Asset[] = [];
@@ -28,26 +27,22 @@ export function spineAtlasCacheBuster(): AssetPipe
         folder: false,
         name: 'spine-cache-buster',
         defaultOptions,
-        test(asset: Asset, _options)
-        {
+        test(asset: Asset, _options) {
             return checkExt(asset.path, '.atlas');
         },
 
-        async transform(asset: Asset, _options)
-        {
+        async transform(asset: Asset, _options) {
             atlasFileToFix.push(asset);
 
             return [asset];
         },
 
-        async finish(asset: Asset)
-        {
+        async finish(asset: Asset) {
             // first we retrieve the final transformed children - so the atlas files that have been copied
             // to the output folder.
             const atlasAssets = atlasFileToFix.map((asset) => asset.getFinalTransformedChildren()[0]);
 
-            atlasAssets.forEach((atlasAsset) =>
-            {
+            atlasAssets.forEach((atlasAsset) => {
                 // we are going to replace the textures in the atlas file with the new cache busted textures
                 // as we do this, the hash of the atlas file will change, so we need to update the path
                 // and also remove the original file.
@@ -57,10 +52,8 @@ export function spineAtlasCacheBuster(): AssetPipe
 
                 const atlasView = new AtlasView(atlasAsset.buffer);
 
-                atlasView.getTextures().forEach((texture) =>
-                {
-                    const textureAssets = findAssets((asset) =>
-                        asset.filename === texture, asset, true);
+                atlasView.getTextures().forEach((texture) => {
+                    const textureAssets = findAssets((asset) => asset.filename === texture, asset, true);
 
                     // last transformed child is the renamed texture
                     const cacheBustedTexture = textureAssets[0].getFinalTransformedChildren()[0];
@@ -79,6 +72,6 @@ export function spineAtlasCacheBuster(): AssetPipe
             });
 
             atlasFileToFix.length = 0;
-        }
+        },
     };
 }

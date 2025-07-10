@@ -6,33 +6,30 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'image';
 
-describe('Compress', () =>
-{
-    it('should compress png', async () =>
-    {
+describe('Compress', () => {
+    it('should compress png', async () => {
         const testName = 'compress-png';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'testPng.png',
-                        content: assetPath('image/sp-2.png'),
-                    },
-                    {
-                        name: 'testJpg.jpg',
-                        content: assetPath('image/sp-3.jpg'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'testPng.png',
+                    content: assetPath('image/sp-2.png'),
+                },
+                {
+                    name: 'testJpg.jpg',
+                    content: assetPath('image/sp-3.jpg'),
+                },
+            ],
+            folders: [],
+        });
 
         const pack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -44,9 +41,9 @@ describe('Compress', () =>
                     astc: true,
                     basis: true,
                     etc: true,
-                    bc7: false // Disabled due to the absence of libomp on the GitHub Actions runner: "error while loading shared libraries: libomp.so.5"
+                    bc7: false, // Disabled due to the absence of libomp on the GitHub Actions runner: "error while loading shared libraries: libomp.so.5"
                 }),
-            ]
+            ],
         });
 
         await pack.run();
@@ -69,30 +66,28 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testJpg.etc.ktx`)).toBe(true);
     });
 
-    it('should compress png with 1 plugin', async () =>
-    {
+    it('should compress png with 1 plugin', async () => {
         const testName = 'compress-png-1-plugin';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'testPng.png',
-                        content: assetPath('image/sp-2.png'),
-                    },
-                    {
-                        name: 'testJpg.jpg',
-                        content: assetPath('image/sp-3.jpg'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'testPng.png',
+                    content: assetPath('image/sp-2.png'),
+                },
+                {
+                    name: 'testJpg.jpg',
+                    content: assetPath('image/sp-3.jpg'),
+                },
+            ],
+            folders: [],
+        });
         const pack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -104,17 +99,19 @@ describe('Compress', () =>
                     astc: true,
                     basis: true,
                     etc: true,
-                    bc7: false
+                    bc7: false,
                 }),
             ],
-            assetSettings: [{
-                files: ['**/*.png'],
-                settings: {
-                    tags: {
-                        nc: 'ncc',
-                    }
-                }
-            }]
+            assetSettings: [
+                {
+                    files: ['**/*.png'],
+                    settings: {
+                        tags: {
+                            nc: 'ncc',
+                        },
+                    },
+                },
+            ],
         });
 
         await pack.run();
@@ -137,38 +134,36 @@ describe('Compress', () =>
         expect(existsSync(`${outputDir}/testJpg.etc.ktx`)).toBe(true);
     });
 
-    it('should be able to turn off a compression', async () =>
-    {
+    it('should be able to turn off a compression', async () => {
         const testName = 'compress-off';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'testPng.png',
-                        content: assetPath('image/sp-2.png'),
-                    },
-                    {
-                        name: 'testJpg.jpg',
-                        content: assetPath('image/sp-3.jpg'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'testPng.png',
+                    content: assetPath('image/sp-2.png'),
+                },
+                {
+                    name: 'testJpg.jpg',
+                    content: assetPath('image/sp-3.jpg'),
+                },
+            ],
+            folders: [],
+        });
         const pack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
                 compress({
                     webp: false,
                     avif: false,
-                })
-            ]
+                }),
+            ],
         });
 
         await pack.run();

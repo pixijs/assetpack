@@ -3,8 +3,7 @@ import { createName } from './createTextures.js';
 
 import type { PixiPacker } from './packTextures.js';
 
-function convertName(pth: string, nameStyle: 'short' | 'relative', removeFileExtension = false)
-{
+function convertName(pth: string, nameStyle: 'short' | 'relative', removeFileExtension = false) {
     const name = nameStyle === 'short' ? path.basename(pth) : pth;
 
     return removeFileExtension ? path.trimExt(name) : name;
@@ -21,22 +20,19 @@ export function createJsons(
         nameStyle: 'short' | 'relative';
         removeFileExtension: boolean;
     },
-)
-{
+) {
     const bins = packer.bins;
 
     const jsons = [];
 
-    for (let i = 0; i < bins.length; i++)
-    {
+    for (let i = 0; i < bins.length; i++) {
         const bin = bins[i];
 
         const json: any = {
             frames: {},
         };
 
-        for (let j = 0; j < bin.rects.length; j++)
-        {
+        for (let j = 0; j < bin.rects.length; j++) {
             const rect = bin.rects[j] as any;
 
             json.frames[convertName(rect.path, options.nameStyle, options.removeFileExtension)] = {
@@ -71,6 +67,7 @@ export function createJsons(
                 h: height,
             },
             scale: options.resolution,
+            // eslint-disable-next-line camelcase
             related_multi_packs: null,
         };
 
@@ -84,10 +81,10 @@ export function createJsons(
 
     const firstJsonMeta = jsons[0].json.meta;
 
+    // eslint-disable-next-line camelcase
     firstJsonMeta.related_multi_packs = [];
 
-    for (let i = 1; i < jsons.length; i++)
-    {
+    for (let i = 1; i < jsons.length; i++) {
         firstJsonMeta.related_multi_packs.push(jsons[i].name);
     }
 

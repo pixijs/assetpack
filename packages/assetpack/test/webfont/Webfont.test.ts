@@ -10,35 +10,29 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'webfont';
 
-describe('Webfont', () =>
-{
-    it('should generate webfont from ttf file', async () =>
-    {
+describe('Webfont', () => {
+    it('should generate webfont from ttf file', async () => {
         const testName = 'ttf';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'ttf{wf}.ttf',
-                        content: assetPath('font/Roboto-Regular.ttf'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'ttf{wf}.ttf',
+                    content: assetPath('font/Roboto-Regular.ttf'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: true,
-            pipes: [
-                webfont()
-            ]
+            pipes: [webfont()],
         });
 
         await assetpack.run();
@@ -47,33 +41,28 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/ttf.woff2`)).toBe(true);
     });
 
-    it('should generate webfont from otf file', async () =>
-    {
+    it('should generate webfont from otf file', async () => {
         const testName = 'otf';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'otf{wf}.otf',
-                        content: assetPath('font/Roboto-Regular.otf'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'otf{wf}.otf',
+                    content: assetPath('font/Roboto-Regular.otf'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                webfont()
-            ]
+            pipes: [webfont()],
         });
 
         await assetpack.run();
@@ -82,33 +71,28 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/otf.woff2`)).toBe(true);
     });
 
-    it('should generate webfont from svg file', async () =>
-    {
+    it('should generate webfont from svg file', async () => {
         const testName = 'svg';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'svg{wf}.svg',
-                        content: assetPath('font/Roboto-Regular.svg'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'svg{wf}.svg',
+                    content: assetPath('font/Roboto-Regular.svg'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                webfont()
-            ]
+            pipes: [webfont()],
         });
 
         await assetpack.run();
@@ -117,33 +101,28 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/svg.woff2`)).toBe(true);
     });
 
-    it('should generate a msdf font from ttf file', async () =>
-    {
+    it('should generate a msdf font from ttf file', async () => {
         const testName = 'msdf';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'msdf{msdf}.ttf',
-                        content: assetPath('font/Roboto-Regular.ttf'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'msdf{msdf}.ttf',
+                    content: assetPath('font/Roboto-Regular.ttf'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                msdfFont()
-            ]
+            pipes: [msdfFont()],
         });
 
         await assetpack.run();
@@ -153,33 +132,28 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/msdf.png`)).toBe(true);
     });
 
-    it('should generate a sdf font from ttf file', async () =>
-    {
+    it('should generate a sdf font from ttf file', async () => {
         const testName = 'sdf';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'sdf{sdf}.ttf',
-                        content: assetPath('font/Roboto-Regular.ttf'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'sdf{sdf}.ttf',
+                    content: assetPath('font/Roboto-Regular.ttf'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                sdfFont()
-            ]
+            pipes: [sdfFont()],
         });
 
         await assetpack.run();
@@ -189,28 +163,25 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/sdf.png`)).toBe(true);
     });
 
-    it('should generate a sdf font from ttf file at 1 resolution', async () =>
-    {
+    it('should generate a sdf font from ttf file at 1 resolution', async () => {
         const testName = 'sdf-resolution';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'sdf{sdf}.ttf',
-                        content: assetPath('font/Roboto-Regular.ttf'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'sdf{sdf}.ttf',
+                    content: assetPath('font/Roboto-Regular.ttf'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -218,8 +189,8 @@ describe('Webfont', () =>
                 mipmap({
                     fixedResolution: 'high',
                     resolutions: { high: 2, default: 1 },
-                })
-            ]
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -229,37 +200,34 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/sdf.png`)).toBe(true);
     });
 
-    it('should generate a split sdf font from ttf file', async () =>
-    {
+    it('should generate a split sdf font from ttf file', async () => {
         const testName = 'sdf-split';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'sdf{sdf}.ttf',
-                        content: assetPath('font/Roboto-Regular.ttf'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'sdf{sdf}.ttf',
+                    content: assetPath('font/Roboto-Regular.ttf'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
                 sdfFont({
                     font: {
                         textureSize: [256, 256],
-                    }
-                })
-            ]
+                    },
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -270,8 +238,7 @@ describe('Webfont', () =>
         expect(existsSync(`${outputDir}/sdf.1.png`)).toBe(true);
     });
 
-    it('should generate manifest correctly', async () =>
-    {
+    it('should generate manifest correctly', async () => {
         const testName = 'webfont-manifest';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -319,12 +286,13 @@ describe('Webfont', () =>
                         },
                     ],
                     folders: [],
-                }
+                },
             ],
         });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -334,7 +302,7 @@ describe('Webfont', () =>
                 mipmap(),
                 compress(),
                 pixiManifest({ legacyMetaDataOutput: false }),
-            ]
+            ],
         });
 
         await assetpack.run();
@@ -353,7 +321,7 @@ describe('Webfont', () =>
                         tags: {
                             wf: true,
                         },
-                    }
+                    },
                 },
                 {
                     alias: ['msdfFolder/ttf.ttf'],
@@ -363,7 +331,7 @@ describe('Webfont', () =>
                         tags: {
                             msdf: true,
                         },
-                    }
+                    },
                 },
                 {
                     alias: ['sdfFolder/ttf.ttf'],
@@ -373,7 +341,7 @@ describe('Webfont', () =>
                         tags: {
                             sdf: true,
                         },
-                    }
+                    },
                 },
                 {
                     alias: ['svgFolder/svg.svg'],
@@ -383,7 +351,7 @@ describe('Webfont', () =>
                         tags: {
                             wf: true,
                         },
-                    }
+                    },
                 },
             ],
         });

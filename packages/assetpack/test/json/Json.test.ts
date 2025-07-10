@@ -7,35 +7,29 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'json';
 
-describe('Json', () =>
-{
-    it('should fail gracefully if json is malformed', async () =>
-    {
+describe('Json', () => {
+    it('should fail gracefully if json is malformed', async () => {
         const testName = 'json-busted';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'busted.json',
-                        content: assetPath('json/json-busted.json'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'busted.json',
+                    content: assetPath('json/json-busted.json'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                json()
-            ]
+            pipes: [json()],
         });
 
         await assetpack.run();
@@ -44,37 +38,33 @@ describe('Json', () =>
         expect(existsSync(`${outputDir}/busted.json`)).toBe(true);
     });
 
-    it('should not modify the json if ignored', async () =>
-    {
+    it('should not modify the json if ignored', async () => {
         const testName = 'json-ignore';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'json',
-                        files: [
-                            {
-                                name: 'json{nc}.json',
-                                content: assetPath('json/json-busted.json'),
-                            },
-                        ],
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'json',
+                    files: [
+                        {
+                            name: 'json{nc}.json',
+                            content: assetPath('json/json-busted.json'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                json()
-            ]
+            pipes: [json()],
         });
 
         await assetpack.run();
@@ -85,38 +75,34 @@ describe('Json', () =>
         expect(res).toEqual(5);
     });
 
-    it('should minify the json', async () =>
-    {
+    it('should minify the json', async () => {
         const testName = 'json-minify';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'json',
-                        files: [
-                            {
-                                name: 'json.json',
-                                content: assetPath('json/json-valid.json'),
-                            },
-                        ],
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'json',
+                    files: [
+                        {
+                            name: 'json.json',
+                            content: assetPath('json/json-valid.json'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                json()
-            ]
+            pipes: [json()],
         });
 
         await assetpack.run();
@@ -126,37 +112,32 @@ describe('Json', () =>
         expect(data.replace(/\\/g, '').trim()).toEqual(`{"hello":"world","Im":"not broken"}`);
     });
 
-    it('should support json5 format', async () =>
-    {
+    it('should support json5 format', async () => {
         const testName = 'json5';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'json5.json',
-                        content: assetPath('json/json5.json'),
-                    },
-                    {
-                        name: 'other-json-5.json5',
-                        content: assetPath('json/json5.json'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'json5.json',
+                    content: assetPath('json/json5.json'),
+                },
+                {
+                    name: 'other-json-5.json5',
+                    content: assetPath('json/json5.json'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                json()
-            ]
+            pipes: [json()],
         });
 
         await assetpack.run();

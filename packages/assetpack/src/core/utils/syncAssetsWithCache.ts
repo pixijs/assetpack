@@ -2,27 +2,23 @@ import { Asset } from '../Asset.js';
 
 import type { CachedAsset } from '../AssetCache.js';
 
-export function syncAssetsWithCache(assetHash: Record<string, Asset>, cachedData: Record<string, CachedAsset>)
-{
+export function syncAssetsWithCache(assetHash: Record<string, Asset>, cachedData: Record<string, CachedAsset>) {
     syncAssetsFromCache(assetHash, cachedData);
     syncTransformedAssetsFromCache(assetHash, cachedData);
 }
 
-function syncAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Record<string, CachedAsset>)
-{
+function syncAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Record<string, CachedAsset>) {
     const deletedAssets: Record<string, Asset> = {};
 
     // check for deletions..
-    for (const i in cachedData)
-    {
+    for (const i in cachedData) {
         const cachedAsset = cachedData[i];
 
-        if (!assetHash[i] && !cachedAsset.transformParent)
-        {
+        if (!assetHash[i] && !cachedAsset.transformParent) {
             // deleted!
             const assetToDelete = new Asset({
                 path: i,
-                isFolder: cachedAsset.isFolder
+                isFolder: cachedAsset.isFolder,
             });
 
             assetToDelete.metaData = cachedAsset.metaData;
@@ -37,14 +33,12 @@ function syncAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Recor
         }
     }
 
-    for (const i in deletedAssets)
-    {
+    for (const i in deletedAssets) {
         const deletedAsset = deletedAssets[i];
 
         const cachedAsset = cachedData[i];
 
-        if (cachedAsset.parent)
-        {
+        if (cachedAsset.parent) {
             assetHash[cachedAsset.parent].addChild(deletedAsset);
         }
     }
@@ -52,51 +46,41 @@ function syncAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Recor
     // next we check for modifications and additions
 
     // so things are new! or modified..
-    for (const i in assetHash)
-    {
+    for (const i in assetHash) {
         const asset = assetHash[i];
 
-        if (asset.state === 'deleted')
-        {
+        if (asset.state === 'deleted') {
             asset.markParentAsModified();
             continue;
         }
 
-        if (!cachedData[i])
-        {
+        if (!cachedData[i]) {
             // new asset!
             asset.state = 'added';
             // TODO - move this into the asset!
             asset.markParentAsModified(asset);
-        }
-        else if (!asset.isFolder && (cachedData[i].hash !== asset.hash))
-        {
+        } else if (!asset.isFolder && cachedData[i].hash !== asset.hash) {
             asset.state = 'modified';
             asset.markParentAsModified(asset);
-        }
-        else
-        {
+        } else {
             asset.state = 'normal';
             asset.stats = cachedData[i].stats;
         }
     }
 }
 
-function syncTransformedAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Record<string, CachedAsset>)
-{
+function syncTransformedAssetsFromCache(assetHash: Record<string, Asset>, cachedData: Record<string, CachedAsset>) {
     const transformedAssets: Record<string, Asset> = {};
 
     // check for deletions..
-    for (const i in cachedData)
-    {
+    for (const i in cachedData) {
         const cachedAssetData = cachedData[i];
         let asset = assetHash[i];
 
-        if (!asset)
-        {
+        if (!asset) {
             asset = new Asset({
                 path: i,
-                isFolder: cachedAssetData.isFolder
+                isFolder: cachedAssetData.isFolder,
             });
 
             transformedAssets[i] = asset;
@@ -110,16 +94,12 @@ function syncTransformedAssetsFromCache(assetHash: Record<string, Asset>, cached
         asset.metaData = cachedAssetData.metaData;
     }
 
-    for (const i in transformedAssets)
-    {
+    for (const i in transformedAssets) {
         const transformedAsset = transformedAssets[i];
 
-        if (transformedAsset.transformParent)
-        {
+        if (transformedAsset.transformParent) {
             assetHash[transformedAsset.transformParent.path].addTransformChild(transformedAssets[i]);
-        }
-        else
-        {
+        } else {
             throw new Error('[AssetPack] transformed asset has no parent!');
         }
     }

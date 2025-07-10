@@ -11,7 +11,7 @@
     "build": "npm run build --workspace @assetpack/core",
     "clean": "xs clean",
     "lint:fix": "xs lint --fix",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prerelease": "npm run test:lint && npm run build",
     "release": "npm run release --workspace @assetpack/core",
     "publish-ci": "npm run publish-ci --workspace @assetpack/core",
@@ -25,26 +25,22 @@
     "docs:start": "npm run start --workspace @assetpack/docs",
     "docs:build": "npm run build --workspace @assetpack/docs"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.{ts,js,mjs}": [
-      "npm run test:lint --"
+    "*": [
+      "npm run lint:fix"
     ]
   },
   "devDependencies": {
-    "@pixi/extension-scripts": "^2.4.1",
-    "@tsconfig/node20": "^20.1.4",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.7",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
+    "@pixi/extension-scripts": "^4.0.0",
+    "@tsconfig/node20": "^20.1.6",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "extensionConfig": {
-    "tsconfig": "tsconfig.eslint.json",
     "clean": [
       "**/*/.testInput",
       "**/*/.testOutput",

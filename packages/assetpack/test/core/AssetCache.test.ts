@@ -2,15 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { Asset } from '../../src/core/Asset.js';
 import { AssetCache } from '../../src/core/AssetCache.js';
 
-describe('AssetCache', () =>
-{
-    it('should write and read cache correctly', async () =>
-    {
+describe('AssetCache', () => {
+    it('should write and read cache correctly', async () => {
         const cacheName = 'asset-cache-test';
 
         const assetCacheWrite = new AssetCache({
             cacheName,
-
         });
 
         const asset = new Asset({
@@ -23,7 +20,7 @@ describe('AssetCache', () =>
             path: 'test/test.json',
         });
 
-        assetChild['_hash'] = '12345';
+        assetChild._hash = '12345';
 
         asset.addChild(assetChild);
 
@@ -49,7 +46,7 @@ describe('AssetCache', () =>
                 parent: 'test',
                 transformData: {},
                 metaData: {},
-            }
+            },
         });
     });
 });

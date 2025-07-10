@@ -6,12 +6,11 @@ import { resolveOptions } from './utils/resolveOptions.js';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 import type { CompressImageData } from './compress.js';
 
-export interface MipmapOptions extends PluginOptions
-{
+export interface MipmapOptions extends PluginOptions {
     /** A template for denoting the resolution of the images. */
     template?: string;
     /** An object containing the resolutions that the images will be resized to. */
-    resolutions?: {[x: string]: number};
+    resolutions?: { [x: string]: number };
     /** A resolution used if the fixed tag is applied. Resolution must match one found in resolutions. */
     fixedResolution?: string;
 }
@@ -22,8 +21,7 @@ const defaultMipmapOptions: Required<MipmapOptions> = {
     fixedResolution: 'default',
 };
 
-export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, 'fix' | 'nomip'>
-{
+export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, 'fix' | 'nomip'> {
     const mipmap = resolveOptions(_options, defaultMipmapOptions);
 
     return {
@@ -36,12 +34,10 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
             fix: 'fix',
             nomip: 'nomip',
         },
-        test(asset: Asset, options)
-        {
+        test(asset: Asset, options) {
             return options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nomip];
         },
-        async transform(asset: Asset, options)
-        {
+        async transform(asset: Asset, options) {
             const shouldMipmap = mipmap && !asset.allMetaData[this.tags!.fix];
 
             let processedImages: CompressImageData[];
@@ -52,74 +48,59 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
                 sharpImage: sharp(asset.buffer),
             };
 
-            const { resolutions, fixedResolution } = options as Required<MipmapOptions>
-                || this.defaultOptions;
+            const { resolutions, fixedResolution } = (options as Required<MipmapOptions>) || this.defaultOptions;
 
             const fixedResolutions = {
-                [fixedResolution]: resolutions[fixedResolution]
+                [fixedResolution]: resolutions[fixedResolution],
             };
 
             const largestResolution = Math.max(...Object.values(resolutions));
 
-            try
-            {
-                if (shouldMipmap)
-                {
-                    const resolutionHash = asset.allMetaData[this.tags!.fix]
-                        ? fixedResolutions
-                        : resolutions;
+            try {
+                if (shouldMipmap) {
+                    const resolutionHash = asset.allMetaData[this.tags!.fix] ? fixedResolutions : resolutions;
 
                     image.resolution = largestResolution;
 
                     processedImages = await mipmapSharp(image, resolutionHash, largestResolution);
-                }
-                else
-                {
+                } else {
                     image.resolution = fixedResolutions[fixedResolution];
 
-                    processedImages = image.resolution === 1
-                        ? [image]
-                        : processedImages = await mipmapSharp(image, fixedResolutions, largestResolution);
+                    processedImages =
+                        image.resolution === 1
+                            ? [image]
+                            : (processedImages = await mipmapSharp(image, fixedResolutions, largestResolution));
                 }
-            }
-            catch (error)
-            {
+            } catch (error) {
                 throw new Error(`[AssetPack][mipmap] Failed to mipmap image: ${asset.path} - ${error}`);
             }
 
             // now create our new assets
-            const newAssets = processedImages.map((data) =>
-            {
+            const newAssets = processedImages.map((data) => {
                 let resolution = '';
 
-                if (options)
-                {
+                if (options) {
                     resolution = (options as Required<MipmapOptions>).template.replace('%%', `${data.resolution}`);
                     resolution = data.resolution === 1 ? '' : resolution;
                 }
 
                 const end = `${resolution}${data.format}`;
-                const filename = asset.filename
-                    .replace(/\.[^/.]+$/, end);
+                const filename = asset.filename.replace(/\.[^/.]+$/, end);
 
-                const newAsset = createNewAssetAt(
-                    asset,
-                    filename
-                );
+                const newAsset = createNewAssetAt(asset, filename);
 
                 return newAsset;
             });
 
-            const promises = processedImages.map((image, i) => image.sharpImage.toBuffer().then((buffer) =>
-            {
-                newAssets[i].buffer = buffer;
-            }));
+            const promises = processedImages.map((image, i) =>
+                image.sharpImage.toBuffer().then((buffer) => {
+                    newAssets[i].buffer = buffer;
+                }),
+            );
 
             await Promise.all(promises);
 
             return newAssets;
         },
-
     };
 }
-

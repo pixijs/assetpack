@@ -7,38 +7,34 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'spine';
 
-describe('Atlas Mipmap', () =>
-{
-    it('should allow for options to be overridden', async () =>
-    {
+describe('Atlas Mipmap', () => {
+    it('should allow for options to be overridden', async () => {
         const testName = 'mip-overrides';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.json',
-                        content: assetPath('spine/dragon.json'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.json',
+                    content: assetPath('spine/dragon.json'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
 
         const opts = {
             mipmap: {
@@ -46,19 +42,17 @@ describe('Atlas Mipmap', () =>
                     high: 2,
                     default: 1,
                     low: 0.5,
-                }
+                },
             },
-            compress: false
+            compress: false,
         };
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                mipmap(opts.mipmap),
-                spineAtlasMipmap(opts.mipmap),
-            ]
+            pipes: [mipmap(opts.mipmap), spineAtlasMipmap(opts.mipmap)],
         });
 
         await assetpack.run();
@@ -74,47 +68,41 @@ describe('Atlas Mipmap', () =>
         expect(existsSync(`${outputDir}/dragon@0.5x.atlas`)).toBe(true);
     });
 
-    it('should generate the fixed resolution when using the fix tags', async () =>
-    {
+    it('should generate the fixed resolution when using the fix tags', async () => {
         const testName = 'mip-fixed';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
 
         const mipmapOpts = {
             resolutions: { low: 0.5 },
-            fixedResolution: 'low'
+            fixedResolution: 'low',
         };
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                spineAtlasMipmap(mipmapOpts),
-                mipmap(mipmapOpts),
-            ]
+            pipes: [spineAtlasMipmap(mipmapOpts), mipmap(mipmapOpts)],
         });
 
         await assetpack.run();
@@ -124,41 +112,36 @@ describe('Atlas Mipmap', () =>
         expect(existsSync(`${outputDir}/dragon@0.5x.atlas`)).toBe(true);
     });
 
-    it('should create mip images', async () =>
-    {
+    it('should create mip images', async () => {
         const testName = 'mip';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                mipmap(),
-                spineAtlasMipmap(),
-            ]
+            pipes: [mipmap(), spineAtlasMipmap()],
         });
 
         await assetpack.run();
@@ -171,47 +154,42 @@ describe('Atlas Mipmap', () =>
         expect(existsSync(`${outputDir}/dragon2@0.5x.png`)).toBe(true);
     });
 
-    it('should resize atlas to fixed resolution when tagged with fix', async () =>
-    {
+    it('should resize atlas to fixed resolution when tagged with fix', async () => {
         const testName = 'mip-fixed-prevent';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'assets',
-                        files: [
-                            {
-                                name: 'dragon{spine}{fix}.atlas',
-                                content: assetPath('spine/dragon.atlas'),
-                            },
-                            {
-                                name: 'dragon{fix}.png',
-                                content: assetPath('spine/dragon.png'),
-                            },
-                            {
-                                name: 'dragon2{fix}.png',
-                                content: assetPath('spine/dragon2.png'),
-                            },
-                        ],
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'assets',
+                    files: [
+                        {
+                            name: 'dragon{spine}{fix}.atlas',
+                            content: assetPath('spine/dragon.atlas'),
+                        },
+                        {
+                            name: 'dragon{fix}.png',
+                            content: assetPath('spine/dragon.png'),
+                        },
+                        {
+                            name: 'dragon2{fix}.png',
+                            content: assetPath('spine/dragon2.png'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                mipmap(),
-                spineAtlasMipmap(),
-            ]
+            pipes: [mipmap(), spineAtlasMipmap()],
         });
 
         await assetpack.run();
@@ -224,47 +202,42 @@ describe('Atlas Mipmap', () =>
         expect(existsSync(`${outputDir}/assets/dragon2.png`)).toBe(true);
     });
 
-    it('should resize atlas to low fixed resolution when tagged with fix', async () =>
-    {
+    it('should resize atlas to low fixed resolution when tagged with fix', async () => {
         const testName = 'mip-fixed-res';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'assets',
-                        files: [
-                            {
-                                name: 'dragon{spine}{fix}.atlas',
-                                content: assetPath('spine/dragon.atlas'),
-                            },
-                            {
-                                name: 'dragon{fix}.png',
-                                content: assetPath('spine/dragon.png'),
-                            },
-                            {
-                                name: 'dragon2{fix}.png',
-                                content: assetPath('spine/dragon2.png'),
-                            },
-                        ],
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'assets',
+                    files: [
+                        {
+                            name: 'dragon{spine}{fix}.atlas',
+                            content: assetPath('spine/dragon.atlas'),
+                        },
+                        {
+                            name: 'dragon{fix}.png',
+                            content: assetPath('spine/dragon.png'),
+                        },
+                        {
+                            name: 'dragon2{fix}.png',
+                            content: assetPath('spine/dragon2.png'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                mipmap({ fixedResolution: 'low' }),
-                spineAtlasMipmap({ fixedResolution: 'low' }),
-            ]
+            pipes: [mipmap({ fixedResolution: 'low' }), spineAtlasMipmap({ fixedResolution: 'low' })],
         });
 
         await assetpack.run();
@@ -277,47 +250,42 @@ describe('Atlas Mipmap', () =>
         expect(existsSync(`${outputDir}/assets/dragon2.png`)).toBe(false);
     });
 
-    it('should create no mipmaps', async () =>
-    {
+    it('should create no mipmaps', async () => {
         const testName = 'mip-nomip';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'assets',
-                        files: [
-                            {
-                                name: 'dragon{spine}{nomip}.atlas',
-                                content: assetPath('spine/dragon.atlas'),
-                            },
-                            {
-                                name: 'dragon{nomip}.png',
-                                content: assetPath('spine/dragon.png'),
-                            },
-                            {
-                                name: 'dragon2{nomip}.png',
-                                content: assetPath('spine/dragon2.png'),
-                            },
-                        ],
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'assets',
+                    files: [
+                        {
+                            name: 'dragon{spine}{nomip}.atlas',
+                            content: assetPath('spine/dragon.atlas'),
+                        },
+                        {
+                            name: 'dragon{nomip}.png',
+                            content: assetPath('spine/dragon.png'),
+                        },
+                        {
+                            name: 'dragon2{nomip}.png',
+                            content: assetPath('spine/dragon2.png'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                mipmap({ fixedResolution: 'low' }),
-                spineAtlasMipmap({ fixedResolution: 'low' }),
-            ]
+            pipes: [mipmap({ fixedResolution: 'low' }), spineAtlasMipmap({ fixedResolution: 'low' })],
         });
 
         await assetpack.run();

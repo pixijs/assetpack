@@ -5,37 +5,31 @@ import { prettifyTime } from './utils.js';
 
 import type { LogLevelKeys } from './logLevel.js';
 
-export interface LogEvent
-{
+export interface LogEvent {
     type: 'log';
     level: LogLevelKeys;
     message: string;
 }
 
-export interface BuildEvent
-{
-    type: 'buildStart' | 'buildProgress' | 'buildSuccess' | 'buildFailure'
+export interface BuildEvent {
+    type: 'buildStart' | 'buildProgress' | 'buildSuccess' | 'buildFailure';
     phase?: 'start' | 'delete' | 'transform' | 'post' | 'finish';
     message?: string;
 }
 
 export type ReporterEvent = LogEvent | BuildEvent;
 
-export class Reporter
-{
+export class Reporter {
     public level: LogLevelKeys = 'info';
     private _buildTime = 0;
 
     // Exported only for test
-    public report(event: ReporterEvent): void
-    {
+    public report(event: ReporterEvent): void {
         const logLevelFilter = LogLevel[this.level || 'info'];
 
-        switch (event.type)
-        {
+        switch (event.type) {
             case 'buildStart': {
-                if (logLevelFilter < LogLevel.info)
-                {
+                if (logLevelFilter < LogLevel.info) {
                     break;
                 }
 
@@ -49,8 +43,7 @@ export class Reporter
                 break;
             }
             case 'buildProgress': {
-                if (logLevelFilter < LogLevel.info)
-                {
+                if (logLevelFilter < LogLevel.info) {
                     break;
                 }
 
@@ -62,18 +55,18 @@ export class Reporter
                 break;
             }
             case 'buildSuccess':
-                if (logLevelFilter < LogLevel.info)
-                {
+                if (logLevelFilter < LogLevel.info) {
                     break;
                 }
 
                 stopProgress();
                 resetWindow();
-                persistMessage(chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Date.now() - this._buildTime)}`));
+                persistMessage(
+                    chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Date.now() - this._buildTime)}`),
+                );
                 break;
             case 'buildFailure':
-                if (logLevelFilter < LogLevel.error)
-                {
+                if (logLevelFilter < LogLevel.error) {
                     break;
                 }
 
@@ -83,13 +76,11 @@ export class Reporter
 
                 break;
             case 'log': {
-                if (logLevelFilter < LogLevel[event.level])
-                {
+                if (logLevelFilter < LogLevel[event.level]) {
                     break;
                 }
 
-                switch (event.level)
-                {
+                switch (event.level) {
                     case 'verbose':
                     case 'info':
                         persistMessage(`${chalk.blue.bold('›')} Info: ${chalk.blue.bold(event.message)}`);

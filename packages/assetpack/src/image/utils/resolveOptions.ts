@@ -15,15 +15,13 @@
  * Otherwise, returns an object of type `T` that merges `defaultOptions` and `options`,
  * with properties in `options` taking precedence.
  */
-export function resolveOptions<T>(options: T | boolean | undefined, defaultOptions: T)
-{
-    if (typeof options === 'boolean')
-    {
+export function resolveOptions<T>(options: T | boolean | undefined, defaultOptions: T) {
+    if (typeof options === 'boolean') {
         return options ? defaultOptions : false;
     }
 
     return {
         ...defaultOptions,
-        ...(options || {})
+        ...(options || {}),
     } as T;
 }

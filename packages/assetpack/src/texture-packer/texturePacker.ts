@@ -6,8 +6,7 @@ import { packTextures } from './packer/packTextures.js';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures.js';
 
-export interface TexturePackerOptions extends PluginOptions
-{
+export interface TexturePackerOptions extends PluginOptions {
     texturePacker?: Partial<PackTexturesOptions>;
     resolutionOptions?: {
         /** A template for denoting the resolution of the images. */
@@ -18,39 +17,32 @@ export interface TexturePackerOptions extends PluginOptions
         fixedResolution?: string;
         /** The maximum size a sprite sheet can be before its split out */
         maximumTextureSize?: number;
-    }
+    };
     /** If true, the frame names for the sprite sheet will be added to the asset meta data. */
     addFrameNames?: boolean;
 }
 
-function checkForTexturePackerShortcutClashes(
-    frames: Record<string, unknown>,
-    shortcutClash: Record<string, boolean>
-)
-{
+function checkForTexturePackerShortcutClashes(frames: Record<string, unknown>, shortcutClash: Record<string, boolean>) {
     const clashes: string[] = [];
 
-    for (const i in frames)
-    {
-        if (!shortcutClash[i])
-        {
+    for (const i in frames) {
+        if (!shortcutClash[i]) {
             shortcutClash[i] = true;
-        }
-        else
-        {
+        } else {
             clashes.push(i);
         }
     }
 
-    if (clashes.length > 0)
-    {
-        // eslint-disable-next-line max-len
-        BuildReporter.warn(`[AssetPack][texturePacker] Texture Packer Shortcut clash detected for ${clashes.join(', ')}. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`);
+    if (clashes.length > 0) {
+        BuildReporter.warn(
+            `[AssetPack][texturePacker] Texture Packer Shortcut clash detected for ${clashes.join(', ')}. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`,
+        );
     }
 }
 
-export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<TexturePackerOptions, 'tps' | 'fix' | 'jpg' | 'nomip'>
-{
+export function texturePacker(
+    _options: TexturePackerOptions = {},
+): AssetPipe<TexturePackerOptions, 'tps' | 'fix' | 'jpg' | 'nomip'> {
     let shortcutClash: Record<string, boolean> = {};
 
     return {
@@ -77,19 +69,16 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             jpg: 'jpg',
             nomip: 'nomip',
         },
-        test(asset: Asset)
-        {
+        test(asset: Asset) {
             return asset.isFolder && asset.metaData[this.tags!.tps];
         },
 
-        async start()
-        {
+        async start() {
             // restart the clashes!
             shortcutClash = {};
         },
 
-        async transform(asset: Asset, options)
-        {
+        async transform(asset: Asset, options) {
             const { resolutionOptions, texturePacker } = options;
             const { resolutions, fixedResolution } = resolutionOptions!;
 
@@ -102,27 +91,26 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             let resolutionHash = asset.allMetaData[this.tags!.fix] ? fixedResolutions : resolutions;
 
             // if nomip is set, then we want to use the largest resolution to avoid any scaling
-            if (asset.allMetaData[this.tags!.nomip])
-            {
+            if (asset.allMetaData[this.tags!.nomip]) {
                 resolutionHash = {
-                    default: largestResolution
+                    default: largestResolution,
                 };
             }
 
             const globPath = `${asset.path}/**/*.{jpg,png,gif}`;
             const files = await glob(globPath);
 
-            if (files.length === 0)
-            {
+            if (files.length === 0) {
                 return [];
             }
 
-            const texturesToPack = await Promise.all(files.map(async (f) =>
-            {
-                const contents = await fs.readFile(f);
+            const texturesToPack = await Promise.all(
+                files.map(async (f) => {
+                    const contents = await fs.readFile(f);
 
-                return { path: stripTags(path.relative(asset.path, f)), contents };
-            }));
+                    return { path: stripTags(path.relative(asset.path, f)), contents };
+                }),
+            );
 
             const textureFormat = (asset.metaData[this.tags!.jpg] ? 'jpg' : 'png') as TexturePackerFormat;
 
@@ -142,75 +130,71 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
             let checkedForClashes = false;
             const imageNames = new Set();
 
-            Object.values(resolutionHash).sort((a, b) => b - a).forEach((resolution) =>
-            {
-                const scale = resolution / largestResolution;
+            Object.values(resolutionHash)
+                .sort((a, b) => b - a)
+                .forEach((resolution) => {
+                    const scale = resolution / largestResolution;
 
-                promises.push((async () =>
-                {
-                    const textureName = texturePackerOptions.textureName ?? stripTags(asset.filename);
+                    promises.push(
+                        (async () => {
+                            const textureName = texturePackerOptions.textureName ?? stripTags(asset.filename);
 
-                    const out = await packTextures({
-                        ...texturePackerOptions,
-                        textureName,
-                        texturesToPack,
-                        scale,
-                        resolution,
-                    });
+                            const out = await packTextures({
+                                ...texturePackerOptions,
+                                textureName,
+                                texturesToPack,
+                                scale,
+                                resolution,
+                            });
 
-                    if (options.addFrameNames)
-                    {
-                        out.jsons.forEach(({ json }) =>
-                        {
-                            Object.keys(json.frames).forEach((frame) => imageNames.add(frame));
-                        });
-                    }
+                            if (options.addFrameNames) {
+                                out.jsons.forEach(({ json }) => {
+                                    Object.keys(json.frames).forEach((frame) => imageNames.add(frame));
+                                });
+                            }
 
-                    const outPromises: Promise<void>[] = [];
+                            const outPromises: Promise<void>[] = [];
 
-                    for (let i = 0; i < out.textures.length; i++)
-                    {
-                        const { buffer, name } = out.textures[i];
+                            for (let i = 0; i < out.textures.length; i++) {
+                                const { buffer, name } = out.textures[i];
 
-                        const textureAsset = createNewAssetAt(asset, name);
+                                const textureAsset = createNewAssetAt(asset, name);
 
-                        textureAsset.buffer = buffer;
-                        textureAsset.metaData.mIgnore = true;
+                                textureAsset.buffer = buffer;
+                                textureAsset.metaData.mIgnore = true;
 
-                        const { json, name: jsonName } = out.jsons[i];
+                                const { json, name: jsonName } = out.jsons[i];
 
-                        const jsonAsset = createNewAssetAt(asset, jsonName);
+                                const jsonAsset = createNewAssetAt(asset, jsonName);
 
-                        if (!checkedForClashes)
-                        {
-                            checkedForClashes = true;
-                            // check for shortcut clashes..
-                            checkForTexturePackerShortcutClashes(json.frames, shortcutClash);
-                        }
+                                if (!checkedForClashes) {
+                                    checkedForClashes = true;
+                                    // check for shortcut clashes..
+                                    checkForTexturePackerShortcutClashes(json.frames, shortcutClash);
+                                }
 
-                        jsonAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
+                                jsonAsset.buffer = Buffer.from(JSON.stringify(json, null, 2));
 
-                        // don't mipmap the texture again, we have already done that
-                        textureAsset.metaData[this.tags!.nomip] = true;
+                                // don't mipmap the texture again, we have already done that
+                                textureAsset.metaData[this.tags!.nomip] = true;
 
-                        jsonAsset.transformData.page = i;
+                                jsonAsset.transformData.page = i;
 
-                        assets.push(textureAsset, jsonAsset);
-                    }
+                                assets.push(textureAsset, jsonAsset);
+                            }
 
-                    await Promise.all(outPromises);
-                })());
-            });
+                            await Promise.all(outPromises);
+                        })(),
+                    );
+                });
 
             await Promise.all(promises);
 
-            if (options.addFrameNames)
-            {
+            if (options.addFrameNames) {
                 asset.metaData.frameNames = Array.from(imageNames);
             }
 
             return assets;
         },
-
     };
 }

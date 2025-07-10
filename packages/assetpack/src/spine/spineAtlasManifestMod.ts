@@ -4,8 +4,7 @@ import { AtlasView } from './AtlasView.js';
 
 import type { Asset, AssetPipe } from '../core/index.js';
 
-export interface SpineManifestOptions
-{
+export interface SpineManifestOptions {
     output?: string;
 }
 
@@ -28,11 +27,10 @@ export interface SpineManifestOptions
  * @param _options
  * @returns
  */
-export function spineAtlasManifestMod(_options: SpineManifestOptions = {}): AssetPipe<SpineManifestOptions>
-{
+export function spineAtlasManifestMod(_options: SpineManifestOptions = {}): AssetPipe<SpineManifestOptions> {
     const defaultOptions = {
         output: 'manifest.json',
-        ..._options
+        ..._options,
     };
 
     return {
@@ -40,49 +38,48 @@ export function spineAtlasManifestMod(_options: SpineManifestOptions = {}): Asse
         name: 'spine-atlas-manifest',
         defaultOptions,
 
-        async finish(asset: Asset, options, pipeSystem)
-        {
-            const atlasAssets = findAssets((asset) =>
-                asset.extension === '.atlas' && asset.transformChildren.length === 0, asset, true);
+        async finish(asset: Asset, options, pipeSystem) {
+            const atlasAssets = findAssets(
+                (asset) => asset.extension === '.atlas' && asset.transformChildren.length === 0,
+                asset,
+                true,
+            );
 
             const manifestLocation = options.output;
 
-            const newFileName = path.dirname(manifestLocation) === '.'
-                ? path.joinSafe(pipeSystem.outputPath, manifestLocation) : manifestLocation;
+            const newFileName =
+                path.dirname(manifestLocation) === '.'
+                    ? path.joinSafe(pipeSystem.outputPath, manifestLocation)
+                    : manifestLocation;
 
             const manifest = fs.readJsonSync(newFileName);
 
-            atlasAssets.forEach((atlasAsset) =>
-            {
+            atlasAssets.forEach((atlasAsset) => {
                 const atlasView = new AtlasView(atlasAsset.buffer);
 
-                atlasView.getTextures().forEach((texture) =>
-                {
+                atlasView.getTextures().forEach((texture) => {
                     // relative path to the output folder
-                    const texturePath = path.relative(pipeSystem.outputPath, path.joinSafe(atlasAsset.directory, texture));
+                    const texturePath = path.relative(
+                        pipeSystem.outputPath,
+                        path.joinSafe(atlasAsset.directory, texture),
+                    );
 
                     findAndRemoveManifestAsset(manifest, texturePath);
                 });
             });
 
             fs.writeJSONSync(newFileName, manifest, { spaces: 2 });
-        }
+        },
     };
 }
 
-function findAndRemoveManifestAsset(manifest: any, assetPath: string)
-{
-    for (let i = 0; i < manifest.bundles.length; i++)
-    {
+function findAndRemoveManifestAsset(manifest: any, assetPath: string) {
+    for (let i = 0; i < manifest.bundles.length; i++) {
         const assets = manifest.bundles[i].assets;
 
-        const manifestAsset = assets.find((asset: {src: string[]}) =>
+        const manifestAsset = assets.find((asset: { src: string[] }) => asset.src.includes(assetPath));
 
-            asset.src.includes(assetPath)
-        );
-
-        if (manifestAsset)
-        {
+        if (manifestAsset) {
             assets.splice(assets.indexOf(manifestAsset), 1);
             break;
         }

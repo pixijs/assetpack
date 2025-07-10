@@ -6,10 +6,8 @@ import crc32 from '@node-rs/crc32';
  * @param input - The file path or buffer to hash
  * @returns The hash of the file or buffer
  */
-export function getHash(input: string | Buffer): string
-{
-    if (typeof input === 'string')
-    {
+export function getHash(input: string | Buffer): string {
+    if (typeof input === 'string') {
         input = fs.readFileSync(input);
     }
 

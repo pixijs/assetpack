@@ -5,8 +5,7 @@ import type { MipmapOptions } from '../image/index.js';
 
 export type SpineOptions = PluginOptions & MipmapOptions;
 
-export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOptions, 'fix' | 'nomip'>
-{
+export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOptions, 'fix' | 'nomip'> {
     return {
         folder: false,
         name: 'mipmap-spine-atlas',
@@ -20,13 +19,11 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
             fix: 'fix',
             nomip: 'nomip',
         },
-        test(asset: Asset)
-        {
+        test(asset: Asset) {
             return !asset.allMetaData[this.tags!.nomip] && checkExt(asset.path, '.atlas');
         },
-        async transform(asset: Asset, options)
-        {
-            const fixedResolutions: {[x: string]: number} = {};
+        async transform(asset: Asset, options) {
+            const fixedResolutions: { [x: string]: number } = {};
 
             fixedResolutions[options.fixedResolution] = options.resolutions[options.fixedResolution];
 
@@ -36,8 +33,7 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
             const rawAtlas = asset.buffer.toString();
 
             // loop through each resolution and pack the images
-            const assets = Object.values(resolutionHash).map((resolution) =>
-            {
+            const assets = Object.values(resolutionHash).map((resolution) => {
                 const scale = resolution / largestResolution;
                 let resolutionLabel = options.template.replace('%%', resolution.toString());
 
@@ -55,7 +51,7 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
             });
 
             return assets;
-        }
+        },
     };
 }
 
@@ -65,8 +61,7 @@ export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOption
  * @param scale - The multiplier for position and size values
  * @param template - Resolution template, same used for images
  */
-function rescaleAtlas(raw: string, scale = 1, template = ''): string
-{
+function rescaleAtlas(raw: string, scale = 1, template = ''): string {
     const lines = raw.split(/\r\n|\r|\n/);
 
     // Regex for xy values, like 'size: 2019,463', 'orig: 134, 240'
@@ -81,31 +76,24 @@ function rescaleAtlas(raw: string, scale = 1, template = ''): string
     // Regex for image names, like 'image.png', 'img.jpg'
     const reImg = /(.+)(.png|jpg|jpeg)$/;
 
-    // eslint-disable-next-line @typescript-eslint/no-for-in-array
-    for (const i in lines)
-    {
+    for (const i in lines) {
         let line = lines[i];
         const matchXY = reXY.exec(line);
         const matchScale = regScale.exec(line);
         const matchRect = regRect.exec(line);
 
-        if (matchXY)
-        {
+        if (matchXY) {
             // Multiply values by scale
             const x = Math.floor(Number(matchXY[2]) * scale);
             const y = Math.floor(Number(matchXY[4]) * scale);
 
             // Rewrite line with new values
             line = line.replace(reXY, `$1${x}$3${y}`);
-        }
-        else if (matchScale)
-        {
+        } else if (matchScale) {
             const newScale = Number(matchScale[2]) * scale;
 
             line = line.replace(regScale, `$1${newScale}`);
-        }
-        else if (matchRect)
-        {
+        } else if (matchRect) {
             const x1 = Math.floor(Number(matchRect[2]) * scale);
             const y1 = Math.floor(Number(matchRect[4]) * scale);
             const x2 = Math.floor(Number(matchRect[6]) * scale);
@@ -114,8 +102,7 @@ function rescaleAtlas(raw: string, scale = 1, template = ''): string
             line = line.replace(regRect, `$1${x1}$3${y1}$5${x2}$7${y2}`);
         }
 
-        if (reImg.exec(line))
-        {
+        if (reImg.exec(line)) {
             // Rename images using provided template
             line = line.replace(reImg, `$1${template}$2`);
         }

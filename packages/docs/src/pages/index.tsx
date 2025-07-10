@@ -5,8 +5,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
 
-function HomepageHeader()
-{
+function HomepageHeader() {
     const { siteConfig } = useDocusaurusContext();
 
     return (
@@ -19,11 +18,19 @@ function HomepageHeader()
                     {siteConfig.tagline}
                 </p>
                 <div className={styles.buttons} style={{ paddingTop: 0 }}>
-                    <Link className="button button--primary button--lg" style={{ color: 'white' }} to="/docs/guide/getting-started/installation">
-            Get Started
+                    <Link
+                        className="button button--primary button--lg"
+                        style={{ color: 'white' }}
+                        to="/docs/guide/getting-started/installation"
+                    >
+                        Get Started
                     </Link>
-                    <Link className="button button--primary button--lg" style={{ color: 'white' }} to="/docs/guide/pipes/overview">
-            Features
+                    <Link
+                        className="button button--primary button--lg"
+                        style={{ color: 'white' }}
+                        to="/docs/guide/pipes/overview"
+                    >
+                        Features
                     </Link>
                 </div>
             </div>
@@ -31,20 +38,22 @@ function HomepageHeader()
     );
 }
 
-export default function Home()
-{
+export default function Home() {
     const { siteConfig } = useDocusaurusContext();
 
     return (
         <Layout title={`${siteConfig.title}`} description="PixiJS AssetPack">
             <HomepageHeader />
             <main
-                style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 50 }}
+                style={{
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    marginLeft: 50,
+                }}
             >
-                <img
-                    src="/assetpack/img/assetpack-screenshot.png"
-                    alt="Hero"
-                />
+                <img src="/assetpack/img/assetpack-screenshot.png" alt="Hero" />
             </main>
         </Layout>
     );

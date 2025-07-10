@@ -1,15 +1,12 @@
 // TODO EXPORT this out! But don't want to create a dependency on the atlas plugin just yet..
-export class AtlasView
-{
+export class AtlasView {
     public rawAtlas: string;
 
-    constructor(buffer: Buffer)
-    {
+    constructor(buffer: Buffer) {
         this.rawAtlas = buffer.toString();
     }
 
-    getTextures(): string[]
-    {
+    getTextures(): string[] {
         const regex = /^.+?(?:\.png|\.jpg|\.jpeg|\.webp|\.avif|\.dds|\.ktx)$/gm;
 
         const matches = this.rawAtlas.match(regex);
@@ -17,13 +14,11 @@ export class AtlasView
         return matches as string[];
     }
 
-    replaceTexture(filename: string, newFilename: string)
-    {
+    replaceTexture(filename: string, newFilename: string) {
         this.rawAtlas = this.rawAtlas.replace(filename, newFilename);
     }
 
-    get buffer()
-    {
+    get buffer() {
         return Buffer.from(this.rawAtlas);
     }
 }

@@ -33,31 +33,31 @@ const config: Config = {
     presets: [
         [
             'classic',
-      {
-          docs: {
-              sidebarPath: './sidebars.ts',
-              // Please change this to your repo.
-              // Remove this to remove the "edit this page" links.
-              editUrl: 'https://github.com/pixijs/assetpack/tree/main/packages/docs/',
-          },
-          blog: {
-              showReadingTime: true,
-              // Please change this to your repo.
-              // Remove this to remove the "edit this page" links.
-              editUrl: 'https://github.com/pixijs/assetpack/tree/main/packages/docs/',
-          },
-          theme: {
-              customCss: './src/css/custom.css',
-          },
-          gtag: {
-              trackingID: 'G-T29MZ70FF1',
-          }
-      } satisfies Preset.Options,
+            {
+                docs: {
+                    sidebarPath: './sidebars.ts',
+                    // Please change this to your repo.
+                    // Remove this to remove the "edit this page" links.
+                    editUrl: 'https://github.com/pixijs/assetpack/tree/main/packages/docs/',
+                },
+                blog: {
+                    showReadingTime: true,
+                    // Please change this to your repo.
+                    // Remove this to remove the "edit this page" links.
+                    editUrl: 'https://github.com/pixijs/assetpack/tree/main/packages/docs/',
+                },
+                theme: {
+                    customCss: './src/css/custom.css',
+                },
+                gtag: {
+                    trackingID: 'G-T29MZ70FF1',
+                },
+            } satisfies Preset.Options,
         ],
     ],
 
     themeConfig: {
-    // Replace with your project's social card
+        // Replace with your project's social card
         image: 'img/ogimage.jpg',
         colorMode: {
             defaultMode: 'dark',
