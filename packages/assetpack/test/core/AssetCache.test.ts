@@ -20,7 +20,7 @@ describe('AssetCache', () => {
             path: 'test/test.json',
         });
 
-        assetChild._hash = '12345';
+        assetChild['_hash'] = '12345';
 
         asset.addChild(assetChild);
 

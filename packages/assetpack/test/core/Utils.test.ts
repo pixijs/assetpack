@@ -18,13 +18,13 @@ describe('Utils', () => {
         expect(
             new AssetPack({
                 entry: 'test/test/test',
-            })._entryPath.endsWith('test/test/test'),
+            })['_entryPath'].endsWith('test/test/test'),
         ).toBe(true);
 
         expect(
             new AssetPack({
                 entry: 'test/test/test/',
-            })._entryPath.endsWith('test/test/test'),
+            })['_entryPath'].endsWith('test/test/test'),
         ).toBe(true);
     });
 
