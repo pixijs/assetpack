@@ -5,6 +5,7 @@ import { resolveOptions } from './utils/resolveOptions.js';
 
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 import type { CompressImageData } from './compress.js';
+import type { SharpProcessingOptions } from './types.js';
 
 export interface MipmapOptions extends PluginOptions
 {
@@ -14,12 +15,15 @@ export interface MipmapOptions extends PluginOptions
     resolutions?: {[x: string]: number};
     /** A resolution used if the fixed tag is applied. Resolution must match one found in resolutions. */
     fixedResolution?: string;
+    /** Options to pass to sharp for processing the images. */
+    sharpOptions?: SharpProcessingOptions;
 }
 
 const defaultMipmapOptions: Required<MipmapOptions> = {
     template: '@%%x',
     resolutions: { default: 1, low: 0.5 },
     fixedResolution: 'default',
+    sharpOptions: {},
 };
 
 export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, 'fix' | 'nomip'>
@@ -52,7 +56,7 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
                 sharpImage: sharp(asset.buffer),
             };
 
-            const { resolutions, fixedResolution } = options as Required<MipmapOptions>
+            const { resolutions, fixedResolution, sharpOptions } = options as Required<MipmapOptions>
                 || this.defaultOptions;
 
             const fixedResolutions = {
@@ -71,7 +75,7 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
 
                     image.resolution = largestResolution;
 
-                    processedImages = await mipmapSharp(image, resolutionHash, largestResolution);
+                    processedImages = await mipmapSharp(image, resolutionHash, largestResolution, sharpOptions);
                 }
                 else
                 {
@@ -79,7 +83,7 @@ export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, '
 
                     processedImages = image.resolution === 1
                         ? [image]
-                        : processedImages = await mipmapSharp(image, fixedResolutions, largestResolution);
+                        : processedImages = await mipmapSharp(image, fixedResolutions, largestResolution, sharpOptions);
                 }
             }
             catch (error)

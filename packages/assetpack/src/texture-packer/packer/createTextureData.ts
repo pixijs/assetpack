@@ -4,6 +4,13 @@ import { BuildReporter } from '../../core/index.js';
 
 import type { PackTexturesOptions, PixiRectData, TextureData } from './packTextures.js';
 
+/**
+ * Creates texture data for packing by processing individual textures and setting up a MaxRects packer.
+ *
+ * This function processes a collection of textures by scaling, trimming (if enabled), and preparing
+ * them for efficient packing into sprite sheets. It handles error cases by creating empty pixel
+ * textures as fallbacks and calculates trim offsets for proper sprite positioning.
+ */
 export async function createTextureData(options: Required<PackTexturesOptions>)
 {
     const packer = new MaxRectsPacker<PixiRectData>(options.width, options.height, options.padding, {
@@ -37,6 +44,7 @@ export async function createTextureData(options: Required<PackTexturesOptions>)
                 .resize({
                     width: newWidth,
                     height: newHeight,
+                    ...options.sharpOptions.resize,
                 });
 
             if (allowTrim)
