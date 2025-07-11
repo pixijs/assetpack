@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { vi } from 'vitest';
+import { type Mock, vi } from 'vitest';
 
 import type { AssetPipe } from '../../src/core/index.js';
 
@@ -84,7 +84,7 @@ export function createAssetPipe(
     } as AssetPipe;
 }
 
-export type MockAssetPipe = Omit<Record<keyof AssetPipe, jest.Mock>, 'folder' | 'name'> & {
+export type MockAssetPipe = Omit<Record<keyof AssetPipe, Mock>, 'folder' | 'name'> & {
     folder: boolean;
     name: string;
 };

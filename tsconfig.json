@@ -1,7 +1,13 @@
 {
-  "extends": "@pixi/extension-scripts/tsconfig",
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",

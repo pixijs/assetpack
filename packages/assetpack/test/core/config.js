@@ -4,7 +4,7 @@ module.exports = {
     entry: '',
     output: '',
     plugins: {
-        json: plugin()
+        json: plugin(),
     },
     files: [
         {
@@ -13,24 +13,24 @@ module.exports = {
                 'hi',
                 {
                     name: 'hi',
-                    data: [100, 200]
+                    data: [100, 200],
                 },
                 {
                     name: 'hi',
                     data: {
                         a: 100,
-                        b: 200
-                    }
-                }
+                        b: 200,
+                    },
+                },
             ],
             settings: {
                 json: {
                     tags: {
-                        json: 'whatever'
+                        json: 'whatever',
                     },
-                    something: 'else'
-                }
-            }
-        }
-    ]
+                    something: 'else',
+                },
+            },
+        },
+    ],
 };

@@ -1,7 +1,7 @@
 {
   "name": "assetpack",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.4.0",
   "license": "MIT",
   "type": "module",
   "workspaces": [
@@ -9,16 +9,17 @@
   ],
   "scripts": {
     "build": "npm run build --workspace @assetpack/core",
-    "clean": "xs clean",
-    "lint:fix": "xs lint --fix",
+    "clean": "rimraf dist **/*/.testInput **/*/.testOutput .assetpack packages/assetpack/test/cache/**/*",
+    "lint:fix": "eslint . --fix",
     "prepare": "husky",
-    "prerelease": "npm run test:lint && npm run build",
-    "release": "npm run release --workspace @assetpack/core",
-    "publish-ci": "npm run publish-ci --workspace @assetpack/core",
+    "version": "node scripts/version.mjs",
+    "version:branch": "npm run version:branch --workspace @assetpack/core",
+    "publish": "npm run publish --workspace @assetpack/core",
+    "publish:branch": "npm run publish:branch --workspace @assetpack/core",
     "pretest": "npm run clean",
     "test": "vitest run",
-    "test:lint": "xs lint --max-warnings 0",
-    "test:types": "xs types",
+    "test:lint": "eslint . --max-warnings 0",
+    "test:types": "tsc --noEmit",
     "test:watch": "vitest",
     "watch": "npm run --ws watch --if-present",
     "deploy": "npm run deploy --workspace @assetpack/docs",
@@ -31,24 +32,18 @@
     ]
   },
   "devDependencies": {
-    "@pixi/extension-scripts": "^4.0.0",
+    "@pixi/eslint-config": "^6.0.0",
     "@tsconfig/node20": "^20.1.6",
-    "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
+    "inquirer": "^12.7.0",
+    "semver": "^7.7.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
-  "extensionConfig": {
-    "clean": [
-      "**/*/.testInput",
-      "**/*/.testOutput",
-      ".assetpack",
-      "packages/assetpack/test/cache/**/*"
-    ],
-    "lint": [
-      "**/*.{ts,tsx}"
-    ]
+  "overrides": {
+    "rimraf": "^6.0.1"
   }
 }
