@@ -19,6 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm rebuild
       - run: npm run ${{ matrix.script.command }}

@@ -9,9 +9,9 @@ async function publish() {
 
         await spawn('npm', ['publish', '--tag', tag]);
 
-        console.log('Package published successfully!');
+        console.log(`✅ Package published successfully with tag: ${tag}`);
     } catch (error) {
-        console.error('Publish failed:', error.message);
+        console.error('❌ Package publish failed:', error.message);
         process.exit(1);
     }
 }

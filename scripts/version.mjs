@@ -76,6 +76,11 @@ const version = async () => {
 
         console.log('Updating assetpack package.json...');
         await updatePackageVersion(assetpackPackagePath, nextVersion);
+        await spawn('git', ['add', assetpackPackagePath]);
+        await spawn('git', ['commit', '-m', `chore: bump version to ${nextVersion}`]);
+        // push changes to git
+        await spawn('git', ['push']);
+        await spawn('git', ['push', '--tags']);
 
         console.log(`✅ Version bump completed: ${currentVersion} → ${nextVersion}`);
     } catch (error) {

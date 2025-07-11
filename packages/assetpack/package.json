@@ -35,8 +35,9 @@
   ],
   "scripts": {
     "build": "tsc",
-    "publish-ci": "node ../../scripts/publish.js",
-    "release": "xs bump,git-push",
+    "publish": "node ../../scripts/publish.mjs",
+    "publish:branch": "PUBLISH_TAG=dev node ../../scripts/publish-branch.mjs",
+    "version:branch": "node ../../scripts/version-branch.mjs",
     "watch": "tsc -w"
   },
   "husky": {

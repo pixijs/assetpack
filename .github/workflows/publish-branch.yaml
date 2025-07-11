@@ -10,7 +10,7 @@ jobs:
         env:
             NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-            BRANCH_NAME: next
+            BRANCH_NAME: dev
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -30,7 +30,12 @@ jobs:
               run: echo "BRANCH_VERSION=$PACKAGE_VERSION-$BRANCH_NAME.${GITHUB_SHA::7}" >> $GITHUB_ENV
 
             - name: Bump version
-              run: npm version $BRANCH_VERSION --no-git-tag-version --force
+              run: npm run version:branch
+              env:
+                VERSION: $BRANCH_VERSION
 
             - name: Publish a new branch release candidate version
-              run: npm publish --tag $BRANCH_NAME
+              run: npm run publish:branch
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                PUBLISH_TAG: $BRANCH_NAME
