@@ -21,7 +21,6 @@ function assetpackPlugin(): Plugin {
             // Add your pipes here
         ],
     };
-
     let mode: ResolvedConfig['command'];
     let ap: AssetPack | undefined;
 
