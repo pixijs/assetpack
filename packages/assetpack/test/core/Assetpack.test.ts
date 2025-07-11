@@ -7,6 +7,7 @@ import { AssetPack } from '../../src/core/AssetPack.js';
 import { getHash } from '../../src/core/index.js';
 import { logAssetGraph } from '../../src/core/utils/logAssetGraph.js';
 import { pixiManifest } from '../../src/manifest/pixiManifest.js';
+import { pixiPipes } from '../../src/pixi/index.js';
 import { assetPath, createAssetPipe, createFolder, getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
 
 import type { AssetPipe } from '../../src/core/pipes/AssetPipe.js';
@@ -439,6 +440,35 @@ describe('Core', () => {
         });
 
         expect(assetpack.rootAsset).toBeDefined();
+    });
+
+    it('should run multipipes correctly', async () => {
+        const testName = 'multipipe-asset';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'json.json',
+                    content: assetPath('json/json.json'),
+                },
+            ],
+            folders: [],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [pixiPipes({})],
+        });
+
+        await assetpack.run();
+
+        expect(existsSync(join(outputDir, 'manifest.json'))).toBe(true);
     });
 
     it('should call onComplete when the asset pack run is complete when watching', async () => {

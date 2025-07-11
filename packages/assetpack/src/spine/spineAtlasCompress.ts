@@ -6,7 +6,11 @@ import type { CompressOptions } from '../image/index.js';
 
 export type SpineAtlasCompressOptions = Omit<CompressOptions, 'jpg'>;
 
-export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetPipe<SpineAtlasCompressOptions, 'nc'> {
+export type SpineAtlasCompressTags = 'nc';
+
+export function spineAtlasCompress(
+    _options?: SpineAtlasCompressOptions,
+): AssetPipe<SpineAtlasCompressOptions, SpineAtlasCompressTags> {
     return {
         name: 'spine-atlas-compress',
         defaultOptions: {

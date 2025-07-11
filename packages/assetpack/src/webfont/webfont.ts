@@ -3,7 +3,9 @@ import { fonts } from './fonts.js';
 
 import type { Asset, AssetPipe } from '../core/index.js';
 
-export function webfont(): AssetPipe<any, 'wf'> {
+export type WebfontTags = 'wf';
+
+export function webfont(): AssetPipe<any, WebfontTags> {
     return {
         folder: false,
         name: 'webfont',

@@ -11,7 +11,9 @@ export interface SDFFontOptions extends PluginOptions {
     font?: Omit<BitmapFontOptions, 'outputType' | 'fieldType'>;
 }
 
-function signedFont(defaultOptions: SDFFontOptions): AssetPipe<SDFFontOptions, 'font' | 'nc' | 'nomip'> {
+export type SignedFontTags = 'font' | 'nc' | 'nomip';
+
+function signedFont(defaultOptions: SDFFontOptions): AssetPipe<SDFFontOptions, SignedFontTags> {
     return {
         folder: false,
         name: defaultOptions.name,

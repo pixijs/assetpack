@@ -3,7 +3,9 @@ import { BuildReporter, checkExt, createNewAssetAt } from '../core/index.js';
 
 import type { Asset, AssetPipe } from '../core/index.js';
 
-export function json(): AssetPipe<any, 'nc'> {
+export type JsonTags = 'nc';
+
+export function json(): AssetPipe<any, JsonTags> {
     return {
         name: 'json',
         folder: false,

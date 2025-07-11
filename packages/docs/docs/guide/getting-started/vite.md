@@ -12,16 +12,15 @@ To see a full list of configuration options, see the [API Reference](/docs/guide
 ```ts
 // vite.config.mts
 import { defineConfig, type Plugin, type ResolvedConfig } from 'vite';
-import { AssetPack } from '@assetpack/core';
+import { AssetPack, type AssetPackConfig  } from '@assetpack/core';
 
 function assetpackPlugin(): Plugin {
-    const apConfig = {
+    const apConfig: AssetPackConfig = {
         entry: './raw-assets',
         pipes: [
             // Add your pipes here
         ],
     };
-    }
     let mode: ResolvedConfig['command'];
     let ap: AssetPack | undefined;
 
