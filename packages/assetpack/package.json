@@ -54,6 +54,7 @@
     "@napi-rs/woff-build": "^0.2.0",
     "@node-rs/crc32": "^1.10.3",
     "@pixi/runner": "^7.4.2",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/cli-progress": "3.11.5",
     "@types/clone": "^2.1.4",
     "@types/fluent-ffmpeg": "^2.1.24",
