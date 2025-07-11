@@ -35,8 +35,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "publish": "node ../../scripts/publish.mjs",
-    "publish:branch": "node ../../scripts/publish-branch.mjs",
+    "release": "node ../../scripts/publish.mjs",
+    "release:branch": "node ../../scripts/publish-branch.mjs",
     "version:branch": "node ../../scripts/version-branch.mjs",
     "watch": "tsc -w"
   },

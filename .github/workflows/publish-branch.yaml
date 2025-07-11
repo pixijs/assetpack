@@ -35,7 +35,7 @@ jobs:
                 VERSION: ${{ env.BRANCH_VERSION }}
 
             - name: Publish a new branch release candidate version
-              run: npm run publish:branch
+              run: npm run release:branch
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
                 PUBLISH_TAG: ${{ env.BRANCH_NAME }}
