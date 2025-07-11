@@ -8,7 +8,9 @@ import type { PackTexturesOptions, TexturePackerFormat } from './packer/packText
 
 export interface TexturePackerOptions extends PluginOptions
 {
+    /** Options for the texture packer. */
     texturePacker?: Partial<PackTexturesOptions>;
+    /** Options for creating different resolutions of the sprite sheet. */
     resolutionOptions?: {
         /** A template for denoting the resolution of the images. */
         template?: string;
