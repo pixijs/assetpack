@@ -45,30 +45,31 @@ export default {
 
 ## API
 
-| Option                               | Type              | Description                                                                                                              |
-| ------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| texturePacker                        | `object`          | Options for generating texture atlases.                                                                                  |
-| texturePacker.textureFormat          | `png\|jpg`        | The format of the texture atlas file.<br />Defaults to `png`.                                                            |
-| texturePacker.padding                | `number`          | The padding between sprites in the texture atlas.<br />Defaults to `2`.                                                  |
-| texturePacker.fixedSize              | `boolean`         | Whether the texture atlas should be a fixed size.<br />Defaults to `false`.                                              |
-| texturePacker.powerOfTwo             | `boolean`         | Whether the texture atlas should be a power of two.<br />Defaults to `false`.                                            |
-| texturePacker.width                  | `number`          | The width of the texture atlas.<br />Defaults to `1024`.                                                                 |
-| texturePacker.height                 | `number`          | The height of the texture atlas.<br />Defaults to `1024`.                                                                |
-| texturePacker.allowTrim              | `boolean`         | Whether the texture atlas should allow trimming.<br />Defaults to `true`.                                                |
-| texturePacker.allowRotation          | `boolean`         | Whether the texture atlas should allow rotation.<br />Defaults to `true`.                                                |
-| texturePacker.alphaThreshold         | `number`          | The alpha threshold for the texture atlas.<br />Defaults to `0.1`.                                                       |
-| texturePacker.scale                  | `number`          | The scale of the texture atlas.<br />Defaults to `1`.                                                                    |
-| texturePacker.resolution             | `number`          | The resolution of the texture atlas.<br />Defaults to `1`.                                                               |
-| texturePacker.nameStyle              | `short\|relative` | The name style of the texture atlas.<br />Defaults to `relative`.                                                        |
-| texturePacker.removeFileExtension    | `boolean`         | Whether the file extension should be removed.<br />Defaults to `false`.                                                  |
-|                                      |                   |                                                                                                                          |
-| resolutionOptions                    | `object`          | Options for generating resolutions.                                                                                      |
-| resolutionOptions.template           | `string`          | A template for denoting the resolution of the images.<br />Defaults to `@%%x`.                                           |
-| resolutionOptions.resolutions        | `object`          | An object containing the resolutions that the images will be resized to.<br />Defaults to `{ default: 1, low: 0.5 }`.    |
-| resolutionOptions.fixedResolution    | `string`          | A resolution used if the fix tag is applied. Resolution must match one found in resolutions.<br />Defaults to `default`. |
-| resolutionOptions.maximumTextureSize | `number`          | The maximum size a sprite sheet can be before its split out.<br />Defaults to `4096`.                                    |
-|                                      |                   |                                                                                                                          |
-| addFrameNames                        | `boolean`         | Whether to add frame names to the data in the manifest<br />Defaults to `false`.                                         |
+| Option                               | Type              | Description                                                                                                                                                           |
+| ------------------------------------ | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| texturePacker                        | `object`          | Options for generating texture atlases.                                                                                                                               |
+| texturePacker.textureFormat          | `png\|jpg`        | The format of the texture atlas file.<br />Defaults to `png`.                                                                                                         |
+| texturePacker.padding                | `number`          | The padding between sprites in the texture atlas.<br />Defaults to `2`.                                                                                               |
+| texturePacker.fixedSize              | `boolean`         | Whether the texture atlas should be a fixed size.<br />Defaults to `false`.                                                                                           |
+| texturePacker.powerOfTwo             | `boolean`         | Whether the texture atlas should be a power of two.<br />Defaults to `false`.                                                                                         |
+| texturePacker.width                  | `number`          | The width of the texture atlas.<br />Defaults to `1024`.                                                                                                              |
+| texturePacker.height                 | `number`          | The height of the texture atlas.<br />Defaults to `1024`.                                                                                                             |
+| texturePacker.allowTrim              | `boolean`         | Whether the texture atlas should allow trimming.<br />Defaults to `true`.                                                                                             |
+| texturePacker.allowRotation          | `boolean`         | Whether the texture atlas should allow rotation.<br />Defaults to `true`.                                                                                             |
+| texturePacker.alphaThreshold         | `number`          | The alpha threshold for the texture atlas.<br />Defaults to `0.1`.                                                                                                    |
+| texturePacker.scale                  | `number`          | The scale of the texture atlas.<br />Defaults to `1`.                                                                                                                 |
+| texturePacker.resolution             | `number`          | The resolution of the texture atlas.<br />Defaults to `1`.                                                                                                            |
+| texturePacker.nameStyle              | `short\|relative` | The name style of the texture atlas.<br />Defaults to `relative`.                                                                                                     |
+| texturePacker.removeFileExtension    | `boolean`         | Whether the file extension should be removed.<br />Defaults to `false`.                                                                                               |
+| texturePacker.sharpOptions           | `object`          | Options for the sharp library to use when generate the texture atlas. See [sharp resize](https://sharp.pixelplumbing.com/api-resize/#resize).<br />Defaults to `{ }`. |
+|                                      |                   |                                                                                                                                                                       |
+| resolutionOptions                    | `object`          | Options for generating resolutions.                                                                                                                                   |
+| resolutionOptions.template           | `string`          | A template for denoting the resolution of the images.<br />Defaults to `@%%x`.                                                                                        |
+| resolutionOptions.resolutions        | `object`          | An object containing the resolutions that the images will be resized to.<br />Defaults to `{ default: 1, low: 0.5 }`.                                                 |
+| resolutionOptions.fixedResolution    | `string`          | A resolution used if the fix tag is applied. Resolution must match one found in resolutions.<br />Defaults to `default`.                                              |
+| resolutionOptions.maximumTextureSize | `number`          | The maximum size a sprite sheet can be before its split out.<br />Defaults to `4096`.                                                                                 |
+|                                      |                   |                                                                                                                                                                       |
+| addFrameNames                        | `boolean`         | Whether to add frame names to the data in the manifest<br />Defaults to `false`.                                                                                      |
 
 ## Tags
 
