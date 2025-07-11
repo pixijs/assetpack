@@ -43,7 +43,9 @@ export interface CompressImageDataResult
     buffer: Buffer;
 }
 
-export function compress(options: CompressOptions = {}): AssetPipe<CompressOptions, 'nc'>
+export type CompressTags = 'nc';
+
+export function compress(options: CompressOptions = {}): AssetPipe<CompressOptions, CompressTags>
 {
     const compress = resolveOptions<CompressOptions>(options, {
         png: true,

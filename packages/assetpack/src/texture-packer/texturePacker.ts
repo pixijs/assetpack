@@ -6,6 +6,8 @@ import { packTextures } from './packer/packTextures.js';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 import type { PackTexturesOptions, TexturePackerFormat } from './packer/packTextures.js';
 
+export type TexturePackerTags = 'tps' | 'fix' | 'jpg' | 'nomip';
+
 export interface TexturePackerOptions extends PluginOptions
 {
     /** Options for the texture packer. */
@@ -51,7 +53,7 @@ function checkForTexturePackerShortcutClashes(
     }
 }
 
-export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<TexturePackerOptions, 'tps' | 'fix' | 'jpg' | 'nomip'>
+export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<TexturePackerOptions, TexturePackerTags>
 {
     let shortcutClash: Record<string, boolean> = {};
 

@@ -3,7 +3,7 @@ import { mergePipeOptions } from './mergePipeOptions.js';
 import { multiPipe } from './multiPipe.js';
 
 import type { Asset } from '../Asset.js';
-import type { AssetPipe } from './AssetPipe.js';
+import type { AssetPipe, Tags } from './AssetPipe.js';
 
 export interface PipeSystemOptions
 {
@@ -16,7 +16,7 @@ export interface AssetSettings
 {
     files: string[],
     settings?: Record<string, any>,
-    metaData?: Record<string, any>
+    metaData?: Record<Tags, boolean> | Record<string, any>,
 }
 
 export class PipeSystem

@@ -81,7 +81,9 @@ export interface PixiManifestOptions extends PluginOptions
     legacyMetaDataOutput?: boolean;
 }
 
-export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<PixiManifestOptions, 'manifest' | 'mIgnore'>
+export type PixiManifestTags = 'manifest' | 'mIgnore';
+
+export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<PixiManifestOptions, PixiManifestTags>
 {
     return {
         name: 'pixi-manifest',

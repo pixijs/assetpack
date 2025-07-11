@@ -5,7 +5,9 @@ import type { MipmapOptions } from '../image/index.js';
 
 export type SpineOptions = PluginOptions & MipmapOptions;
 
-export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOptions, 'fix' | 'nomip'>
+export type SpineAtlasMipmapTags = 'fix' | 'nomip';
+
+export function spineAtlasMipmap(_options?: SpineOptions): AssetPipe<SpineOptions, SpineAtlasMipmapTags>
 {
     return {
         folder: false,

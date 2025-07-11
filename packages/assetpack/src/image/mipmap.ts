@@ -19,6 +19,8 @@ export interface MipmapOptions extends PluginOptions
     sharpOptions?: SharpProcessingOptions;
 }
 
+export type MipmapTags = 'fix' | 'nomip';
+
 const defaultMipmapOptions: Required<MipmapOptions> = {
     template: '@%%x',
     resolutions: { default: 1, low: 0.5 },
@@ -26,7 +28,7 @@ const defaultMipmapOptions: Required<MipmapOptions> = {
     sharpOptions: {},
 };
 
-export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, 'fix' | 'nomip'>
+export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, MipmapTags>
 {
     const mipmap = resolveOptions(_options, defaultMipmapOptions);
 

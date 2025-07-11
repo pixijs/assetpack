@@ -5,9 +5,11 @@ import type { CompressOptions } from '../image/compress.js';
 
 export type TexturePackerCompressOptions = Omit<CompressOptions, 'jpg'>;
 
+export type TexturePackerCompressTags = 'tps' | 'nc';
+
 export function texturePackerCompress(
     _options?: TexturePackerCompressOptions,
-): AssetPipe<TexturePackerCompressOptions, 'tps' | 'nc'>
+): AssetPipe<TexturePackerCompressOptions, TexturePackerCompressTags>
 {
     return {
         name: 'texture-packer-compress',
