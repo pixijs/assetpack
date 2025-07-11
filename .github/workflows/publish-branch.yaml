@@ -32,10 +32,10 @@ jobs:
             - name: Bump version
               run: npm run version:branch
               env:
-                VERSION: $BRANCH_VERSION
+                VERSION: ${{ env.BRANCH_VERSION }}
 
             - name: Publish a new branch release candidate version
               run: npm run publish:branch
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-                PUBLISH_TAG: $BRANCH_NAME
+                PUBLISH_TAG: ${{ env.BRANCH_NAME }}
