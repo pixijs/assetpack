@@ -5,8 +5,7 @@ import type { Asset, AssetPipe } from '../core/index.js';
 
 export type WebfontTags = 'wf';
 
-export function webfont(): AssetPipe<any, WebfontTags>
-{
+export function webfont(): AssetPipe<any, WebfontTags> {
     return {
         folder: false,
         name: 'webfont',
@@ -14,18 +13,15 @@ export function webfont(): AssetPipe<any, WebfontTags>
         tags: {
             wf: 'wf',
         },
-        test(asset: Asset)
-        {
+        test(asset: Asset) {
             return asset.allMetaData[this.tags!.wf] && checkExt(asset.path, '.otf', '.ttf', '.svg');
         },
-        async transform(asset: Asset)
-        {
+        async transform(asset: Asset) {
             const ext = path.extname(asset.path);
 
             let buffer: Buffer | null = null;
 
-            switch (ext)
-            {
+            switch (ext) {
                 case '.otf':
                     buffer = fonts.otf.to.woff2(asset.path);
                     break;
@@ -49,6 +45,6 @@ export function webfont(): AssetPipe<any, WebfontTags>
             asset.metaData.family ??= stripTags(path.trimExt(asset.filename));
 
             return [newAsset];
-        }
+        },
     };
 }

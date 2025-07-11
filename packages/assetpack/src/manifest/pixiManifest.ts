@@ -1,26 +1,19 @@
 import fs from 'fs-extra';
 import { BuildReporter, path, stripTags } from '../core/index.js';
 
-import type {
-    Asset,
-    AssetPipe,
-    PipeSystem, PluginOptions
-} from '../core/index.js';
+import type { Asset, AssetPipe, PipeSystem, PluginOptions } from '../core/index.js';
 
-export interface PixiBundle
-{
+export interface PixiBundle {
     name: string;
     assets: PixiManifestEntry[];
     relativeName?: string;
 }
 
-export interface PixiManifest
-{
+export interface PixiManifest {
     bundles: PixiBundle[];
 }
 
-export interface PixiManifestEntry
-{
+export interface PixiManifestEntry {
     alias: string | string[];
     src: string | string[];
     data?: {
@@ -29,8 +22,7 @@ export interface PixiManifestEntry
     };
 }
 
-export interface PixiManifestOptions extends PluginOptions
-{
+export interface PixiManifestOptions extends PluginOptions {
     /**
      * The output location for the manifest file.
      */
@@ -83,8 +75,7 @@ export interface PixiManifestOptions extends PluginOptions
 
 export type PixiManifestTags = 'manifest' | 'mIgnore';
 
-export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<PixiManifestOptions, PixiManifestTags>
-{
+export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<PixiManifestOptions, PixiManifestTags> {
     return {
         name: 'pixi-manifest',
         defaultOptions: {
@@ -98,20 +89,21 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
         },
         tags: {
             manifest: 'm',
-            mIgnore: 'mIgnore'
+            mIgnore: 'mIgnore',
         },
-        async finish(asset: Asset, options, pipeSystem: PipeSystem)
-        {
-            const newFileName = path.dirname(options.output) === '.'
-                ? path.joinSafe(pipeSystem.outputPath, options.output) : options.output;
+        async finish(asset: Asset, options, pipeSystem: PipeSystem) {
+            const newFileName =
+                path.dirname(options.output) === '.'
+                    ? path.joinSafe(pipeSystem.outputPath, options.output)
+                    : options.output;
 
             const defaultBundle: PixiBundle = {
                 name: 'default',
-                assets: []
+                assets: [],
             };
 
             const manifest: PixiManifest = {
-                bundles: [defaultBundle]
+                bundles: [defaultBundle],
             };
 
             collectAssets(
@@ -122,32 +114,28 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
                 manifest.bundles,
                 defaultBundle,
                 this.tags!,
-                pipeSystem.internalMetaData
+                pipeSystem.internalMetaData,
             );
             filterUniqueNames(manifest, options);
             await fs.writeJSON(newFileName, manifest, { spaces: 2 });
-        }
+        },
     };
 }
 
-function filterUniqueNames(manifest: PixiManifest, options: PixiManifestOptions)
-{
+function filterUniqueNames(manifest: PixiManifest, options: PixiManifestOptions) {
     const nameMap = new Map<PixiManifestEntry, string[]>();
     const isNameStyleShort = options.nameStyle !== 'relative';
     const bundleNames = new Set<string>();
     const duplicateBundleNames = new Set<string>();
 
-    manifest.bundles.forEach((bundle) =>
-    {
-        if (isNameStyleShort)
-        {
-            if (bundleNames.has(bundle.name))
-            {
+    manifest.bundles.forEach((bundle) => {
+        if (isNameStyleShort) {
+            if (bundleNames.has(bundle.name)) {
                 duplicateBundleNames.add(bundle.name);
-                BuildReporter.warn(`[AssetPack][manifest] Duplicate bundle name '${bundle.name}'. All bundles with that name will be renamed to their relative name instead.`);
-            }
-            else
-            {
+                BuildReporter.warn(
+                    `[AssetPack][manifest] Duplicate bundle name '${bundle.name}'. All bundles with that name will be renamed to their relative name instead.`,
+                );
+            } else {
                 bundleNames.add(bundle.name);
             }
         }
@@ -159,19 +147,15 @@ function filterUniqueNames(manifest: PixiManifest, options: PixiManifestOptions)
     const sets = arrays.map((arr) => new Set(arr));
     const uniqueArrays = arrays.map((arr, i) => arr.filter((x) => sets.every((set, j) => j === i || !set.has(x))));
 
-    manifest.bundles.forEach((bundle) =>
-    {
-        if (isNameStyleShort)
-        {
+    manifest.bundles.forEach((bundle) => {
+        if (isNameStyleShort) {
             // Switch to relative bundle name to avoid duplications
-            if (duplicateBundleNames.has(bundle.name))
-            {
+            if (duplicateBundleNames.has(bundle.name)) {
                 bundle.name = bundle.relativeName ?? bundle.name;
             }
         }
 
-        bundle.assets.forEach((asset) =>
-        {
+        bundle.assets.forEach((asset) => {
             const names = nameMap.get(asset) as string[];
 
             asset.alias = uniqueArrays.find((arr) => arr.every((x) => names.includes(x))) as string[];
@@ -179,14 +163,12 @@ function filterUniqueNames(manifest: PixiManifest, options: PixiManifestOptions)
     });
 }
 
-function getRelativeBundleName(asset: Asset, entryPath: string): string
-{
+function getRelativeBundleName(asset: Asset, entryPath: string): string {
     let name = asset.filename;
     let parent = asset.parent;
 
     // Exclude assets the paths of which equal to the entry path
-    while (parent && parent.path !== entryPath)
-    {
+    while (parent && parent.path !== entryPath) {
         name = `${parent.filename}/${name}`;
         parent = parent.parent;
     }
@@ -202,32 +184,29 @@ function collectAssets(
     bundles: PixiBundle[],
     bundle: PixiBundle,
     tags: AssetPipe<null, 'manifest' | 'mIgnore'>['tags'],
-    internalTags: Record<string, any>
-)
-{
+    internalTags: Record<string, any>,
+) {
     if (asset.skip) return;
     // an item may have been deleted, so we don't want to add it to the manifest!
     if (asset.state === 'deleted') return;
 
     let localBundle = bundle;
 
-    if (asset.metaData[tags!.manifest!])
-    {
+    if (asset.metaData[tags!.manifest!]) {
         localBundle = {
-            name: options.nameStyle === 'relative' ? getRelativeBundleName(asset, entryPath) : stripTags(asset.filename),
-            assets: []
+            name:
+                options.nameStyle === 'relative' ? getRelativeBundleName(asset, entryPath) : stripTags(asset.filename),
+            assets: [],
         };
 
         // This property helps rename duplicate bundle declarations
         // Also, mark it as non-enumerable to prevent fs from including it into output
-        if (options.nameStyle !== 'relative')
-        {
+        if (options.nameStyle !== 'relative') {
             Object.defineProperty(localBundle, 'relativeName', {
                 enumerable: false,
-                get()
-                {
+                get() {
                     return getRelativeBundleName(asset, entryPath);
-                }
+                },
             });
         }
 
@@ -237,19 +216,17 @@ function collectAssets(
     const bundleAssets = localBundle.assets;
     const finalAssets = asset.getFinalTransformedChildren();
 
-    if (asset.transformChildren.length > 0)
-    {
+    if (asset.transformChildren.length > 0) {
         const finalManifestAssets = finalAssets.filter((finalAsset) => !finalAsset.inheritedMetaData[tags!.mIgnore!]);
 
         if (finalManifestAssets.length === 0) return;
 
         const metadata = {
             tags: { ...asset.getInternalMetaData(internalTags) },
-            ...asset.getPublicMetaData(internalTags)
+            ...asset.getPublicMetaData(internalTags),
         } as Record<string, any>;
 
-        if (options.legacyMetaDataOutput)
-        {
+        if (options.legacyMetaDataOutput) {
             metadata.tags = asset.allMetaData;
         }
 
@@ -258,31 +235,28 @@ function collectAssets(
             src: finalManifestAssets
                 .map((finalAsset) => path.relative(outputPath, finalAsset.path))
                 .sort((a, b) => b.localeCompare(a)),
-            data:  options.includeMetaData ? metadata : undefined
+            data: options.includeMetaData ? metadata : undefined,
         });
     }
 
-    asset.children.forEach((child) =>
-    {
+    asset.children.forEach((child) => {
         collectAssets(child, options, outputPath, entryPath, bundles, localBundle, tags, internalTags);
     });
 
     // for all assets.. check for atlas and remove them from the bundle..
 }
 
-function getShortNames(name: string, options: PixiManifestOptions)
-{
+function getShortNames(name: string, options: PixiManifestOptions) {
     const createShortcuts = options.createShortcuts;
     const trimExtensions = options.trimExtensions;
 
     const allNames = [];
 
     allNames.push(name);
-    /* eslint-disable @typescript-eslint/no-unused-expressions */
+
     trimExtensions && allNames.push(path.trimExt(name));
     createShortcuts && allNames.push(path.basename(name));
     createShortcuts && trimExtensions && allNames.push(path.trimExt(path.basename(name)));
-    /* eslint-enable @typescript-eslint/no-unused-expressions */
 
     // remove duplicates
     const uniqueNames = new Set(allNames);

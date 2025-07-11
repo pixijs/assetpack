@@ -4,10 +4,8 @@ import { createAssetPipe } from '../utils/index.js';
 
 import type { AssetPackConfig } from '../../src/core/config.js';
 
-describe('AssetPack Config', () =>
-{
-    it('should apply default config', async () =>
-    {
+describe('AssetPack Config', () => {
+    it('should apply default config', async () => {
         const assetpack = new AssetPack({});
 
         expect(assetpack.config).toEqual({
@@ -22,30 +20,25 @@ describe('AssetPack Config', () =>
         });
     });
 
-    it('should merge configs correctly', async () =>
-    {
+    it('should merge configs correctly', async () => {
         const plugin = createAssetPipe({ test: true });
         const baseConfig: AssetPackConfig = {
             entry: 'src/old',
             output: 'dist/old',
             ignore: ['scripts/**/*'],
-            pipes: [
-                plugin
-            ]
+            pipes: [plugin],
         };
 
         const assetpack = new AssetPack(baseConfig);
 
         expect(assetpack.config).toEqual({
             entry: 'src/old',
-            output:  'dist/old',
+            output: 'dist/old',
             ignore: ['scripts/**/*'],
             cache: true,
             cacheLocation: '.assetpack',
             logLevel: 'info',
-            pipes: [
-                plugin
-            ],
+            pipes: [plugin],
             strict: false,
         });
     });

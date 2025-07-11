@@ -1,9 +1,11 @@
-export function getManifestName(path: string, entry: string): string | null
-{
+export function getManifestName(path: string, entry: string): string | null {
     // Get the string after the entry path
     const val = path.replace(entry, '');
     // Get the string after the last /{m}/
-    const res = val.split('/').filter((v: string) => v.match(/{m}/) !== null).at(-1) as string;
+    const res = val
+        .split('/')
+        .filter((v: string) => v.match(/{m}/) !== null)
+        .at(-1) as string;
 
     if (!res) return null;
 

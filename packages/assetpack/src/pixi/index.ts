@@ -23,8 +23,7 @@ import type { TexturePackerOptions } from '../texture-packer/texturePacker.js';
 /**
  * Options for the AssetpackPlugin.
  */
-export interface PixiAssetPack
-{
+export interface PixiAssetPack {
     cacheBust?: boolean;
     resolutions?: Record<string, number>;
     compression?: CompressOptions | false;
@@ -57,8 +56,7 @@ const defaultConfig: PixiAssetPack = {
  * Returns an array of plugins that can be used by AssetPack to process assets
  * for a PixiJS project.
  */
-export function pixiPipes(config: PixiAssetPack)
-{
+export function pixiPipes(config: PixiAssetPack) {
     const apConfig: Required<PixiAssetPack> = merge.recursive(defaultConfig, config);
 
     // don't merge the resolutions, just overwrite them
@@ -85,8 +83,7 @@ export function pixiPipes(config: PixiAssetPack)
         }),
     ] as AssetPipe[];
 
-    if (apConfig.compression !== false)
-    {
+    if (apConfig.compression !== false) {
         pipes.push(
             compress(apConfig.compression),
             spineAtlasCompress(apConfig.compression),
@@ -96,8 +93,7 @@ export function pixiPipes(config: PixiAssetPack)
 
     pipes.push(json());
 
-    if (apConfig.cacheBust)
-    {
+    if (apConfig.cacheBust) {
         pipes.push(cacheBuster(), spineAtlasCacheBuster(), texturePackerCacheBuster());
     }
 
@@ -106,10 +102,7 @@ export function pixiPipes(config: PixiAssetPack)
         ...apConfig.manifest,
     };
 
-    pipes.push(
-        pixiManifest(manifestOptions),
-        spineAtlasManifestMod(manifestOptions),
-    );
+    pipes.push(pixiManifest(manifestOptions), spineAtlasManifestMod(manifestOptions));
 
     return pipes;
 }

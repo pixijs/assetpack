@@ -14,8 +14,7 @@ import type { AssetPackConfig } from './config.js';
 import type { AssetPipe } from './pipes/AssetPipe.js';
 import type { AssetSettings } from './pipes/PipeSystem.js';
 
-export class AssetPack
-{
+export class AssetPack {
     private _defaultConfig: AssetPackConfig = {
         entry: './static',
         output: './dist',
@@ -46,8 +45,7 @@ export class AssetPack
      */
     private _onWatchInitialTransformComplete: ((value: unknown) => void) | undefined;
 
-    constructor(config: AssetPackConfig = {})
-    {
+    constructor(config: AssetPackConfig = {}) {
         this.config = merge.recursive(true, this._defaultConfig, config);
         this._entryPath = normalizePath(this.config.entry as string);
         this._outputPath = normalizePath(this.config.output as string);
@@ -64,13 +62,10 @@ export class AssetPack
 
         // if there is no cache, lets just go ahead and remove the output folder
         // and the cached info folder
-        if (!cache)
-        {
+        if (!cache) {
             fs.removeSync(this._outputPath);
             fs.removeSync(cacheLocation!);
-        }
-        else
-        {
+        } else {
             // create the asset cache, this is used to store the asset graph information
             // so if you restart the process, it can pick up where it left off
             assetCache = new AssetCache({
@@ -79,12 +74,9 @@ export class AssetPack
 
             // read the cache data, this will be used to restore the asset graph
             // by the AssetWatcher
-            if (assetCache.exists())
-            {
+            if (assetCache.exists()) {
                 BuildReporter.info('[AssetPack] cache found.');
-            }
-            else
-            {
+            } else {
                 BuildReporter.warn('[AssetPack] cache not found, clearing output folder');
 
                 // to be safe - lets nuke the folder as the cache is empty
@@ -102,7 +94,7 @@ export class AssetPack
         this._pipeSystem = new PipeSystem({
             outputPath: this._outputPath,
             entryPath: this._entryPath,
-            pipes: [...pipes as AssetPipe[], finalCopyPipe],
+            pipes: [...(pipes as AssetPipe[]), finalCopyPipe],
         });
 
         // create the asset watcher, this is used to watch the file system for changes
@@ -116,24 +108,20 @@ export class AssetPack
             entryPath: this._entryPath,
             assetCache,
             ignore: this.config.ignore,
-            assetSettingsData: this.config.assetSettings as AssetSettings[] || [],
-            onUpdate: async (root: Asset) =>
-            {
+            assetSettingsData: (this.config.assetSettings as AssetSettings[]) || [],
+            onUpdate: async (root: Asset) => {
                 BuildReporter.report({
                     type: 'buildProgress',
                     phase: 'transform',
-                    message: '0'
+                    message: '0',
                 });
 
-                await this._transform(root).catch((e) =>
-                {
+                await this._transform(root).catch((e) => {
                     BuildReporter.error(`[AssetPack] Transform failed: ${e.message}`);
                 });
             },
-            onComplete: async (root: Asset) =>
-            {
-                if (cache)
-                {
+            onComplete: async (root: Asset) => {
+                if (cache) {
                     // write back to the cache...
                     (assetCache as AssetCache).write(root);
 
@@ -150,22 +138,20 @@ export class AssetPack
 
                 // if the watch method was called, we need to resolve the promise
                 // that was created when the watch method was called
-                if (this._onWatchInitialTransformComplete)
-                {
+                if (this._onWatchInitialTransformComplete) {
                     this._onWatchInitialTransformComplete(root);
 
                     // clear the promise resolve function, so it only gets resolved once
                     this._onWatchInitialTransformComplete = undefined;
                 }
-            }
+            },
         });
     }
 
     /**
      * Run the asset pack, this will transform all the assets and resolve when it's done
      */
-    public async run()
-    {
+    public async run() {
         await this._assetWatcher.run();
     }
 
@@ -176,16 +162,14 @@ export class AssetPack
      * @param onComplete - optional callback that will be called after each time asset pack has finished transforming the assets
      * @returns a promise that will resolve when the first time asset pack has finished transforming the assets
      */
-    public watch(onComplete?: (root: Asset) => void)
-    {
+    public watch(onComplete?: (root: Asset) => void) {
         this._onWatchTransformComplete = onComplete;
 
-        const onCompletePromise = new Promise((resolve) =>
-        {
+        const onCompletePromise = new Promise((resolve) => {
             this._onWatchInitialTransformComplete = resolve;
         });
 
-        this._assetWatcher.watch();
+        void this._assetWatcher.watch();
 
         return onCompletePromise;
     }
@@ -193,18 +177,15 @@ export class AssetPack
     /**
      * Stop the asset pack, this will stop the watcher
      */
-    public stop()
-    {
+    public stop() {
         return this._assetWatcher.stop();
     }
 
-    public get rootAsset()
-    {
+    public get rootAsset() {
         return this._assetWatcher.root;
     }
 
-    private async _transform(asset: Asset)
-    {
+    private async _transform(asset: Asset) {
         await this._pipeSystem.start(asset);
 
         const assetsToTransform: Asset[] = [];
@@ -213,97 +194,81 @@ export class AssetPack
 
         let index = 0;
 
-        const all = assetsToTransform.map((asset) =>
-            (async () =>
-            {
-                if (asset.skip) return;
+        const all = assetsToTransform.map((asset) => async () => {
+            if (asset.skip) return;
 
-                const stats = asset.stats = {
-                    date: Date.now(),
-                    duration: 0,
-                    success: true,
-                } as TransformStats;
+            const stats = (asset.stats = {
+                date: Date.now(),
+                duration: 0,
+                success: true,
+            } as TransformStats);
 
-                const now = performance.now();
+            const now = performance.now();
 
-                await this._pipeSystem.transform(asset).catch((e) =>
-                {
-                    stats.success = false;
-                    stats.error = e.message;
+            await this._pipeSystem.transform(asset).catch((e) => {
+                stats.success = false;
+                stats.error = e.message;
 
-                    // eslint-disable-next-line max-len
-                    BuildReporter.error(`[AssetPack] Transform failed:\ntransform: ${e.name}\nasset:${asset.path}\nerror:${e.message}`);
-                });
+                BuildReporter.error(
+                    `[AssetPack] Transform failed:\ntransform: ${e.name}\nasset:${asset.path}\nerror:${e.message}`,
+                );
+            });
 
-                stats.duration = performance.now() - now;
+            stats.duration = performance.now() - now;
 
-                index++;
+            index++;
 
-                const percent = Math.round((index / assetsToTransform.length) * 100);
+            const percent = Math.round((index / assetsToTransform.length) * 100);
 
-                BuildReporter.report({
-                    type: 'buildProgress',
-                    phase: 'transform',
-                    message: percent.toString()
-                });
-            }));
+            BuildReporter.report({
+                type: 'buildProgress',
+                phase: 'transform',
+                message: percent.toString(),
+            });
+        });
 
         await promiseAllConcurrent(all, 5);
 
         await this._pipeSystem.finish(asset);
     }
 
-    private deleteAndCollectAssetsToTransform(asset: Asset, output: Asset[])
-    {
-        if (asset.state !== 'normal')
-        {
-            if (asset.state === 'deleted')
-            {
-                deleteAssetFiles(asset);
-            }
-            else
-            {
+    private deleteAndCollectAssetsToTransform(asset: Asset, output: Asset[]) {
+        if (asset.state !== 'normal') {
+            if (asset.state === 'deleted') {
+                void deleteAssetFiles(asset);
+            } else {
                 output.push(asset);
             }
 
-            for (let i = 0; i < asset.children.length; i++)
-            {
+            for (let i = 0; i < asset.children.length; i++) {
                 this.deleteAndCollectAssetsToTransform(asset.children[i], output);
             }
         }
     }
 }
 
-export async function deleteAssetFiles(asset: Asset)
-{
-    asset.transformChildren.forEach((child) =>
-    {
+export async function deleteAssetFiles(asset: Asset) {
+    asset.transformChildren.forEach((child) => {
         _deleteAsset(child);
     });
 }
 
-function _deleteAsset(asset: Asset)
-{
-    asset.transformChildren.forEach((child) =>
-    {
+function _deleteAsset(asset: Asset) {
+    asset.transformChildren.forEach((child) => {
         _deleteAsset(child);
     });
 
-    if (!asset.isFolder)
-    {
+    if (!asset.isFolder) {
         fs.removeSync(asset.path);
     }
 }
 
-function normalizePath(pth: string)
-{
+function normalizePath(pth: string) {
     pth = path.normalizeTrim(pth);
 
-    if (!path.isAbsolute(pth))
-    {
+    if (!path.isAbsolute(pth)) {
         pth = path.normalizeTrim(path.join(process.cwd(), pth));
     }
 
     return pth;
 }
-

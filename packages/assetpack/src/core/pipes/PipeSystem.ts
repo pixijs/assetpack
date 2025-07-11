@@ -5,22 +5,19 @@ import { multiPipe } from './multiPipe.js';
 import type { Asset } from '../Asset.js';
 import type { AssetPipe, Tags } from './AssetPipe.js';
 
-export interface PipeSystemOptions
-{
+export interface PipeSystemOptions {
     pipes: (AssetPipe | AssetPipe[])[];
     outputPath: string;
     entryPath: string;
 }
 
-export interface AssetSettings
-{
-    files: string[],
-    settings?: Record<string, any>,
-    metaData?: Record<Tags, boolean> | Record<string, any>,
+export interface AssetSettings {
+    files: string[];
+    settings?: Record<string, any>;
+    metaData?: Record<Tags, boolean> | Record<string, any>;
 }
 
-export class PipeSystem
-{
+export class PipeSystem {
     pipes: AssetPipe[] = [];
     pipeHash: Record<string, AssetPipe> = {};
     outputPath: string;
@@ -33,28 +30,28 @@ export class PipeSystem
         ignore: 'ignore',
     };
 
-    constructor(options: PipeSystemOptions)
-    {
+    constructor(options: PipeSystemOptions) {
         const pipes = [];
 
-        for (let i = 0; i < options.pipes.length; i++)
-        {
+        for (let i = 0; i < options.pipes.length; i++) {
             const pipe = options.pipes[i];
 
-            if (Array.isArray(pipe))
-            {
+            if (Array.isArray(pipe)) {
                 pipes.push(multiPipe({ pipes: pipe }));
-            }
-            else
-            {
+            } else {
                 pipes.push(pipe);
             }
         }
 
-        options.pipes.flat().forEach((pipe) =>
-        {
+        options.pipes.flat().forEach((pipe) => {
             this.pipeHash[pipe.name] = pipe;
-            this.internalMetaData = { ...this.internalMetaData, ...Object.values(pipe.internalTags ?? pipe.tags ?? {}).reduce((acc, tag) => ({ ...acc, [tag]: true }), {}) };
+            this.internalMetaData = {
+                ...this.internalMetaData,
+                ...Object.values(pipe.internalTags ?? pipe.tags ?? {}).reduce(
+                    (acc, tag) => ({ ...acc, [tag]: true }),
+                    {},
+                ),
+            };
         });
 
         this.pipes = pipes;
@@ -63,15 +60,12 @@ export class PipeSystem
         this.entryPath = options.entryPath;
     }
 
-    async transform(asset: Asset): Promise<void>
-    {
+    async transform(asset: Asset): Promise<void> {
         await this._transform(asset, 0);
     }
 
-    private async _transform(asset: Asset, pipeIndex = 0): Promise<void>
-    {
-        if (pipeIndex >= this.pipes.length)
-        {
+    private async _transform(asset: Asset, pipeIndex = 0): Promise<void> {
+        if (pipeIndex >= this.pipes.length) {
             return;
         }
 
@@ -81,8 +75,7 @@ export class PipeSystem
 
         // if the asset has the copy tag on it, then the only pipe that should be run is the final copy pipe
         // this is to ensure that the asset is copied to the output directory without any other processing
-        if (asset.allMetaData.copy && pipe !== finalCopyPipe)
-        {
+        if (asset.allMetaData.copy && pipe !== finalCopyPipe) {
             await this._transform(asset, this.pipes.length - 1);
 
             return;
@@ -90,8 +83,7 @@ export class PipeSystem
 
         const options = mergePipeOptions(pipe, asset);
 
-        if (options !== false && pipe.transform && pipe.test?.(asset, options))
-        {
+        if (options !== false && pipe.transform && pipe.test?.(asset, options)) {
             asset.transformName = pipe.name;
             asset.transformChildren = [];
 
@@ -99,10 +91,8 @@ export class PipeSystem
 
             const promises: Promise<void>[] = [];
 
-            for (const transformAsset of assets)
-            {
-                if (asset !== transformAsset)
-                {
+            for (const transformAsset of assets) {
+                if (asset !== transformAsset) {
                     asset.addTransformChild(transformAsset);
                 }
 
@@ -110,42 +100,32 @@ export class PipeSystem
             }
 
             await Promise.all(promises);
-        }
-        else
-        {
+        } else {
             await this._transform(asset, pipeIndex);
         }
     }
 
-    async start(rootAsset: Asset)
-    {
-        for (let i = 0; i < this.pipes.length; i++)
-        {
+    async start(rootAsset: Asset) {
+        for (let i = 0; i < this.pipes.length; i++) {
             const pipe = this.pipes[i];
 
-            if (pipe.start)
-            {
+            if (pipe.start) {
                 await pipe.start(rootAsset, pipe.defaultOptions, this);
             }
         }
     }
 
-    async finish(rootAsset: Asset)
-    {
-        for (let i = 0; i < this.pipes.length; i++)
-        {
+    async finish(rootAsset: Asset) {
+        for (let i = 0; i < this.pipes.length; i++) {
             const pipe = this.pipes[i];
 
-            if (pipe.finish)
-            {
+            if (pipe.finish) {
                 await pipe.finish(rootAsset, pipe.defaultOptions, this);
             }
         }
     }
 
-    getPipe(name: string): AssetPipe
-    {
+    getPipe(name: string): AssetPipe {
         return this.pipeHash[name];
     }
 }
-

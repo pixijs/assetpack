@@ -4,10 +4,8 @@ import { PipeSystem } from '../../src/core/pipes/PipeSystem.js';
 
 import type { AssetPipe } from '../../src/core/pipes/AssetPipe.js';
 
-describe('PipeSystem', () =>
-{
-    it('should transform an asset', async () =>
-    {
+describe('PipeSystem', () => {
+    it('should transform an asset', async () => {
         const asset = new Asset({
             path: 'test.png',
             isFolder: false,
@@ -16,8 +14,7 @@ describe('PipeSystem', () =>
         const dummyPipe: AssetPipe = {
             name: 'dummy',
             defaultOptions: {},
-            transform: async (_asset: Asset) =>
-            {
+            transform: async (_asset: Asset) => {
                 const newAsset = new Asset({
                     path: 'test@2x.png',
                 });
@@ -28,8 +25,7 @@ describe('PipeSystem', () =>
 
                 return [newAsset, newAsset2];
             },
-            test: (_asset: Asset) =>
-                true
+            test: (_asset: Asset) => true,
         };
 
         const pipeSystem = new PipeSystem({

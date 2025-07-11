@@ -3,27 +3,24 @@ import { Reporter } from './Reporter.js';
 import type { LogLevelKeys } from './logLevel.js';
 import type { ReporterEvent } from './Reporter.js';
 
-export interface BuildReporterOptions
-{
+export interface BuildReporterOptions {
     level: LogLevelKeys;
     strict: boolean;
 }
 /** @deprecated Use BuildReporterOptions instead */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface LoggerOptions extends BuildReporterOptions {}
 
-class BuildReporterClass
-{
+class BuildReporterClass {
     private _reporter: Reporter = new Reporter();
     private strict = false;
 
-    public init(options: BuildReporterOptions)
-    {
+    public init(options: BuildReporterOptions) {
         this._reporter.level = options.level || 'info';
         this.strict = options.strict;
     }
 
-    public verbose(message: string)
-    {
+    public verbose(message: string) {
         this.report({
             type: 'log',
             level: 'verbose',
@@ -31,13 +28,11 @@ class BuildReporterClass
         });
     }
 
-    public log(message: string)
-    {
+    public log(message: string) {
         this.info(message);
     }
 
-    public info(message: string)
-    {
+    public info(message: string) {
         this.report({
             type: 'log',
             level: 'info',
@@ -45,23 +40,20 @@ class BuildReporterClass
         });
     }
 
-    public error(message: string)
-    {
+    public error(message: string) {
         this.report({
             type: 'log',
             level: 'error',
             message,
         });
 
-        if (this.strict)
-        {
+        if (this.strict) {
             this.report({ type: 'buildFailure' });
             process.exit(1);
         }
     }
 
-    public warn(message: string)
-    {
+    public warn(message: string) {
         this.report({
             type: 'log',
             level: 'warn',
@@ -69,8 +61,7 @@ class BuildReporterClass
         });
     }
 
-    public report(event: ReporterEvent)
-    {
+    public report(event: ReporterEvent) {
         this._reporter.report(event);
     }
 }

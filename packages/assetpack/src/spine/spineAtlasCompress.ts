@@ -8,8 +8,9 @@ export type SpineAtlasCompressOptions = Omit<CompressOptions, 'jpg'>;
 
 export type SpineAtlasCompressTags = 'nc';
 
-export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetPipe<SpineAtlasCompressOptions, SpineAtlasCompressTags>
-{
+export function spineAtlasCompress(
+    _options?: SpineAtlasCompressOptions,
+): AssetPipe<SpineAtlasCompressOptions, SpineAtlasCompressTags> {
     return {
         name: 'spine-atlas-compress',
         defaultOptions: {
@@ -20,20 +21,17 @@ export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetP
                 astc: false,
                 bc7: false,
                 basis: false,
-                etc: false
+                etc: false,
             },
             ..._options,
         },
         tags: {
             nc: 'nc',
         },
-        test(asset: Asset)
-        {
-            return !asset.allMetaData[this.tags!.nc]
-                && checkExt(asset.path, '.atlas');
+        test(asset: Asset) {
+            return !asset.allMetaData[this.tags!.nc] && checkExt(asset.path, '.atlas');
         },
-        async transform(asset: Asset, options)
-        {
+        async transform(asset: Asset, options) {
             const formats: Array<[format: string, extension: string]> = [];
 
             if (options.avif) formats.push(['avif', '.avif']);
@@ -48,14 +46,12 @@ export function spineAtlasCompress(_options?: SpineAtlasCompressOptions): AssetP
 
             const textures = atlas.getTextures();
 
-            const assets = formats.map(([format, extension]) =>
-            {
+            const assets = formats.map(([format, extension]) => {
                 const newAtlas = new AtlasView(asset.buffer);
 
                 const newFileName = swapExt(asset.filename, `.${format}.atlas`);
 
-                textures.forEach((texture) =>
-                {
+                textures.forEach((texture) => {
                     newAtlas.replaceTexture(texture, swapExt(texture, extension));
                 });
 

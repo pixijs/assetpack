@@ -13,9 +13,7 @@ import type { AssetPackConfig } from '../config.js';
  * @param options - The asset pack config
  * @returns - A unique name based on the hash generated from the config
  */
-export function generateCacheName(options: AssetPackConfig)
-{
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function generateCacheName(options: AssetPackConfig) {
     const { pipes, cache, logLevel, ...configWithoutPlugins } = options;
 
     const optionsToHash: any = {
@@ -23,8 +21,7 @@ export function generateCacheName(options: AssetPackConfig)
     };
 
     // get pipes
-    pipes?.flat().forEach((pipe) =>
-    {
+    pipes?.flat().forEach((pipe) => {
         optionsToHash[pipe.name] = pipe.defaultOptions;
     });
 

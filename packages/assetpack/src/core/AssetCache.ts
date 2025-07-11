@@ -3,8 +3,7 @@ import { path } from './utils/path.js';
 
 import type { Asset, TransformStats } from './Asset.js';
 
-export interface AssetCacheOptions
-{
+export interface AssetCacheOptions {
     cacheName?: string;
 }
 
@@ -12,8 +11,7 @@ export interface AssetCacheOptions
  * Interface representing the Asset Cache.
  * This interface defines the methods required for reading from and writing to the asset cache.
  */
-export interface IAssetCache
-{
+export interface IAssetCache {
     /**
      * Reads the asset cache and returns a record of cached assets.
      * @returns {Record<string, CachedAsset>} A record containing the cached assets.
@@ -33,43 +31,35 @@ export interface IAssetCache
     exists(): boolean;
 }
 
-export class AssetCache implements IAssetCache
-{
+export class AssetCache implements IAssetCache {
     public static location = '.assetpack';
     private _assetCacheData: AssetCacheData | undefined;
     private _cacheName: string;
 
-    constructor({ cacheName }: AssetCacheOptions = {})
-    {
+    constructor({ cacheName }: AssetCacheOptions = {}) {
         this._cacheName = cacheName ?? 'assets';
     }
 
-    exists()
-    {
+    exists() {
         return fs.existsSync(`${AssetCache.location}/${this._cacheName}.json`);
     }
 
     // save a file to disk
-    read()
-    {
+    read() {
         if (this._assetCacheData) return this._assetCacheData.assets;
 
-        try
-        {
+        try {
             this._assetCacheData = fs.readJSONSync(`${AssetCache.location}/${this._cacheName}.json`) as AssetCacheData;
 
             return this._assetCacheData.assets;
-        }
-        catch (e)
-        {
+        } catch (_e) {
             return {};
         }
     }
 
-    write(asset: Asset)
-    {
+    write(asset: Asset) {
         const schema: AssetCacheData = {
-            assets: {}
+            assets: {},
         };
 
         this._serializeAsset(asset, schema.assets, true);
@@ -83,26 +73,22 @@ export class AssetCache implements IAssetCache
         this._assetCacheData = schema;
     }
 
-    private _serializeAsset(asset: Asset, schema: AssetCacheData['assets'], saveHash = false)
-    {
+    private _serializeAsset(asset: Asset, schema: AssetCacheData['assets'], saveHash = false) {
         const serializeAsset: CachedAsset = this.toCacheData(asset, saveHash);
 
         schema[asset.path] = serializeAsset;
 
-        asset.children.forEach((child) =>
-        {
+        asset.children.forEach((child) => {
             this._serializeAsset(child, schema, true);
         });
 
-        asset.transformChildren.forEach((child) =>
-        {
+        asset.transformChildren.forEach((child) => {
             // we don't care about hashes for transformed children!
             this._serializeAsset(child, schema);
         });
     }
 
-    private toCacheData(asset: Asset, saveHash: boolean): CachedAsset
-    {
+    private toCacheData(asset: Asset, saveHash: boolean): CachedAsset {
         const data: CachedAsset = {
             isFolder: asset.isFolder,
             parent: asset.parent?.path,
@@ -110,11 +96,10 @@ export class AssetCache implements IAssetCache
             metaData: { ...asset.metaData },
             inheritedMetaData: { ...asset.inheritedMetaData },
             transformData: { ...asset.transformData },
-            stats: asset.stats ? { ...asset.stats } : undefined
+            stats: asset.stats ? { ...asset.stats } : undefined,
         };
 
-        if (!asset.isFolder && saveHash)
-        {
+        if (!asset.isFolder && saveHash) {
             data.hash = asset.hash;
         }
 
@@ -122,8 +107,7 @@ export class AssetCache implements IAssetCache
     }
 }
 
-export interface CachedAsset
-{
+export interface CachedAsset {
     isFolder: boolean;
     hash?: string;
     parent: string | undefined;

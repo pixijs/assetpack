@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { Asset } from '../../src/core/Asset.js';
 
-describe('Asset', () =>
-{
-    it('should extract metadata from filename tags', async () =>
-    {
+describe('Asset', () => {
+    it('should extract metadata from filename tags', async () => {
         const asset = new Asset({
             path: 'folder{fi}/test{foo}.png',
             isFolder: false,
@@ -17,8 +15,7 @@ describe('Asset', () =>
         });
     });
 
-    it('child asset should inherit metadata', async () =>
-    {
+    it('child asset should inherit metadata', async () => {
         const folderAsset = new Asset({
             path: 'folder{fi}',
             isFolder: false,
@@ -45,8 +42,7 @@ describe('Asset', () =>
         });
     });
 
-    it('transformed child asset should inherit metadata', async () =>
-    {
+    it('transformed child asset should inherit metadata', async () => {
         const originalAsset = new Asset({
             path: 'test{fi}.png',
             isFolder: false,

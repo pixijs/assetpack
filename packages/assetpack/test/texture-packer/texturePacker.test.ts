@@ -11,10 +11,8 @@ import type { File } from '../utils/index.js';
 
 const pkg = 'texture-packer';
 
-describe('Texture Packer', () =>
-{
-    it('should create a sprite sheet', async () =>
-    {
+describe('Texture Packer', () => {
+    it('should create a sprite sheet', async () => {
         const testName = 'tp-simple';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -22,7 +20,8 @@ describe('Texture Packer', () =>
         createTPSFolder(testName, pkg);
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -30,8 +29,8 @@ describe('Texture Packer', () =>
                     resolutionOptions: {
                         resolutions: { default: 1 },
                     },
-                })
-            ]
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -52,8 +51,7 @@ describe('Texture Packer', () =>
         expect(existsSync(`${outputDir}/sprites`)).toBe(false);
     });
 
-    it('should create a sprite sheet: power of two', async () =>
-    {
+    it('should create a sprite sheet: power of two', async () => {
         const testName = 'tp-pot';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -61,7 +59,8 @@ describe('Texture Packer', () =>
         createTPSFolder(testName, pkg);
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -72,8 +71,8 @@ describe('Texture Packer', () =>
                     resolutionOptions: {
                         resolutions: { default: 1 },
                     },
-                })
-            ]
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -94,8 +93,7 @@ describe('Texture Packer', () =>
         expect(existsSync(`${outputDir}/sprites`)).toBe(false);
     });
 
-    it('should adjust the size of the textures outputted based on maximumTextureSize', async () =>
-    {
+    it('should adjust the size of the textures outputted based on maximumTextureSize', async () => {
         const testName = 'tp-max-size';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -105,7 +103,8 @@ describe('Texture Packer', () =>
         const size = 512;
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -114,8 +113,8 @@ describe('Texture Packer', () =>
                         resolutions: { default: 1, low: 0.5 },
                         maximumTextureSize: size,
                     },
-                })
-            ]
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -130,8 +129,7 @@ describe('Texture Packer', () =>
         expect(sheet2.meta.size.h).toBeLessThanOrEqual(size);
     });
 
-    it('should override default texture packer options', async () =>
-    {
+    it('should override default texture packer options', async () => {
         const testName = 'tp-custom';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -139,7 +137,8 @@ describe('Texture Packer', () =>
         createTPSFolder(testName, pkg);
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -149,9 +148,9 @@ describe('Texture Packer', () =>
                     },
                     texturePacker: {
                         textureName: 'something',
-                    }
-                })
-            ]
+                    },
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -163,8 +162,7 @@ describe('Texture Packer', () =>
         expect(json).toBe(true);
     });
 
-    it('should override default texture packer options (resolutions)', async () =>
-    {
+    it('should override default texture packer options (resolutions)', async () => {
         const testName = 'tp-custom-res';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -172,7 +170,8 @@ describe('Texture Packer', () =>
         createTPSFolder(testName, pkg);
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -183,9 +182,9 @@ describe('Texture Packer', () =>
                     },
                     texturePacker: {
                         removeFileExtension: true,
-                    }
-                })
-            ]
+                    },
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -201,13 +200,13 @@ describe('Texture Packer', () =>
         const sheet2Data = fs.readJSONSync(`${outputDir}/sprites@2x.json`);
         const sheet3Data = fs.readJSONSync(`${outputDir}/sprites@0.5x.json`);
 
-        expect(sheet2Data.frames['sprite0'].frame).toEqual({ x: 200, y: 432, w: 136, h: 196 });
+        expect(sheet2Data.frames.sprite0.frame).toEqual({ x: 200, y: 432, w: 136, h: 196 });
         expect(sheet2Data.meta.size).toEqual({ w: 545, h: 570 });
         expect(sheet2Data.meta.scale).toEqual(2);
-        expect(sheet1Data.frames['sprite0'].frame).toEqual({ x: 104, y: 227, w: 70, h: 101 });
+        expect(sheet1Data.frames.sprite0.frame).toEqual({ x: 104, y: 227, w: 70, h: 101 });
         expect(sheet1Data.meta.size).toEqual({ w: 284, h: 299 });
         expect(sheet1Data.meta.scale).toEqual(1);
-        expect(sheet3Data.frames['sprite0'].frame).toEqual({ x: 56, y: 90, w: 36, h: 52 });
+        expect(sheet3Data.frames.sprite0.frame).toEqual({ x: 56, y: 90, w: 36, h: 52 });
         expect(sheet3Data.meta.size).toEqual({ w: 157, h: 162 });
         expect(sheet3Data.meta.scale).toEqual(0.5);
 
@@ -225,35 +224,31 @@ describe('Texture Packer', () =>
         expect(meta3.height).toEqual(162);
     });
 
-    it('should allow tags to be overridden', async () =>
-    {
+    it('should allow tags to be overridden', async () => {
         const testName = 'tp-tag-override';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         const sprites: File[] = [];
 
-        for (let i = 0; i < 10; i++)
-        {
+        for (let i = 0; i < 10; i++) {
             sprites.push({
                 name: `sprite${i}.png`,
                 content: assetPath(`image/sp-${i + 1}.png`),
             });
         }
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{random}',
-                        files: sprites,
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{random}',
+                    files: sprites,
+                    folders: [],
+                },
+            ],
+        });
 
         const tps = texturePacker({
             resolutionOptions: {
@@ -263,12 +258,11 @@ describe('Texture Packer', () =>
 
         tps.tags!.tps = 'random';
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                tps
-            ]
+            pipes: [tps],
         });
 
         await assetpack.run();
@@ -287,8 +281,7 @@ describe('Texture Packer', () =>
         expect(sheet2Exists).toBe(false);
     });
 
-    it('should create mip spritesheets', async () =>
-    {
+    it('should create mip spritesheets', async () => {
         const testName = 'tp-mip';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -296,12 +289,11 @@ describe('Texture Packer', () =>
         createTPSFolder(testName, pkg);
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                texturePacker(),
-            ]
+            pipes: [texturePacker()],
         });
 
         await assetpack.run();
@@ -323,49 +315,44 @@ describe('Texture Packer', () =>
         expect(sheetJson.meta.size).toEqual(expectedSize);
     });
 
-    it('should resize spritesheet to fixed resolution', async () =>
-    {
+    it('should resize spritesheet to fixed resolution', async () => {
         const testName = 'tp-fix';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         const sprites: File[] = [];
 
-        for (let i = 0; i < 10; i++)
-        {
+        for (let i = 0; i < 10; i++) {
             sprites.push({
                 name: `sprite${i}.png`,
                 content: assetPath(`image/sp-${i + 1}.png`),
             });
         }
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{fix}',
-                        files: [],
-                        folders: [
-                            {
-                                name: 'sprites{tps}',
-                                files: sprites,
-                                folders: [],
-                            },
-                        ],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{fix}',
+                    files: [],
+                    folders: [
+                        {
+                            name: 'sprites{tps}',
+                            files: sprites,
+                            folders: [],
+                        },
+                    ],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                texturePacker({ resolutionOptions: { fixedResolution: 'low' } }),
-            ]
+            pipes: [texturePacker({ resolutionOptions: { fixedResolution: 'low' } })],
         });
 
         await assetpack.run();
@@ -385,49 +372,44 @@ describe('Texture Packer', () =>
         expect(img3).toBe(false);
     });
 
-    it('should not create any mipmaps for the spritesheet', async () =>
-    {
+    it('should not create any mipmaps for the spritesheet', async () => {
         const testName = 'tp-nomip';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         const sprites: File[] = [];
 
-        for (let i = 0; i < 10; i++)
-        {
+        for (let i = 0; i < 10; i++) {
             sprites.push({
                 name: `sprite${i}.png`,
                 content: assetPath(`image/sp-${i + 1}.png`),
             });
         }
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{nomip}',
-                        files: [],
-                        folders: [
-                            {
-                                name: 'sprites{tps}',
-                                files: sprites,
-                                folders: [],
-                            },
-                        ],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{nomip}',
+                    files: [],
+                    folders: [
+                        {
+                            name: 'sprites{tps}',
+                            files: sprites,
+                            folders: [],
+                        },
+                    ],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                texturePacker({ resolutionOptions: { fixedResolution: 'low' } }),
-            ]
+            pipes: [texturePacker({ resolutionOptions: { fixedResolution: 'low' } })],
         });
 
         await assetpack.run();
@@ -447,43 +429,38 @@ describe('Texture Packer', () =>
         expect(img3).toBe(false);
     });
 
-    it('should create jpg spritesheets', async () =>
-    {
+    it('should create jpg spritesheets', async () => {
         const testName = 'tp-jpg';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         const sprites: File[] = [];
 
-        for (let i = 0; i < 10; i++)
-        {
+        for (let i = 0; i < 10; i++) {
             sprites.push({
                 name: `sprite${i}.png`,
                 content: assetPath(`image/sp-${i + 1}.png`),
             });
         }
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{tps}{jpg}',
-                        files: sprites,
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}{jpg}',
+                    files: sprites,
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                texturePacker(),
-            ]
+            pipes: [texturePacker()],
         });
 
         await assetpack.run();
@@ -497,82 +474,78 @@ describe('Texture Packer', () =>
         expect(sheet3).toBe(false);
     });
 
-    it('should create short names in sprite sheets', async () =>
-    {
+    it('should create short names in sprite sheets', async () => {
         const testName = 'tp-short-names';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         const sprites: File[] = [];
 
-        for (let i = 0; i < 10; i++)
-        {
+        for (let i = 0; i < 10; i++) {
             sprites.push({
                 name: `sprite${i}.png`,
                 content: assetPath(`image/sp-${i + 1}.png`),
             });
         }
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{tps}',
-                        files: sprites,
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}',
+                    files: sprites,
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
                 texturePacker({
                     resolutionOptions: { resolutions: { default: 1 } },
                 }),
-            ]
+            ],
         });
 
         await assetpack.run();
 
         const json = fs.readJSONSync(`${outputDir}/sprites.json`);
 
-        for (let i = 0; i < 10; i++)
-        {
+        for (let i = 0; i < 10; i++) {
             expect(json.frames[`sprite${i}.png`]).toBeDefined();
         }
     });
 
-    it('should pack an empty texture if trim is true', async () =>
-    {
+    it('should pack an empty texture if trim is true', async () => {
         const testName = 'tp-empty';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{tps}',
-                        files: [{
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}',
+                    files: [
+                        {
                             name: `empty-texture.png`,
                             content: assetPath(`image/empty-texture.png`),
-                        }],
-                        folders: []
-                    },
-                ],
-            });
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -580,8 +553,8 @@ describe('Texture Packer', () =>
                     resolutionOptions: {
                         resolutions: { default: 1 },
                     },
-                })
-            ]
+                }),
+            ],
         });
 
         await assetpack.run();
@@ -593,7 +566,7 @@ describe('Texture Packer', () =>
                 x: 2,
                 y: 2,
                 w: 1,
-                h: 35
+                h: 35,
             },
             rotated: false,
             trimmed: false,
@@ -601,52 +574,49 @@ describe('Texture Packer', () =>
                 x: 0,
                 y: 0,
                 w: 1,
-                h: 35
+                h: 35,
             },
             sourceSize: {
                 w: 1,
-                h: 35
-            }
+                h: 35,
+            },
         });
     });
 
-    it('should throw warning if sprite sheet frames have the same name', async () =>
-    {
+    it('should throw warning if sprite sheet frames have the same name', async () => {
         const testName = 'tp-short-names-clash';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         const sprites: File[] = [];
 
-        for (let i = 0; i < 10; i++)
-        {
+        for (let i = 0; i < 10; i++) {
             sprites.push({
                 name: `sprite${i}.png`,
                 content: assetPath(`image/sp-${i + 1}.png`),
             });
         }
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{tps}',
-                        files: sprites,
-                        folders: [],
-                    },
-                    {
-                        name: 'sprites-copy{tps}',
-                        files: sprites,
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}',
+                    files: sprites,
+                    folders: [],
+                },
+                {
+                    name: 'sprites-copy{tps}',
+                    files: sprites,
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -656,25 +626,28 @@ describe('Texture Packer', () =>
                         nameStyle: 'short',
                     },
                 }),
-            ]
+            ],
         });
 
         // Mock console.warn
-        const mockWarn = vi.spyOn(BuildReporter, 'warn').mockImplementation(() => { /**/ });
+        const mockWarn = vi.spyOn(BuildReporter, 'warn').mockImplementation(() => {
+            /**/
+        });
 
         await assetpack.run();
 
         // Check if console.warn was called
         expect(mockWarn).toHaveBeenCalled();
-        // eslint-disable-next-line max-len
-        expect(mockWarn).toHaveBeenCalledWith(`[AssetPack][texturePacker] Texture Packer Shortcut clash detected for sprite9.png, sprite8.png, sprite7.png, sprite6.png, sprite5.png, sprite4.png, sprite3.png, sprite2.png, sprite1.png, sprite0.png. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`); // Adjust this line based on expected message
+
+        expect(mockWarn).toHaveBeenCalledWith(
+            `[AssetPack][texturePacker] Texture Packer Shortcut clash detected for sprite9.png, sprite8.png, sprite7.png, sprite6.png, sprite5.png, sprite4.png, sprite3.png, sprite2.png, sprite1.png, sprite0.png. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`,
+        ); // Adjust this line based on expected message
 
         // Restore console.warn
         mockWarn.mockRestore();
     });
 
-    it('should handle smaller than 3x3 textures if trimming is enabled', async () =>
-    {
+    it('should handle smaller than 3x3 textures if trimming is enabled', async () => {
         const testName = 'tp-small-trim';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -691,29 +664,28 @@ describe('Texture Packer', () =>
             content: assetPath(`image/2x2-small-empty-texture.png`),
         });
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'sprites{tps}',
-                        files: sprites,
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}',
+                    files: sprites,
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
                 texturePacker({
                     resolutionOptions: { resolutions: { default: 1 } },
                 }),
-            ]
+            ],
         });
 
         // Mock console.warn
@@ -727,7 +699,7 @@ describe('Texture Packer', () =>
                 x: 140,
                 y: 2,
                 w: 2,
-                h: 2
+                h: 2,
             },
             rotated: false,
             trimmed: false,
@@ -735,14 +707,12 @@ describe('Texture Packer', () =>
                 x: 0,
                 y: 0,
                 w: 2,
-                h: 2
+                h: 2,
             },
             sourceSize: {
                 w: 2,
-                h: 2
-            }
-        },
-        );
+                h: 2,
+            },
+        });
     });
 });
-

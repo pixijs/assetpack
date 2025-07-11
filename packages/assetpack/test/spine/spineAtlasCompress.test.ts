@@ -7,37 +7,34 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'spine';
 
-describe('Spine Atlas Compress', () =>
-{
-    it('should correctly cache the files names with compressed atlas', async () =>
-    {
+describe('Spine Atlas Compress', () => {
+    it('should correctly cache the files names with compressed atlas', async () => {
         const testName = 'spine-atlas-compress';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -45,14 +42,14 @@ describe('Spine Atlas Compress', () =>
                     png: true,
                     jpg: true,
                     webp: true,
-                    astc: true
+                    astc: true,
                 }),
                 spineAtlasCompress({
                     png: true,
                     webp: true,
-                    astc: true
+                    astc: true,
                 }),
-            ]
+            ],
         });
 
         await assetpack.run();

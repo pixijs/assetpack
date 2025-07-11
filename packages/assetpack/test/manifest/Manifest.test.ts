@@ -13,12 +13,10 @@ import type { File } from '../utils/index.js';
 
 const pkg = 'manifest';
 
-function genSprites(total = 10)
-{
+function genSprites(total = 10) {
     const sprites: File[] = [];
 
-    for (let i = 0; i < total; i++)
-    {
+    for (let i = 0; i < total; i++) {
         sprites.push({
             name: `sprite${i}.png`,
             content: assetPath(`image/sp-${i + 1}.png`),
@@ -28,18 +26,15 @@ function genSprites(total = 10)
     return sprites;
 }
 
-describe('Manifest', () =>
-{
-    it('should gather all transformed spritesheet files even if split into multiple files', async () =>
-    {
+describe('Manifest', () => {
+    it('should gather all transformed spritesheet files even if split into multiple files', async () => {
         const testName = 'manifest-spritesheet';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
         const useCache = false;
 
-        if (!useCache)
-        {
+        if (!useCache) {
             createFolder(pkg, {
                 name: testName,
                 files: [],
@@ -171,7 +166,7 @@ describe('Manifest', () =>
                         'bundle/sprite@0.5x.astc.ktx',
                         'bundle/sprite.webp',
                         'bundle/sprite.png',
-                        'bundle/sprite.astc.ktx'
+                        'bundle/sprite.astc.ktx',
                     ],
                     data: {
                         tags: {
@@ -187,7 +182,7 @@ describe('Manifest', () =>
                         'bundle/tps-0@0.5x.astc.json',
                         'bundle/tps-0.webp.json',
                         'bundle/tps-0.png.json',
-                        'bundle/tps-0.astc.json'
+                        'bundle/tps-0.astc.json',
                     ],
                     data: {
                         tags: {
@@ -203,8 +198,8 @@ describe('Manifest', () =>
                                 'sprite3.png',
                                 'sprite2.png',
                                 'sprite1.png',
-                                'sprite0.png'
-                            ]
+                                'sprite0.png',
+                            ],
                         },
                         frameNames: [
                             'sprite9.png',
@@ -216,9 +211,9 @@ describe('Manifest', () =>
                             'sprite3.png',
                             'sprite2.png',
                             'sprite1.png',
-                            'sprite0.png'
-                        ]
-                    }
+                            'sprite0.png',
+                        ],
+                    },
                 },
             ],
         });
@@ -260,8 +255,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should copy over files and add them to manifest', async () =>
-    {
+    it('should copy over files and add them to manifest', async () => {
         const testName = 'manifest-copy';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -406,8 +400,7 @@ describe('Manifest', () =>
         });
     }, 30000);
 
-    it('should try to add a shortcut to the names of each entry', async () =>
-    {
+    it('should try to add a shortcut to the names of each entry', async () => {
         const testName = 'manifest-shortcut';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -555,8 +548,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should not include spine atlas textures', async () =>
-    {
+    it('should not include spine atlas textures', async () => {
         const testName = 'manifest-shortcut-atlas-textures';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -623,8 +615,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should not trim extensions in manifest names', async () =>
-    {
+    it('should not trim extensions in manifest names', async () => {
         const testName = 'manifest-shortcut-no-trim';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -772,8 +763,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should not remove base path in manifest names', async () =>
-    {
+    it('should not remove base path in manifest names', async () => {
         const testName = 'manifest-shortcut-no-base';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -921,8 +911,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should use the correct output path', async () =>
-    {
+    it('should use the correct output path', async () => {
         const testName = 'manifest-output';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -963,8 +952,7 @@ describe('Manifest', () =>
         expect(existsSync(`${outputDir}/manifest2.json`)).toBe(true);
     });
 
-    it('should ensure sub-manifests are created correctly', async () =>
-    {
+    it('should ensure sub-manifests are created correctly', async () => {
         const testName = 'manifest-sub-manifest';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -1038,8 +1026,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should ensure sub-manifests are created correctly with short names', async () =>
-    {
+    it('should ensure sub-manifests are created correctly with short names', async () => {
         const testName = 'manifest-sub-manifest-short';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -1152,8 +1139,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should ensure sub-manifests are created correctly with relative names', async () =>
-    {
+    it('should ensure sub-manifests are created correctly with relative names', async () => {
         const testName = 'manifest-sub-manifest-relative';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -1268,8 +1254,7 @@ describe('Manifest', () =>
         });
     });
 
-    it('should ignore files with the mIgnore tag', async () =>
-    {
+    it('should ignore files with the mIgnore tag', async () => {
         const testName = 'manifest-ignore';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -1321,22 +1306,16 @@ describe('Manifest', () =>
     });
 });
 
-function sortObjectProperties(obj: any)
-{
+function sortObjectProperties(obj: any) {
     return Object.keys(obj)
         .sort()
-        .reduce((acc: any, key: string) =>
-        {
+        .reduce((acc: any, key: string) => {
             const value = obj[key];
 
-            if (typeof value === 'object' && !Array.isArray(value) && value !== null)
-            {
+            if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
                 acc[key] = sortObjectProperties(value);
-            }
-            else
-            {
-                if (Array.isArray(value))
-                {
+            } else {
+                if (Array.isArray(value)) {
                     value.sort();
                 }
 

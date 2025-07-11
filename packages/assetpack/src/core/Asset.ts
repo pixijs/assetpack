@@ -4,8 +4,7 @@ import { extractTagsFromFileName } from './utils/extractTagsFromFileName.js';
 import { getHash } from './utils/getHash.js';
 import { path } from './utils/path.js';
 
-export interface TransformStats
-{
+export interface TransformStats {
     /* The duration of the transformation */
     duration: number;
     /* The last time the asset was transformed */
@@ -16,15 +15,13 @@ export interface TransformStats
     error?: string;
 }
 
-export interface AssetOptions
-{
+export interface AssetOptions {
     path: string;
     transformName?: string;
     isFolder?: boolean;
 }
 
-export class Asset
-{
+export class Asset {
     private _defaultOptions: AssetOptions = {
         path: '',
         isFolder: false,
@@ -57,8 +54,7 @@ export class Asset
 
     private _hash?: string;
 
-    constructor(options: AssetOptions)
-    {
+    constructor(options: AssetOptions) {
         options = { ...this._defaultOptions, ...options };
 
         this.path = options.path;
@@ -69,8 +65,7 @@ export class Asset
         extractTagsFromFileName(this.filename, this.metaData);
     }
 
-    addChild(asset: Asset)
-    {
+    addChild(asset: Asset) {
         this.children.push(asset);
 
         asset.parent = this;
@@ -79,12 +74,10 @@ export class Asset
         asset.transformData = { ...this.transformData, ...asset.transformData };
     }
 
-    removeChild(asset: Asset)
-    {
+    removeChild(asset: Asset) {
         const index = this.children.indexOf(asset);
 
-        if (index !== -1)
-        {
+        if (index !== -1) {
             this.children.splice(index, 1);
             asset.parent = null;
         }
@@ -92,8 +85,7 @@ export class Asset
         asset.releaseChildrenBuffers();
     }
 
-    addTransformChild(asset: Asset)
-    {
+    addTransformChild(asset: Asset) {
         this.transformChildren.push(asset);
 
         asset.transformParent = this;
@@ -104,108 +96,89 @@ export class Asset
         asset.settings = this.settings;
     }
 
-    get allMetaData()
-    {
+    get allMetaData() {
         return { ...this.inheritedMetaData, ...this.metaData };
     }
 
-    get state()
-    {
+    get state() {
         return this._state;
     }
 
-    set state(value)
-    {
+    set state(value) {
         if (this._state === value) return;
         this._state = value;
 
         this._hash = undefined;
     }
 
-    get buffer(): Buffer
-    {
-        if (this.isFolder)
-        {
+    get buffer(): Buffer {
+        if (this.isFolder) {
             BuildReporter.error('[AssetPack] folders should not have buffers!. Contact the developer of AssetPack');
         }
 
-        if (!this._buffer)
-        {
+        if (!this._buffer) {
             this._buffer = fs.readFileSync(this.path);
         }
 
         return this._buffer;
     }
 
-    set buffer(value: Buffer | null)
-    {
+    set buffer(value: Buffer | null) {
         this._buffer = value;
 
         this._hash = undefined;
     }
 
-    get hash()
-    {
-        if (this.isFolder)
-        {
+    get hash() {
+        if (this.isFolder) {
             BuildReporter.error('[AssetPack] folders should not have hashes. Contact the developer of the AssetPack');
         }
 
-        try
-        {
+        try {
             this._hash ??= getHash(this.buffer);
+        } catch (_error) {
+            /* empty */
         }
-        catch (error)
-        { /* empty */ }
 
         return this._hash;
     }
 
-    get filename()
-    {
+    get filename() {
         return path.basename(this.path);
     }
 
-    get directory()
-    {
+    get directory() {
         return path.dirname(this.path);
     }
 
-    get extension()
-    {
+    get extension() {
         return path.extname(this.path);
     }
 
-    get rootAsset()
-    {
+    get rootAsset() {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         let asset: Asset = this;
 
-        while (asset.parent)
-        {
+        while (asset.parent) {
             asset = asset.parent;
         }
 
         return asset;
     }
 
-    get rootTransformAsset()
-    {
+    get rootTransformAsset() {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         let asset: Asset = this;
 
-        while (asset.transformParent)
-        {
+        while (asset.transformParent) {
             asset = asset.transformParent;
         }
 
         return asset;
     }
 
-    skipChildren()
-    {
-        for (let i = 0; i < this.children.length; i++)
-        {
+    skipChildren() {
+        for (let i = 0; i < this.children.length; i++) {
             const child = this.children[i];
 
             child.skip = true;
@@ -213,33 +186,25 @@ export class Asset
         }
     }
 
-    getFinalTransformedChildren(asset: Asset = this, finalChildren: Asset[] = []): Asset[]
-    {
-        if (asset.transformChildren.length > 0)
-        {
-            for (let i = 0; i < asset.transformChildren.length; i++)
-            {
+    getFinalTransformedChildren(asset: Asset = this, finalChildren: Asset[] = []): Asset[] {
+        if (asset.transformChildren.length > 0) {
+            for (let i = 0; i < asset.transformChildren.length; i++) {
                 const child = asset.transformChildren[i];
 
                 this.getFinalTransformedChildren(child, finalChildren);
             }
-        }
-        else
-        {
+        } else {
             finalChildren.push(asset);
         }
 
         return finalChildren;
     }
 
-    markParentAsModified(asset: Asset = this)
-    {
+    markParentAsModified(asset: Asset = this) {
         const parent = asset.parent;
 
-        if (parent)
-        {
-            if (parent.state === 'normal')
-            {
+        if (parent) {
+            if (parent.state === 'normal') {
                 parent.state = 'modified';
             }
 
@@ -251,12 +216,10 @@ export class Asset
      * Release all buffers from this asset and its transformed children
      * this is to make sure we don't hold onto buffers that are no longer needed!
      */
-    releaseBuffers()
-    {
+    releaseBuffers() {
         this.buffer = null;
 
-        for (let i = 0; i < this.transformChildren.length; i++)
-        {
+        for (let i = 0; i < this.transformChildren.length; i++) {
             this.transformChildren[i].releaseBuffers();
         }
     }
@@ -264,11 +227,9 @@ export class Asset
     /**
      * Release all buffers from this asset and its children
      */
-    releaseChildrenBuffers()
-    {
+    releaseChildrenBuffers() {
         this.releaseBuffers();
-        for (let i = 0; i < this.children.length; i++)
-        {
+        for (let i = 0; i < this.children.length; i++) {
             this.children[i].releaseChildrenBuffers();
         }
     }
@@ -277,30 +238,27 @@ export class Asset
      * Get the public meta data for this asset
      * This will exclude any internal data
      */
-    getPublicMetaData(internalPipeData: Record<string, any>)
-    {
+    getPublicMetaData(internalPipeData: Record<string, any>) {
         const internalKeys = new Set(Object.keys(internalPipeData));
-        const metaData = Object.keys(this.allMetaData).reduce((result: Record<string, any>, key) =>
-        {
-            if (!internalKeys.has(key))
-            {
-                result[key] = this.allMetaData[key];
-            }
+        const metaData = Object.keys(this.allMetaData).reduce(
+            (result: Record<string, any>, key) => {
+                if (!internalKeys.has(key)) {
+                    result[key] = this.allMetaData[key];
+                }
 
-            return result;
-        }, {} as Record<string, any>);
+                return result;
+            },
+            {} as Record<string, any>,
+        );
 
         return metaData;
     }
 
-    getInternalMetaData(internalPipeData: Record<string, any>)
-    {
+    getInternalMetaData(internalPipeData: Record<string, any>) {
         const res: Record<string, any> = {};
 
-        Object.keys(internalPipeData).forEach((key) =>
-        {
-            if (this.allMetaData[key])
-            {
+        Object.keys(internalPipeData).forEach((key) => {
+            if (this.allMetaData[key]) {
                 res[key] = this.allMetaData[key];
             }
         });
@@ -308,4 +266,3 @@ export class Asset
         return res;
     }
 }
-

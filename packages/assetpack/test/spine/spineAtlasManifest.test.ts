@@ -7,47 +7,41 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'spine';
 
-describe('Atlas Manifest', () =>
-{
-    it('should allow for options to be overridden', async () =>
-    {
+describe('Atlas Manifest', () => {
+    it('should allow for options to be overridden', async () => {
         const testName = 'manifest';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.json',
-                        content: assetPath('spine/dragon.json'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.json',
+                    content: assetPath('spine/dragon.json'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                pixiManifest(),
-                spineAtlasManifestMod(),
-            ]
+            pipes: [pixiManifest(), spineAtlasManifestMod()],
         });
 
         await assetpack.run();
@@ -60,165 +54,133 @@ describe('Atlas Manifest', () =>
                     name: 'default',
                     assets: [
                         {
-                            alias: [
-                                'dragon.json'
-                            ],
-                            src: [
-                                'dragon.json'
-                            ],
+                            alias: ['dragon.json'],
+                            src: ['dragon.json'],
                             data: {
-                                tags: {}
-                            }
+                                tags: {},
+                            },
                         },
                         {
-                            alias: [
-                                'dragon.atlas'
-                            ],
-                            src: [
-                                'dragon.atlas'
-                            ],
+                            alias: ['dragon.atlas'],
+                            src: ['dragon.atlas'],
                             data: {
                                 spine: true,
                                 tags: {
-                                    spine: true
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
+                                    spine: true,
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
         });
     });
 
-    it('should allow for options to be overridden and the assets are nested', async () =>
-    {
+    it('should allow for options to be overridden and the assets are nested', async () => {
         const testName = 'manifest-nested';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.json',
-                        content: assetPath('spine/dragon.json'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-                ],
-                folders: [
-                    {
-                        name: 'nested',
-                        files: [
-                            {
-                                name: 'dragon{spine}.atlas',
-                                content: assetPath('spine/dragon.atlas'),
-                            },
-                            {
-                                name: 'dragon.json',
-                                content: assetPath('spine/dragon.json'),
-                            },
-                            {
-                                name: 'dragon.png',
-                                content: assetPath('spine/dragon.png'),
-                            },
-                            {
-                                name: 'dragon2.png',
-                                content: assetPath('spine/dragon2.png'),
-                            },
-                        ],
-                        folders: []
-                    }
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.json',
+                    content: assetPath('spine/dragon.json'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [
+                {
+                    name: 'nested',
+                    files: [
+                        {
+                            name: 'dragon{spine}.atlas',
+                            content: assetPath('spine/dragon.atlas'),
+                        },
+                        {
+                            name: 'dragon.json',
+                            content: assetPath('spine/dragon.json'),
+                        },
+                        {
+                            name: 'dragon.png',
+                            content: assetPath('spine/dragon.png'),
+                        },
+                        {
+                            name: 'dragon2.png',
+                            content: assetPath('spine/dragon2.png'),
+                        },
+                    ],
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                pixiManifest(),
-                spineAtlasManifestMod(),
-            ]
+            pipes: [pixiManifest(), spineAtlasManifestMod()],
         });
 
         await assetpack.run();
 
         const manifest = JSON.parse(readFileSync(`${outputDir}/manifest.json`).toString());
 
-        expect(manifest).toEqual(
-            {
-                bundles: [
-                    {
-                        name: 'default',
-                        assets: [
-                            {
-                                alias: [
-                                    'dragon.json'
-                                ],
-                                src: [
-                                    'dragon.json'
-                                ],
-                                data: {
-                                    tags: {}
-                                }
+        expect(manifest).toEqual({
+            bundles: [
+                {
+                    name: 'default',
+                    assets: [
+                        {
+                            alias: ['dragon.json'],
+                            src: ['dragon.json'],
+                            data: {
+                                tags: {},
                             },
-                            {
-                                alias: [
-                                    'dragon.atlas'
-                                ],
-                                src: [
-                                    'dragon.atlas'
-                                ],
-                                data: {
+                        },
+                        {
+                            alias: ['dragon.atlas'],
+                            src: ['dragon.atlas'],
+                            data: {
+                                spine: true,
+                                tags: {
                                     spine: true,
-                                    tags: {
-                                        spine: true
-                                    }
-                                }
+                                },
                             },
-                            {
-                                alias: [
-                                    'nested/dragon.json'
-                                ],
-                                src: [
-                                    'nested/dragon.json'
-                                ],
-                                data: {
-                                    tags: {}
-                                }
+                        },
+                        {
+                            alias: ['nested/dragon.json'],
+                            src: ['nested/dragon.json'],
+                            data: {
+                                tags: {},
                             },
-                            {
-                                alias: [
-                                    'nested/dragon.atlas'
-                                ],
-                                src: [
-                                    'nested/dragon.atlas'
-                                ],
-                                data: {
+                        },
+                        {
+                            alias: ['nested/dragon.atlas'],
+                            src: ['nested/dragon.atlas'],
+                            data: {
+                                spine: true,
+                                tags: {
                                     spine: true,
-                                    tags: {
-                                        spine: true
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-
-        );
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+        });
     });
 });

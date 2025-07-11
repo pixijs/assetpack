@@ -6,8 +6,7 @@ import { fitTextureToPacker } from './fitTextureToPacker.js';
 import type { MaxRectsPacker, Rectangle } from 'maxrects-packer';
 import type { SharpProcessingOptions } from '../../image/types.js';
 
-export interface PixiRectData extends Rectangle
-{
+export interface PixiRectData extends Rectangle {
     textureData: TextureData;
     path: string;
 }
@@ -16,8 +15,7 @@ export type PixiPacker = MaxRectsPacker<PixiRectData>;
 
 export type TexturePackerFormat = 'png' | 'jpg';
 
-export interface TextureData
-{
+export interface TextureData {
     buffer: Buffer;
     originalWidth: number;
     originalHeight: number;
@@ -29,9 +27,8 @@ export interface TextureData
     trimmed: boolean;
 }
 
-export interface PackTexturesOptions
-{
-    texturesToPack: {path: string, contents: Buffer}[];
+export interface PackTexturesOptions {
+    texturesToPack: { path: string; contents: Buffer }[];
     textureName: string;
     padding?: number;
     fixedSize?: boolean;
@@ -39,26 +36,22 @@ export interface PackTexturesOptions
     width?: number;
     height?: number;
     allowTrim?: boolean;
-    allowRotation?: boolean
+    allowRotation?: boolean;
     alphaThreshold?: number;
     textureFormat?: TexturePackerFormat;
     scale?: number;
     resolution?: number;
     nameStyle?: 'short' | 'relative';
     removeFileExtension?: boolean;
-    sharpOptions?: SharpProcessingOptions
+    sharpOptions?: SharpProcessingOptions;
 }
 
-interface PackTexturesResult
-{
-    textures: {name: string, buffer: Buffer}[];
-    jsons: {name: string, json: any}[];
+interface PackTexturesResult {
+    textures: { name: string; buffer: Buffer }[];
+    jsons: { name: string; json: any }[];
 }
 
-export async function packTextures(
-    _options: PackTexturesOptions
-): Promise<PackTexturesResult>
-{
+export async function packTextures(_options: PackTexturesOptions): Promise<PackTexturesResult> {
     const options: Required<PackTexturesOptions> = {
         width: 1024,
         height: 1024,
@@ -91,7 +84,6 @@ export async function packTextures(
         // combine the textures into one big one with all the info we have
         textures: await createTextures(packer, width, height, options),
         // create the jsons for the textures
-        jsons: createJsons(packer, width, height, options)
+        jsons: createJsons(packer, width, height, options),
     };
 }
-
