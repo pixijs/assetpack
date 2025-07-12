@@ -46,14 +46,14 @@ These plugins generate signed distance field (SDF) and multi-channel signed dist
 <ImageToggle image={'webfonts/webfont-sdf'} />
 
 ```js
-import { sdf, msdf } from "@assetpack/core/webfont";
+import { sdfFont, msdfFont } from "@assetpack/core/webfont";
 
 export default {
   ...
   pipes: [
     ...
-    sdf(),
-    msdf(),
+    sdfFont(),
+    msdfFont(),
   ],
 };
 ```
