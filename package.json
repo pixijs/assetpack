@@ -12,7 +12,7 @@
     "clean": "rimraf dist **/*/.testInput **/*/.testOutput .assetpack packages/assetpack/test/cache/**/*",
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
-    "version": "node scripts/version.mjs",
+    "version:main": "node scripts/version.mjs",
     "version:branch": "VERSION=$VERSION npm run version:branch --workspace @assetpack/core",
     "release": "npm run release --workspace @assetpack/core",
     "release:branch": "PUBLISH_TAG=$PUBLISH_TAG npm run release:branch --workspace @assetpack/core",
