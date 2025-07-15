@@ -3,7 +3,7 @@ import { spawn } from './spawn.mjs';
 
 async function publish() {
     try {
-        const tag = process.env.XS_PUBLISH_TAG ?? 'latest';
+        const tag = process.env.PUBLISH_TAG ?? 'latest';
 
         console.log(`Publishing with tag: ${tag}`);
 
