@@ -53,7 +53,7 @@ export function spineAtlasCacheBuster(): AssetPipe {
                 const atlasView = new AtlasView(atlasAsset.buffer);
 
                 atlasView.getTextures().forEach((texture) => {
-                    const textureAssets = findAssets((asset) => asset.filename === texture, asset, true);
+                    const textureAssets = findAssets((asset) => asset.filename === texture && asset.rootTransformAsset.directory === atlasAsset.rootTransformAsset.directory, asset, true);
 
                     // last transformed child is the renamed texture
                     const cacheBustedTexture = textureAssets[0].getFinalTransformedChildren()[0];

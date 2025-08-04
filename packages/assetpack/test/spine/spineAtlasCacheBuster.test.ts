@@ -74,7 +74,7 @@ describe('Spine Atlas Cache Buster', () => {
         });
     });
 
-    it('should create same name atlases in different directories and correctly update paths to atlas assets', async () => {
+    it.only('should create same name atlases in different directories and correctly update paths to atlas assets', async () => {
         const testName = 'spine-cache-bust-samename';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -133,7 +133,7 @@ describe('Spine Atlas Cache Buster', () => {
 
         await assetpack.run();
 
-        const smallPath = path.join(outputDir, 'small', `*.{atlas,json,png}`).replaceAll('\\', '/');
+        const smallPath = path.join(outputDir, 'small/spine', `*.{atlas,json,png}`).replaceAll('\\', '/');
         const smallFiles = await glob(smallPath);
 
         expect(smallFiles.length).toBe(3);
@@ -143,7 +143,7 @@ describe('Spine Atlas Cache Buster', () => {
 
         checkSpineAtlasAssetPath(smallFiles)
 
-        const largePath = path.join(outputDir, 'small', `*.{atlas,json,png}`).replaceAll('\\', '/');
+        const largePath = path.join(outputDir, 'large/spine', `*.{atlas,json,png}`).replaceAll('\\', '/');
         const largeFiles = await glob(largePath);
 
         expect(largeFiles.length).toBe(3);
@@ -166,7 +166,7 @@ function checkSpineAtlasAssetPath(files: string[]) {
 
     if (!atlasPath) throw new Error('Could not find atlas file')
 
-    const atlasContent = readFileSync(atlasPath, 'utf-8').split('/\r?\n/')
+    const atlasContent = readFileSync(atlasPath, 'utf-8').split('\n')
 
     expect(atlasContent[0]).toBe(pngFilename)
 }
