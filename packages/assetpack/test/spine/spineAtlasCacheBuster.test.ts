@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs-extra';
 import { glob } from 'glob';
+import path from 'path';
 import { describe, expect, it } from 'vitest';
 import { cacheBuster } from '../../src/cache-buster/index.js';
 import { AssetPack } from '../../src/core/index.js';
@@ -7,7 +8,6 @@ import { spineAtlasCacheBuster } from '../../src/spine/spineAtlasCacheBuster.js'
 import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
 
 import type { File } from '../utils/index.js';
-import path from 'path';
 
 const pkg = 'spine';
 
@@ -79,17 +79,17 @@ describe('Spine Atlas Cache Buster', () => {
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        const spineFiles = ['main.atlas', 'skeleton.json', 'main.png']
+        const spineFiles = ['main.atlas', 'skeleton.json', 'main.png'];
 
-        const spineSmall: File[]  = spineFiles.map(file => ({
+        const spineSmall: File[] = spineFiles.map((file) => ({
             name: file,
-            content: assetPath(`spine/small-square/${file}`)
-        }))
+            content: assetPath(`spine/small-square/${file}`),
+        }));
 
-        const spineLarge: File[] = spineFiles.map(file => ({
+        const spineLarge: File[] = spineFiles.map((file) => ({
             name: `${file}`,
-            content: assetPath(`spine/large-square/${file}`)
-        }))
+            content: assetPath(`spine/large-square/${file}`),
+        }));
 
         createFolder(pkg, {
             name: testName,
@@ -125,10 +125,7 @@ describe('Spine Atlas Cache Buster', () => {
             cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                cacheBuster(),
-                spineAtlasCacheBuster()
-            ],
+            pipes: [cacheBuster(), spineAtlasCacheBuster()],
         });
 
         await assetpack.run();
@@ -141,7 +138,7 @@ describe('Spine Atlas Cache Buster', () => {
         expect(smallFiles.filter((file) => file.endsWith('.atlas')).length).toBe(1);
         expect(smallFiles.filter((file) => file.endsWith('.png')).length).toBe(1);
 
-        checkSpineAtlasAssetPath(smallFiles)
+        checkSpineAtlasAssetPath(smallFiles);
 
         const largePath = path.join(outputDir, 'large/spine', `*.{atlas,json,png}`).replaceAll('\\', '/');
         const largeFiles = await glob(largePath);
@@ -151,22 +148,22 @@ describe('Spine Atlas Cache Buster', () => {
         expect(largeFiles.filter((file) => file.endsWith('.atlas')).length).toBe(1);
         expect(largeFiles.filter((file) => file.endsWith('.png')).length).toBe(1);
 
-        checkSpineAtlasAssetPath(largeFiles)
+        checkSpineAtlasAssetPath(largeFiles);
     });
 });
 
 function checkSpineAtlasAssetPath(files: string[]) {
-    const pngPath = files.find(file => file.endsWith('.png'))
+    const pngPath = files.find((file) => file.endsWith('.png'));
 
-    if (!pngPath) throw new Error('Could not find png file')
+    if (!pngPath) throw new Error('Could not find png file');
 
-    const pngFilename = path.basename(pngPath)
+    const pngFilename = path.basename(pngPath);
 
-    const atlasPath = files.find(file => file.endsWith('.atlas'))
+    const atlasPath = files.find((file) => file.endsWith('.atlas'));
 
-    if (!atlasPath) throw new Error('Could not find atlas file')
+    if (!atlasPath) throw new Error('Could not find atlas file');
 
-    const atlasContent = readFileSync(atlasPath, 'utf-8').split('\n')
+    const atlasContent = readFileSync(atlasPath, 'utf-8').split('\n');
 
-    expect(atlasContent[0]).toBe(pngFilename)
+    expect(atlasContent[0]).toBe(pngFilename);
 }
