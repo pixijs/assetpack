@@ -238,8 +238,8 @@ describe('Texture Packer Cache Buster', () => {
         expect(bFiles.filter((file) => file.endsWith('.png')).length).toBe(3);
 
         // check that the files are correct
-        checkMutiPacks(aFiles, path.join(outputDir, 'a'));
-        checkMutiPacks(bFiles, path.join(outputDir, 'b'));
+        checkMultiPacks(aFiles, path.join(outputDir, 'a'));
+        checkMultiPacks(bFiles, path.join(outputDir, 'b'));
     });
 });
 
@@ -248,7 +248,7 @@ describe('Texture Packer Cache Buster', () => {
  * @param files
  * @param outputDir
  */
-function checkMutiPacks(files: string[], outputDir: string): boolean {
+function checkMultiPacks(files: string[], outputDir: string): boolean {
     const jsonFiles = files.filter((file) => file.endsWith('.json'));
     const pngFiles = files.filter((file) => file.endsWith('.png'));
 
