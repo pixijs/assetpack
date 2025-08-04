@@ -74,7 +74,7 @@ describe('Spine Atlas Cache Buster', () => {
         });
     });
 
-    it.only('should create same name atlases in different directories and correctly update paths to atlas assets', async () => {
+    it('should create same name atlases in different directories and correctly update paths to atlas assets', async () => {
         const testName = 'spine-cache-bust-samename';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
