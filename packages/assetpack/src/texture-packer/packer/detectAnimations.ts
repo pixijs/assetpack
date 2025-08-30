@@ -3,7 +3,7 @@ import { path } from '../../core/index.js';
 export function detectAnimations(frames: { [key: string]: any }): { [key: string]: string[] } {
     const frameNames = Object.keys(frames).sort();
 
-    const suffixRegex = /[-_](\d+)$/;
+    const suffixRegex = /(?:[-_]?)(\d+)$/;
 
     const frameGroups = frameNames.reduce<Record<string, string[]>>((acc, item) => {
         const key = path.trimExt(item).replace(suffixRegex, '');
