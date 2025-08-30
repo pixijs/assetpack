@@ -39,7 +39,7 @@ describe('Texture Packer', () => {
 
         const expectedAnim = ['png-1.png', 'png-2.png'];
 
-        expect(sheet1.animations.png).toEqual(expectedAnim);
+        expect(sheet1.animations).toEqual(expectedAnim);
 
         const expectedSize = {
             w: 545,
