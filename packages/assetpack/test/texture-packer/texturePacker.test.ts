@@ -37,11 +37,9 @@ describe('Texture Packer', () => {
 
         const sheet1 = fs.readJSONSync(`${outputDir}/sprites.json`);
 
-        const expectedPng = {
-            anim: ['png-1.png', 'png-2.png'],
-        };
+        const expectedAnim = ['png-1.png', 'png-2.png'];
 
-        expect(sheet1.animations.png).toEqual(expectedPng);
+        expect(sheet1.animations.png).toEqual(expectedAnim);
 
         const expectedSize = {
             w: 545,
