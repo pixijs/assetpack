@@ -31,6 +31,7 @@ AssetPack requires [Node.js](https://nodejs.org/en/) version 20+, please upgrade
 
 To set up AssetPack, you need to create a configuration file that defines what assets you want to optimise and how you want to optimise them.
 
+### For Node.js Versions < 20.19.0
 First create a `.assetpack.js` file in the root of your project. This file should export an object with the following properties:
 
 ```js
@@ -40,6 +41,29 @@ export default {
     output: './public/assets',
     pipes: [],
 };
+```
+
+### For Node.js Versions >= 20.19.0
+
+First create a `.assetpack.cjs` file in the root of your project. This file should export an object with the following properties:
+
+```js
+// .assetpack.cjs
+module.exports = {
+    entry: './raw-assets',
+    output: './public/assets',
+    pipes: [],
+};
+```
+
+You will need to update in the config path to your `package.json` scripts
+
+```json
+{
+  "scripts": {
+    "assetpack": "assetpack --config .assetpack.cjs"
+  }
+}
 ```
 
 To see the full list of configuration options, see the [API Reference](/docs/guide/configuration) page.
