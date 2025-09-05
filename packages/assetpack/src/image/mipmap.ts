@@ -27,8 +27,8 @@ const defaultMipmapOptions: Required<MipmapOptions> = {
     sharpOptions: {},
 };
 
-export function mipmap(_options: MipmapOptions = {}): AssetPipe<MipmapOptions, MipmapTags> {
-    const mipmap = resolveOptions(_options, defaultMipmapOptions);
+export function mipmap(defaultOptions: MipmapOptions = {}): AssetPipe<MipmapOptions, MipmapTags> {
+    const mipmap = resolveOptions(defaultOptions, defaultMipmapOptions);
 
     return {
         folder: true,

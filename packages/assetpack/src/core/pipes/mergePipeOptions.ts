@@ -10,5 +10,5 @@ export function mergePipeOptions<T extends PluginOptions>(pipe: AssetPipe<T>, as
 
     if (pipeSettings === false) return false;
 
-    return merge.recursive(pipe.defaultOptions, pipeSettings ?? {});
+    return merge.recursive(true, pipe.defaultOptions, pipeSettings ?? {});
 }

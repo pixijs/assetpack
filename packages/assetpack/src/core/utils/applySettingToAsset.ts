@@ -17,7 +17,7 @@ export function applySettingToAsset(asset: Asset, settings: AssetSettings[], ent
         const match = setting.files.some((item: string) => minimatch(relativePath, item, { dot: true }));
 
         if (match) {
-            assetOptions = merge.recursive(assetOptions ?? {}, setting.settings);
+            assetOptions = merge.recursive(true, assetOptions ?? {}, setting.settings);
             metaData = { ...(metaData ?? {}), ...setting.metaData };
         }
     }
