@@ -299,7 +299,7 @@ describe('Core', () => {
                     folders: [],
                 },
                 {
-                    name: 'defaultAgain',
+                    name: 'revert',
                     files: [
                         {
                             name: 'default.png',
