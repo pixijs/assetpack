@@ -6,6 +6,7 @@ import { cacheBuster } from '../../src/cache-buster/cacheBuster.js';
 import { AssetPack } from '../../src/core/AssetPack.js';
 import { getHash } from '../../src/core/index.js';
 import { logAssetGraph } from '../../src/core/utils/logAssetGraph.js';
+import { mipmap } from '../../src/image/mipmap.js';
 import { pixiManifest } from '../../src/manifest/pixiManifest.js';
 import { pixiPipes } from '../../src/pixi/index.js';
 import { assetPath, createAssetPipe, createFolder, getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
@@ -278,15 +279,34 @@ describe('Core', () => {
             files: [],
             folders: [
                 {
-                    name: 'anything',
-                    files: [],
-                    folders: [
+                    name: 'default',
+                    files: [
                         {
-                            name: 'test',
-                            files: [],
-                            folders: [],
+                            name: 'default.png',
+                            content: assetPath('image/png-1.png'),
                         },
                     ],
+                    folders: [],
+                },
+                {
+                    name: 'defaultLow',
+                    files: [
+                        {
+                            name: 'defaultLow.png',
+                            content: assetPath('image/png-1.png'),
+                        },
+                    ],
+                    folders: [],
+                },
+                {
+                    name: 'defaultAgain',
+                    files: [
+                        {
+                            name: 'default.png',
+                            content: assetPath('image/png-1.png'),
+                        },
+                    ],
+                    folders: [],
                 },
             ],
         });
@@ -303,14 +323,14 @@ describe('Core', () => {
             entry: inputDir,
             cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
-            pipes: [plugin],
+            pipes: [plugin, mipmap({ resolutions: { default: 1 } })],
             cache: false,
             assetSettings: [
                 {
-                    files: ['anything/**'],
+                    files: ['defaultLow/**'],
                     settings: {
-                        json: {
-                            test: 'test',
+                        mipmap: {
+                            resolutions: { default: 1, low: 0.5 },
                         },
                     },
                     metaData: [],
@@ -320,13 +340,13 @@ describe('Core', () => {
 
         await assetpack.run();
 
-        const rootAsset = assetpack['_assetWatcher']['_root'].children[0];
+        const rootAsset = assetpack['_assetWatcher']['_root'].children[1];
 
         logAssetGraph(rootAsset);
 
         expect(rootAsset.children[0].settings).toStrictEqual({
-            json: {
-                test: 'test',
+            mipmap: {
+                resolutions: { default: 1, low: 0.5 },
             },
         });
 
