@@ -49,6 +49,17 @@ const updatePackageVersion = async (packagePath, newVersion) => {
     console.log(`Updated ${packagePath} to version ${newVersion}`);
 };
 
+const updatePackageLockVersion = async (packageLockPath, newVersion) => {
+    const packageLockJson = await readJsonFile(packageLockPath);
+
+    if (packageLockJson['packages/assetpack']) {
+        packageLockJson['packages/assetpack'].version = newVersion;
+    }
+
+    await writeJsonFile(packageLockPath, packageLockJson);
+    console.log(`Updated ${packageLockPath} to version ${newVersion}`);
+};
+
 /**
  * Bump the version of the package and update all relevant package.json files
  * @returns {Promise<string>} The next version
@@ -67,17 +78,21 @@ const version = async () => {
 
         console.log(`Next version: ${nextVersion}`);
 
+        // Update assetpack package.json
+        const assetpackPackagePath = join(rootDir, 'packages', 'assetpack', 'package.json');
+        const assetpackPackageLockPath = join(rootDir, 'package-lock.json');
+
+        // Update root package.json using npm version command
+        console.log('Updating assetpack package.json...');
+        await updatePackageVersion(assetpackPackagePath, nextVersion);
+        await updatePackageLockVersion(assetpackPackageLockPath, nextVersion);
+        await spawn('git', ['add', '.']);
+        await spawn('git', ['commit', '-m', `chore: bump version to ${nextVersion}`]);
+
         // Update root package.json using npm version command
         console.log('Updating root package.json...');
         await spawn('npm', ['version', nextVersion]);
 
-        // Update assetpack package.json
-        const assetpackPackagePath = join(rootDir, 'packages', 'assetpack', 'package.json');
-
-        console.log('Updating assetpack package.json...');
-        await updatePackageVersion(assetpackPackagePath, nextVersion);
-        await spawn('git', ['add', assetpackPackagePath]);
-        await spawn('git', ['commit', '-m', `chore: bump version to ${nextVersion}`]);
         // push changes to git
         await spawn('git', ['push']);
         await spawn('git', ['push', '--tags']);
