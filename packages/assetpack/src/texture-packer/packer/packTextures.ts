@@ -43,6 +43,7 @@ export interface PackTexturesOptions {
     resolution?: number;
     nameStyle?: 'short' | 'relative';
     removeFileExtension?: boolean;
+    autodetectAnimations?: boolean;
     sharpOptions?: SharpProcessingOptions;
 }
 
@@ -66,6 +67,7 @@ export async function packTextures(_options: PackTexturesOptions): Promise<PackT
         resolution: 1,
         nameStyle: 'relative',
         removeFileExtension: false,
+        autodetectAnimations: true,
         sharpOptions: {},
         ..._options,
     };
