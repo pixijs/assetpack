@@ -241,7 +241,8 @@ function collectAssets(
 
         // Set up sorting options
         const isAscendingSort = options.srcSortOptions?.order === 'ascending';
-        let sortOptions: Intl.CollatorOptions | undefined = undefined;
+        let sortOptions: Intl.CollatorOptions | undefined;
+
         if (options.srcSortOptions !== undefined) {
             sortOptions = {
                 numeric: options.srcSortOptions?.numeric ?? false,
