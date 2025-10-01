@@ -45,6 +45,15 @@ export interface PixiManifestOptions extends PluginOptions {
      */
     nameStyle?: 'short' | 'relative';
     /**
+     * Options for sorting the `src` array of each manifest entry.
+     */
+    srcSortOptions?: {
+        /** The order to sort the `src` array with. */
+        order?: 'ascending' | 'descending';
+        /** If true, sorts numbers within strings in numerical order. */
+        numeric?: boolean;
+    };
+    /**
      * if true, the all tags will be outputted in the data.tags field of the manifest.
      * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
      * @example
@@ -230,11 +239,24 @@ function collectAssets(
             metadata.tags = asset.allMetaData;
         }
 
+        // Set up sorting options
+        const isAscendingSort = options.srcSortOptions?.order === 'ascending';
+        let sortOptions: Intl.CollatorOptions | undefined = undefined;
+        if (options.srcSortOptions !== undefined) {
+            sortOptions = {
+                numeric: options.srcSortOptions?.numeric ?? false,
+            };
+        }
+
         bundleAssets.push({
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
             src: finalManifestAssets
                 .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                .sort((a, b) => b.localeCompare(a)),
+                .sort((a, b) =>
+                    isAscendingSort
+                        ? a.localeCompare(b, undefined, sortOptions)
+                        : b.localeCompare(a, undefined, sortOptions),
+                ),
             data: options.includeMetaData ? metadata : undefined,
         });
     }
