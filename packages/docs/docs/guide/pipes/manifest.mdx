@@ -1,6 +1,7 @@
 ---
 sidebar_position: 5
 ---
+
 import { ImageToggle } from '@site/src/components/ImageToggle';
 
 # Manifest
@@ -14,17 +15,6 @@ We believe this plugin is a must-have for any PixiJS project, as it simplifies t
 ## Example
 
 <ImageToggle image={'manifest/manifest-tags'} height={750} />
-
-{/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: '24px' }}>
-    <img
-        src={'/assetpack/screenshots/manifest/manifest-tags.png'}
-        alt="Tags Example"
-        style={{
-            borderRadius: '12px',
-            boxShadow: '0 0 20px hsla(192, 84%, 40%, 0.5)',
-        }}
-    />
-</div> */}
 
 ```js
 import { pixiManifest } from "@assetpack/core/manifest";
@@ -40,6 +30,7 @@ export default {
       createShortcuts: false,
       trimExtensions: false,
       includeMetaData: true,
+      includeFileSizes: false
       nameStyle: 'short'
     })
   ],
@@ -48,13 +39,14 @@ export default {
 
 ## API
 
-| Option          | Type              | Description                                                                                    |
-| --------------- | ----------------- | ---------------------------------------------------------------------------------------------- |
-| output          | `string`          | The path to the manifest file.<br />Defaults to the output folder defined in your config.      |
-| createShortcuts | `boolean`         | Whether to create the shortest possible alias for an asset.<br />Defaults to `false`.          |
-| trimExtensions  | `boolean`         | Whether to trim the extensions from the asset aliases. <br />Defaults to `false`.              |
-| includeMetaData | `boolean`         | Whether to include the tags the asset has used in the manifest file. <br />Defaults to `true`. |
-| nameStyle       | `short\|relative` | The name style for the bundle names in the manifest file.<br />Defaults to `short`.            |
+| Option           | Type                 | Description                                                                                                                                                                                                                                                                        |
+| ---------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| output           | `string`             | The path to the manifest file.<br />Defaults to the output folder defined in your config.                                                                                                                                                                                          |
+| createShortcuts  | `boolean`            | Whether to create the shortest possible alias for an asset.<br />Defaults to `false`.                                                                                                                                                                                              |
+| trimExtensions   | `boolean`            | Whether to trim the extensions from the asset aliases. <br />Defaults to `false`.                                                                                                                                                                                                  |
+| includeMetaData  | `boolean`            | Whether to include the tags the asset has used in the manifest file. <br />Defaults to `true`.                                                                                                                                                                                     |
+| includeFileSizes | `false`/`gzip`/`raw` | Whether to include the file sizes of each asset in the manifest file. If enabled a `progressSize` attribute will be added to each assets src. This can then be used by external tools for progress bars, or calculating the size of a given bundle etc. <br />Defaults to `false`. |
+| nameStyle        | `short\|relative`    | The name style for the bundle names in the manifest file.<br />Defaults to `short`.                                                                                                                                                                                                |
 
 ## Tags
 
