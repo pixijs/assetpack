@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import zlib from 'node:zlib';
 import { BuildReporter, path, stripTags } from '../core/index.js';
 
 import type { Asset, AssetPipe, PipeSystem, PluginOptions } from '../core/index.js';
@@ -15,11 +16,12 @@ export interface PixiManifest {
 
 export interface PixiManifestEntry {
     alias: string | string[];
-    src: string | string[];
+    src: (string | { src: string; progressSize?: number })[];
     data?: {
         // tags: Tags;
         [x: string]: any;
     };
+    progressSize?: number;
 }
 
 export interface PixiManifestOptions extends PluginOptions {
@@ -39,6 +41,12 @@ export interface PixiManifestOptions extends PluginOptions {
      * if true, the metaData will be outputted in the data field of the manifest.
      */
     includeMetaData?: boolean;
+    /**
+     * if true, the file sizes of each asset will be included in the manifest.
+     * The sizes are in kilobytes (KB) and represent the gzipped size of each asset.
+     * @default true
+     */
+    includeFileSizes?: false | 'gzip' | 'raw';
     /**
      * The name style for asset bundles in the manifest file.
      * When set to relative, asset bundles will use their relative paths as names.
@@ -84,6 +92,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
             trimExtensions: false,
             includeMetaData: true,
             legacyMetaDataOutput: true,
+            includeFileSizes: false,
             nameStyle: 'short',
             ..._options,
         },
@@ -230,13 +239,46 @@ function collectAssets(
             metadata.tags = asset.allMetaData;
         }
 
-        bundleAssets.push({
+        const bundledAsset: PixiManifestEntry = {
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
             src: finalManifestAssets
-                .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                .sort((a, b) => b.localeCompare(a)),
+                .map((finalAsset) => {
+                    const src = path.relative(outputPath, finalAsset.path);
+                    let size: number;
+
+                    if (!options.includeFileSizes) {
+                        return src;
+                    }
+
+                    try {
+                        if (options.includeFileSizes === 'raw') {
+                            size = fs.statSync(finalAsset.path).size;
+                        } else {
+                            size = zlib.gzipSync(fs.readFileSync(finalAsset.path)).length;
+                        }
+                        size = Number((size / 1024).toFixed(2));
+                    } catch (_e) {
+                        BuildReporter.warn(
+                            `[AssetPack][manifest] Unable to get size for asset '${finalAsset.path}'. Skipping file size entry.`,
+                        );
+                        size = 1;
+                    }
+
+                    return {
+                        src,
+                        progressSize: size,
+                    };
+                })
+                .sort((a, b) => {
+                    const aSrc = typeof a === 'string' ? a : a.src;
+                    const bSrc = typeof b === 'string' ? b : b.src;
+
+                    return bSrc.localeCompare(aSrc);
+                }),
             data: options.includeMetaData ? metadata : undefined,
-        });
+        };
+
+        bundleAssets.push(bundledAsset);
     }
 
     asset.children.forEach((child) => {

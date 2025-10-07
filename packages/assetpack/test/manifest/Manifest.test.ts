@@ -253,6 +253,243 @@ describe('Manifest', () => {
                 },
             ],
         });
+    }, 15000);
+
+    it('should add filesize information to the manifest', async () => {
+        const testName = 'manifest-filesize';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        const useCache = false;
+
+        if (!useCache) {
+            createFolder(pkg, {
+                name: testName,
+                files: [],
+
+                folders: [
+                    {
+                        name: 'bundle{m}',
+                        files: [
+                            {
+                                name: 'json.json',
+                                content: assetPath('json/json.json'),
+                            },
+                            {
+                                name: 'json.json5',
+                                content: assetPath('json/json.json'),
+                            },
+                            {
+                                name: 'sprite.png',
+                                content: assetPath('image/sp-1.png'),
+                            },
+                        ],
+                        folders: [
+                            {
+                                name: 'tps{tps}',
+                                files: genSprites(),
+                                folders: [],
+                            },
+                        ],
+                    },
+                    {
+                        name: 'defaultFolder',
+                        files: [
+                            {
+                                name: '1.mp3',
+                                content: assetPath('audio/1.mp3'),
+                            },
+                            {
+                                name: '3.wav',
+                                content: assetPath('audio/3.wav'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                    {
+                        name: 'spine',
+                        files: [
+                            {
+                                name: 'dragon{spine}.atlas',
+                                content: assetPath('spine/dragon.atlas'),
+                            },
+                            {
+                                name: 'dragon.json',
+                                content: assetPath('spine/dragon.json'),
+                            },
+                            {
+                                name: 'dragon.png',
+                                content: assetPath('spine/dragon.png'),
+                            },
+                            {
+                                name: 'dragon2.png',
+                                content: assetPath('spine/dragon2.png'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                ],
+            });
+        }
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: useCache,
+            pipes: [
+                audio(),
+                spineAtlasMipmap(),
+                texturePacker({
+                    resolutionOptions: {
+                        maximumTextureSize: 512,
+                    },
+                    addFrameNames: true,
+                }),
+                mipmap(),
+                compress({
+                    png: true,
+                    jpg: true,
+                    webp: true,
+                    avif: false,
+                    astc: true,
+                }),
+                texturePackerCompress({ astc: true }),
+                pixiManifest({ includeFileSizes: 'gzip' }),
+                spineAtlasManifestMod(),
+            ],
+        });
+
+        await assetpack.run();
+
+        // load the manifest json
+        const manifest = sortObjectProperties(await fs.readJSONSync(`${outputDir}/manifest.json`)) as any;
+
+        expect(manifest.bundles[1]).toEqual({
+            name: 'bundle',
+            assets: [
+                {
+                    alias: ['bundle/json.json'],
+                    src: [{ src: 'bundle/json.json', progressSize: 0.06 }],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
+                },
+                {
+                    alias: ['bundle/json.json5'],
+                    src: [{ src: 'bundle/json.json5', progressSize: 0.06 }],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
+                },
+                {
+                    alias: ['bundle/sprite.png'],
+                    src: [
+                        { src: 'bundle/sprite@0.5x.webp', progressSize: 3.78 },
+                        { src: 'bundle/sprite@0.5x.png', progressSize: 5.21 },
+                        { src: 'bundle/sprite@0.5x.astc.ktx', progressSize: 4.98 },
+                        { src: 'bundle/sprite.webp', progressSize: 8.2 },
+                        { src: 'bundle/sprite.png', progressSize: 14.49 },
+                        { src: 'bundle/sprite.astc.ktx', progressSize: 16.57 },
+                    ],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
+                },
+                {
+                    alias: ['bundle/tps'],
+                    src: [
+                        { src: 'bundle/tps-0@0.5x.webp.json', progressSize: 0.4 },
+                        { src: 'bundle/tps-0@0.5x.png.json', progressSize: 0.39 },
+                        { src: 'bundle/tps-0@0.5x.astc.json', progressSize: 0.4 },
+                        { src: 'bundle/tps-0.webp.json', progressSize: 0.41 },
+                        { src: 'bundle/tps-0.png.json', progressSize: 0.41 },
+                        { src: 'bundle/tps-0.astc.json', progressSize: 0.41 },
+                    ],
+                    data: {
+                        tags: {
+                            m: true,
+                            tps: true,
+                            frameNames: [
+                                'sprite9.png',
+                                'sprite8.png',
+                                'sprite7.png',
+                                'sprite6.png',
+                                'sprite5.png',
+                                'sprite4.png',
+                                'sprite3.png',
+                                'sprite2.png',
+                                'sprite1.png',
+                                'sprite0.png',
+                            ],
+                        },
+                        frameNames: [
+                            'sprite9.png',
+                            'sprite8.png',
+                            'sprite7.png',
+                            'sprite6.png',
+                            'sprite5.png',
+                            'sprite4.png',
+                            'sprite3.png',
+                            'sprite2.png',
+                            'sprite1.png',
+                            'sprite0.png',
+                        ],
+                    },
+                },
+            ],
+        });
+        expect(manifest.bundles[0]).toEqual({
+            name: 'default',
+            assets: [
+                {
+                    alias: ['defaultFolder/1.mp3'],
+                    src: [
+                        { src: 'defaultFolder/1.ogg', progressSize: 5.87 },
+                        { src: 'defaultFolder/1.mp3', progressSize: 9.71 },
+                    ],
+                    data: {
+                        tags: {},
+                    },
+                },
+                {
+                    alias: ['defaultFolder/3.wav'],
+                    src: [
+                        { src: 'defaultFolder/3.ogg', progressSize: 5.87 },
+                        { src: 'defaultFolder/3.mp3', progressSize: 10.9 },
+                    ],
+                    data: {
+                        tags: {},
+                    },
+                },
+                {
+                    alias: ['spine/dragon.json'],
+                    src: [{ src: 'spine/dragon.json', progressSize: 3.31 }],
+                    data: {
+                        tags: {},
+                    },
+                },
+                {
+                    alias: ['spine/dragon.atlas'],
+                    src: [
+                        { src: 'spine/dragon@0.5x.atlas', progressSize: 0.85 },
+                        { src: 'spine/dragon.atlas', progressSize: 0.87 },
+                    ],
+                    data: {
+                        spine: true,
+                        tags: {
+                            spine: true,
+                        },
+                    },
+                },
+            ],
+        });
     });
 
     it('should copy over files and add them to manifest', async () => {
