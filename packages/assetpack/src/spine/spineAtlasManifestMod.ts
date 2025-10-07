@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { type PixiManifest } from 'src/manifest/pixiManifest.js';
+import { type PixiManifest } from '..//manifest/pixiManifest.js';
 import { findAssets, path } from '../core/index.js';
 import { AtlasView } from './AtlasView.js';
 
