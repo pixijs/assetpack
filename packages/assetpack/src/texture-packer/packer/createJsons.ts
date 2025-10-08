@@ -1,5 +1,6 @@
 import { path } from '../../core/index.js';
 import { createName } from './createTextures.js';
+import { detectAnimations } from './detectAnimations.js';
 
 import type { PixiPacker } from './packTextures.js';
 
@@ -19,6 +20,7 @@ export function createJsons(
         textureFormat: 'png' | 'jpg';
         nameStyle: 'short' | 'relative';
         removeFileExtension: boolean;
+        autodetectAnimations?: boolean;
     },
 ) {
     const bins = packer.bins;
@@ -55,6 +57,10 @@ export function createJsons(
                     h: rect.textureData.originalHeight,
                 },
             };
+        }
+
+        if (options.autodetectAnimations) {
+            json.animations = detectAnimations(json.frames);
         }
 
         json.meta = {
