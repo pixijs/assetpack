@@ -45,6 +45,17 @@ export interface PixiManifestOptions extends PluginOptions {
      */
     nameStyle?: 'short' | 'relative';
     /**
+     * Options for sorting the `src` array of each manifest entry or custom sorting function.
+     */
+    srcSortOptions?:
+        | {
+              /** The order to sort the `src` array with. */
+              order?: 'ascending' | 'descending';
+              /** Options to pass to localeCompare. */
+              collatorOptions?: Intl.CollatorOptions;
+          }
+        | ((assetsSrc: string[]) => string[]);
+    /**
      * if true, the all tags will be outputted in the data.tags field of the manifest.
      * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
      * @example
@@ -230,11 +241,24 @@ function collectAssets(
             metadata.tags = asset.allMetaData;
         }
 
+        // Set up sorting options
+        let sortFn: (assetsSrc: string[]) => string[];
+
+        if (typeof options.srcSortOptions === 'function') {
+            sortFn = options.srcSortOptions;
+        } else {
+            const isAscending = options.srcSortOptions?.order === 'ascending';
+            const collatorOptions = options.srcSortOptions?.collatorOptions;
+
+            sortFn = (assetsSrc: string[]) =>
+                assetsSrc.sort((a, b) =>
+                    (isAscending ? a : b).localeCompare(isAscending ? b : a, undefined, collatorOptions),
+                );
+        }
+
         bundleAssets.push({
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
-            src: finalManifestAssets
-                .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                .sort((a, b) => b.localeCompare(a)),
+            src: sortFn(finalManifestAssets.map((finalAsset) => path.relative(outputPath, finalAsset.path))),
             data: options.includeMetaData ? metadata : undefined,
         });
     }
