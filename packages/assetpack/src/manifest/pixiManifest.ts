@@ -54,7 +54,7 @@ export interface PixiManifestOptions extends PluginOptions {
               /** Options to pass to localeCompare. */
               collatorOptions?: Intl.CollatorOptions;
           }
-        | ((a: string, b: string) => number);
+        | ((assetsSrc: string[]) => string[]);
     /**
      * if true, the all tags will be outputted in the data.tags field of the manifest.
      * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
@@ -242,29 +242,23 @@ function collectAssets(
         }
 
         // Set up sorting options
-        let sortFn: (a: string, b: string) => number;
+        let sortFn: (assetsSrc: string[]) => string[];
 
         if (typeof options.srcSortOptions === 'function') {
-            // If srcSortOptions is a function, use it directly for custom sorting
             sortFn = options.srcSortOptions;
-        } else if (typeof options.srcSortOptions === 'object') {
-            // If srcSortOptions is an object, use its order and collatorOptions with localeCompare
-            const sortOptions = options.srcSortOptions;
-            const isAscendingSort = sortOptions.order === 'ascending';
-            const collatorOptions = sortOptions.collatorOptions;
-
-            sortFn = (a: string, b: string) =>
-                isAscendingSort
-                    ? a.localeCompare(b, undefined, collatorOptions)
-                    : b.localeCompare(a, undefined, collatorOptions);
         } else {
-            // If not provided, default to descending order using localeCompare.
-            sortFn = (a: string, b: string) => b.localeCompare(a);
+            const isAscending = options.srcSortOptions?.order === 'ascending';
+            const collatorOptions = options.srcSortOptions?.collatorOptions;
+
+            sortFn = (assetsSrc: string[]) =>
+                assetsSrc.sort((a, b) =>
+                    (isAscending ? a : b).localeCompare(isAscending ? b : a, undefined, collatorOptions),
+                );
         }
 
         bundleAssets.push({
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
-            src: finalManifestAssets.map((finalAsset) => path.relative(outputPath, finalAsset.path)).sort(sortFn),
+            src: sortFn(finalManifestAssets.map((finalAsset) => path.relative(outputPath, finalAsset.path))),
             data: options.includeMetaData ? metadata : undefined,
         });
     }
