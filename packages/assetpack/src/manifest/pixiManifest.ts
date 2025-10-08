@@ -53,6 +53,17 @@ export interface PixiManifestOptions extends PluginOptions {
      */
     nameStyle?: 'short' | 'relative';
     /**
+     * Options for sorting the `src` array of each manifest entry or custom sorting function.
+     */
+    srcSortOptions?:
+        | {
+              /** The order to sort the `src` array with. */
+              order?: 'ascending' | 'descending';
+              /** Options to pass to localeCompare. */
+              collatorOptions?: Intl.CollatorOptions;
+          }
+        | ((assetsSrc: PixiManifestEntry['src']) => PixiManifestEntry['src']);
+    /**
      * if true, the all tags will be outputted in the data.tags field of the manifest.
      * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
      * @example
@@ -239,10 +250,32 @@ function collectAssets(
             metadata.tags = asset.allMetaData;
         }
 
+        // Set up sorting options
+        let sortFn: (assetsSrc: PixiManifestEntry['src']) => PixiManifestEntry['src'];
+
+        if (typeof options.srcSortOptions === 'function') {
+            sortFn = options.srcSortOptions;
+        } else {
+            const isAscending = options.srcSortOptions?.order === 'ascending';
+            const collatorOptions = options.srcSortOptions?.collatorOptions;
+
+            sortFn = (assetsSrc: PixiManifestEntry['src']) =>
+                assetsSrc.sort((a, b) => {
+                    const aSrc = typeof a === 'string' ? a : a.src;
+                    const bSrc = typeof b === 'string' ? b : b.src;
+
+                    return (isAscending ? aSrc : bSrc).localeCompare(
+                        isAscending ? bSrc : aSrc,
+                        undefined,
+                        collatorOptions,
+                    );
+                });
+        }
+
         const bundledAsset: PixiManifestEntry = {
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
-            src: finalManifestAssets
-                .map((finalAsset) => {
+            src: sortFn(
+                finalManifestAssets.map((finalAsset) => {
                     const src = path.relative(outputPath, finalAsset.path);
                     let size: number;
 
@@ -268,13 +301,8 @@ function collectAssets(
                         src,
                         progressSize: size,
                     };
-                })
-                .sort((a, b) => {
-                    const aSrc = typeof a === 'string' ? a : a.src;
-                    const bSrc = typeof b === 'string' ? b : b.src;
-
-                    return bSrc.localeCompare(aSrc);
                 }),
+            ),
             data: options.includeMetaData ? metadata : undefined,
         };
 

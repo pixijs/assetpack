@@ -405,12 +405,12 @@ describe('Manifest', () => {
                 {
                     alias: ['bundle/tps'],
                     src: [
-                        { src: 'bundle/tps-0@0.5x.webp.json', progressSize: 0.4 },
-                        { src: 'bundle/tps-0@0.5x.png.json', progressSize: 0.39 },
-                        { src: 'bundle/tps-0@0.5x.astc.json', progressSize: 0.4 },
-                        { src: 'bundle/tps-0.webp.json', progressSize: 0.41 },
-                        { src: 'bundle/tps-0.png.json', progressSize: 0.41 },
-                        { src: 'bundle/tps-0.astc.json', progressSize: 0.41 },
+                        { src: 'bundle/tps-0@0.5x.webp.json', progressSize: 0.42 },
+                        { src: 'bundle/tps-0@0.5x.png.json', progressSize: 0.42 },
+                        { src: 'bundle/tps-0@0.5x.astc.json', progressSize: 0.43 },
+                        { src: 'bundle/tps-0.webp.json', progressSize: 0.43 },
+                        { src: 'bundle/tps-0.png.json', progressSize: 0.43 },
+                        { src: 'bundle/tps-0.astc.json', progressSize: 0.43 },
                     ],
                     data: {
                         tags: {
@@ -631,6 +631,106 @@ describe('Manifest', () => {
                         tags: {
                             copy: true,
                         },
+                    },
+                },
+            ],
+        });
+    }, 30000);
+
+    it('should sort the order of the src array', async () => {
+        const testName = 'manifest-src-sort';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        const useCache = false;
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+
+            folders: [
+                {
+                    name: 'defaultFolder',
+                    files: [],
+                    folders: [
+                        {
+                            name: 'mip',
+                            files: genSprites(3),
+                            folders: [],
+                        },
+                    ],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: useCache,
+            pipes: [
+                mipmap(),
+                compress({
+                    png: true,
+                    jpg: true,
+                    webp: true,
+                    avif: false,
+                    astc: true,
+                }),
+                pixiManifest({
+                    srcSortOptions: { order: 'ascending' },
+                }),
+            ],
+        });
+
+        await assetpack.run();
+
+        // load the manifest json
+        const manifest = sortObjectProperties(await fs.readJSONSync(`${outputDir}/manifest.json`)) as any;
+
+        expect(manifest.bundles[0]).toEqual({
+            name: 'default',
+            assets: [
+                {
+                    alias: ['defaultFolder/mip/sprite0.png'],
+                    src: [
+                        'defaultFolder/mip/sprite0.astc.ktx',
+                        'defaultFolder/mip/sprite0.png',
+                        'defaultFolder/mip/sprite0.webp',
+                        'defaultFolder/mip/sprite0@0.5x.astc.ktx',
+                        'defaultFolder/mip/sprite0@0.5x.png',
+                        'defaultFolder/mip/sprite0@0.5x.webp',
+                    ],
+                    data: {
+                        tags: {},
+                    },
+                },
+                {
+                    alias: ['defaultFolder/mip/sprite1.png'],
+                    src: [
+                        'defaultFolder/mip/sprite1.astc.ktx',
+                        'defaultFolder/mip/sprite1.png',
+                        'defaultFolder/mip/sprite1.webp',
+                        'defaultFolder/mip/sprite1@0.5x.astc.ktx',
+                        'defaultFolder/mip/sprite1@0.5x.png',
+                        'defaultFolder/mip/sprite1@0.5x.webp',
+                    ],
+                    data: {
+                        tags: {},
+                    },
+                },
+                {
+                    alias: ['defaultFolder/mip/sprite2.png'],
+                    src: [
+                        'defaultFolder/mip/sprite2.astc.ktx',
+                        'defaultFolder/mip/sprite2.png',
+                        'defaultFolder/mip/sprite2.webp',
+                        'defaultFolder/mip/sprite2@0.5x.astc.ktx',
+                        'defaultFolder/mip/sprite2@0.5x.png',
+                        'defaultFolder/mip/sprite2@0.5x.webp',
+                    ],
+                    data: {
+                        tags: {},
                     },
                 },
             ],
