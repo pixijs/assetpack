@@ -45,14 +45,16 @@ export interface PixiManifestOptions extends PluginOptions {
      */
     nameStyle?: 'short' | 'relative';
     /**
-     * Options for sorting the `src` array of each manifest entry.
+     * Options for sorting the `src` array of each manifest entry or custom sorting function.
      */
-    srcSortOptions?: {
-        /** The order to sort the `src` array with. */
-        order?: 'ascending' | 'descending';
-        /** If true, sorts numbers within strings in numerical order. */
-        numeric?: boolean;
-    };
+    srcSortOptions?:
+        | {
+              /** The order to sort the `src` array with. */
+              order?: 'ascending' | 'descending';
+              /** Options to pass to localeCompare. */
+              collatorOptions?: Intl.CollatorOptions;
+          }
+        | ((a: string, b: string) => number);
     /**
      * if true, the all tags will be outputted in the data.tags field of the manifest.
      * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
@@ -240,24 +242,29 @@ function collectAssets(
         }
 
         // Set up sorting options
-        const isAscendingSort = options.srcSortOptions?.order === 'ascending';
-        let sortOptions: Intl.CollatorOptions | undefined;
+        let sortFn: (a: string, b: string) => number;
 
-        if (options.srcSortOptions !== undefined) {
-            sortOptions = {
-                numeric: options.srcSortOptions?.numeric ?? false,
-            };
+        if (typeof options.srcSortOptions === 'function') {
+            // If srcSortOptions is a function, use it directly for custom sorting
+            sortFn = options.srcSortOptions;
+        } else if (typeof options.srcSortOptions === 'object') {
+            // If srcSortOptions is an object, use its order and collatorOptions with localeCompare
+            const sortOptions = options.srcSortOptions;
+            const isAscendingSort = sortOptions.order === 'ascending';
+            const collatorOptions = sortOptions.collatorOptions;
+
+            sortFn = (a: string, b: string) =>
+                isAscendingSort
+                    ? a.localeCompare(b, undefined, collatorOptions)
+                    : b.localeCompare(a, undefined, collatorOptions);
+        } else {
+            // If not provided, default to descending order using localeCompare.
+            sortFn = (a: string, b: string) => b.localeCompare(a);
         }
 
         bundleAssets.push({
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
-            src: finalManifestAssets
-                .map((finalAsset) => path.relative(outputPath, finalAsset.path))
-                .sort((a, b) =>
-                    isAscendingSort
-                        ? a.localeCompare(b, undefined, sortOptions)
-                        : b.localeCompare(a, undefined, sortOptions),
-                ),
+            src: finalManifestAssets.map((finalAsset) => path.relative(outputPath, finalAsset.path)).sort(sortFn),
             data: options.includeMetaData ? metadata : undefined,
         });
     }
