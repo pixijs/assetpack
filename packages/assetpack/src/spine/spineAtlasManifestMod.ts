@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import { type PixiManifest } from '..//manifest/pixiManifest.js';
 import { findAssets, path } from '../core/index.js';
 import { AtlasView } from './AtlasView.js';
 
@@ -73,11 +74,13 @@ export function spineAtlasManifestMod(_options: SpineManifestOptions = {}): Asse
     };
 }
 
-function findAndRemoveManifestAsset(manifest: any, assetPath: string) {
+function findAndRemoveManifestAsset(manifest: PixiManifest, assetPath: string) {
     for (let i = 0; i < manifest.bundles.length; i++) {
         const assets = manifest.bundles[i].assets;
 
-        const manifestAsset = assets.find((asset: { src: string[] }) => asset.src.includes(assetPath));
+        const manifestAsset = assets.find((asset) => {
+            return asset.src.find((src) => (typeof src === 'string' ? src : src.src) === assetPath);
+        });
 
         if (manifestAsset) {
             assets.splice(assets.indexOf(manifestAsset), 1);

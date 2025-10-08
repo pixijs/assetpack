@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import zlib from 'node:zlib';
 import { BuildReporter, path, stripTags } from '../core/index.js';
 
 import type { Asset, AssetPipe, PipeSystem, PluginOptions } from '../core/index.js';
@@ -15,11 +16,12 @@ export interface PixiManifest {
 
 export interface PixiManifestEntry {
     alias: string | string[];
-    src: string | string[];
+    src: (string | { src: string; progressSize?: number })[];
     data?: {
         // tags: Tags;
         [x: string]: any;
     };
+    progressSize?: number;
 }
 
 export interface PixiManifestOptions extends PluginOptions {
@@ -40,6 +42,12 @@ export interface PixiManifestOptions extends PluginOptions {
      */
     includeMetaData?: boolean;
     /**
+     * if true, the file sizes of each asset will be included in the manifest.
+     * The sizes are in kilobytes (KB) and represent the gzipped size of each asset.
+     * @default true
+     */
+    includeFileSizes?: false | 'gzip' | 'raw';
+    /**
      * The name style for asset bundles in the manifest file.
      * When set to relative, asset bundles will use their relative paths as names.
      */
@@ -54,7 +62,7 @@ export interface PixiManifestOptions extends PluginOptions {
               /** Options to pass to localeCompare. */
               collatorOptions?: Intl.CollatorOptions;
           }
-        | ((assetsSrc: string[]) => string[]);
+        | ((assetsSrc: PixiManifestEntry['src']) => PixiManifestEntry['src']);
     /**
      * if true, the all tags will be outputted in the data.tags field of the manifest.
      * If false, only internal tags will be outputted to the data.tags field. All other tags will be outputted to the data field directly.
@@ -95,6 +103,7 @@ export function pixiManifest(_options: PixiManifestOptions = {}): AssetPipe<Pixi
             trimExtensions: false,
             includeMetaData: true,
             legacyMetaDataOutput: true,
+            includeFileSizes: false,
             nameStyle: 'short',
             ..._options,
         },
@@ -242,7 +251,7 @@ function collectAssets(
         }
 
         // Set up sorting options
-        let sortFn: (assetsSrc: string[]) => string[];
+        let sortFn: (assetsSrc: PixiManifestEntry['src']) => PixiManifestEntry['src'];
 
         if (typeof options.srcSortOptions === 'function') {
             sortFn = options.srcSortOptions;
@@ -250,17 +259,54 @@ function collectAssets(
             const isAscending = options.srcSortOptions?.order === 'ascending';
             const collatorOptions = options.srcSortOptions?.collatorOptions;
 
-            sortFn = (assetsSrc: string[]) =>
-                assetsSrc.sort((a, b) =>
-                    (isAscending ? a : b).localeCompare(isAscending ? b : a, undefined, collatorOptions),
-                );
+            sortFn = (assetsSrc: PixiManifestEntry['src']) =>
+                assetsSrc.sort((a, b) => {
+                    const aSrc = typeof a === 'string' ? a : a.src;
+                    const bSrc = typeof b === 'string' ? b : b.src;
+
+                    return (isAscending ? aSrc : bSrc).localeCompare(
+                        isAscending ? bSrc : aSrc,
+                        undefined,
+                        collatorOptions,
+                    );
+                });
         }
 
-        bundleAssets.push({
+        const bundledAsset: PixiManifestEntry = {
             alias: getShortNames(stripTags(path.relative(entryPath, asset.path)), options),
-            src: sortFn(finalManifestAssets.map((finalAsset) => path.relative(outputPath, finalAsset.path))),
+            src: sortFn(
+                finalManifestAssets.map((finalAsset) => {
+                    const src = path.relative(outputPath, finalAsset.path);
+                    let size: number;
+
+                    if (!options.includeFileSizes) {
+                        return src;
+                    }
+
+                    try {
+                        if (options.includeFileSizes === 'raw') {
+                            size = fs.statSync(finalAsset.path).size;
+                        } else {
+                            size = zlib.gzipSync(fs.readFileSync(finalAsset.path)).length;
+                        }
+                        size = Number((size / 1024).toFixed(2));
+                    } catch (_e) {
+                        BuildReporter.warn(
+                            `[AssetPack][manifest] Unable to get size for asset '${finalAsset.path}'. Skipping file size entry.`,
+                        );
+                        size = 1;
+                    }
+
+                    return {
+                        src,
+                        progressSize: size,
+                    };
+                }),
+            ),
             data: options.includeMetaData ? metadata : undefined,
-        });
+        };
+
+        bundleAssets.push(bundledAsset);
     }
 
     asset.children.forEach((child) => {

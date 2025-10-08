@@ -52,8 +52,8 @@ const updatePackageVersion = async (packagePath, newVersion) => {
 const updatePackageLockVersion = async (packageLockPath, newVersion) => {
     const packageLockJson = await readJsonFile(packageLockPath);
 
-    if (packageLockJson['packages/assetpack']) {
-        packageLockJson['packages/assetpack'].version = newVersion;
+    if (packageLockJson.packages && packageLockJson.packages['packages/assetpack']) {
+        packageLockJson.packages['packages/assetpack'].version = newVersion;
     }
 
     await writeJsonFile(packageLockPath, packageLockJson);
