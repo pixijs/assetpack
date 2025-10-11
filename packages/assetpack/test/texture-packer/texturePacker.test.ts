@@ -17,7 +17,31 @@ describe('Texture Packer', () => {
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createTPSFolder(testName, pkg);
+        const sprites: File[] = [];
+
+        for (let i = 0; i < 10; i++) {
+            sprites.push({
+                name: `sprite${i}.png`,
+                content: assetPath(`image/sp-${i + 1}.png`),
+            });
+        }
+
+        sprites.push({
+            name: `sprite.png`,
+            content: assetPath(`image/sp-1.png`),
+        });
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}',
+                    files: sprites,
+                    folders: [],
+                },
+            ],
+        });
 
         const assetpack = new AssetPack({
             entry: inputDir,

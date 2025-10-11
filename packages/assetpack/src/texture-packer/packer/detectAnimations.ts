@@ -8,6 +8,9 @@ export function detectAnimations(frames: { [key: string]: any }): { [key: string
     const frameGroups = frameNames.reduce<Record<string, string[]>>((acc, item) => {
         const key = path.trimExt(item).replace(suffixRegex, '');
 
+        // if the key doesn't have a number suffix, don't add it
+        if (key === path.trimExt(item)) return acc;
+
         if (!acc[key]) {
             acc[key] = [];
         }
