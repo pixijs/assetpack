@@ -8,6 +8,7 @@ import { BuildReporter } from './logger/BuildReporter.js';
 import { applySettingToAsset } from './utils/applySettingToAsset.js';
 import { path } from './utils/path.js';
 import { syncAssetsWithCache } from './utils/syncAssetsWithCache.js';
+import { removeFileFromChanges } from './utils/removeFileFromChanges.js';
 
 import type { IAssetCache } from './AssetCache.js';
 import type { AssetSettings } from './pipes/PipeSystem.js';
@@ -21,7 +22,7 @@ export interface AssetWatcherOptions {
     onComplete: (root: Asset) => void;
 }
 
-interface ChangeData {
+export interface ChangeData {
     type: string;
     file: string;
 }
@@ -110,6 +111,10 @@ export class AssetWatcher {
 
             this._watcher.on('all', (type: any, file: string) => {
                 if (!file || this._ignore.shouldIgnore(file)) return;
+
+                // remove file changes in case some of them were already queued for it
+                // file was deleted, then added again, we should not have both changes in the queue
+                removeFileFromChanges(this._changes, file);
 
                 this._changes.push({
                     type,
