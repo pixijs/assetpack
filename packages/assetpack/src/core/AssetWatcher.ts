@@ -7,8 +7,8 @@ import { deleteAssetFiles } from './AssetPack.js';
 import { BuildReporter } from './logger/BuildReporter.js';
 import { applySettingToAsset } from './utils/applySettingToAsset.js';
 import { path } from './utils/path.js';
-import { syncAssetsWithCache } from './utils/syncAssetsWithCache.js';
 import { removeFileFromChanges } from './utils/removeFileFromChanges.js';
+import { syncAssetsWithCache } from './utils/syncAssetsWithCache.js';
 
 import type { IAssetCache } from './AssetCache.js';
 import type { AssetSettings } from './pipes/PipeSystem.js';
