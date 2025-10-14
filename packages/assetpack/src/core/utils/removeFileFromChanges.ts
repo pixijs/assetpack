@@ -1,4 +1,4 @@
-import type { ChangeData } from 'src/core/AssetWatcher.js';
+import type { ChangeData } from '../AssetWatcher.js';
 
 export function removeFileFromChanges(changes: ChangeData[], filePath: string) {
     const index = changes.findIndex((change) => change.file === filePath);
