@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
-import zlib from 'node:zlib';
 import { BuildReporter, path, stripTags } from '../core/index.js';
+import { getFileSizeInKB } from './utils.js';
 
 import type { Asset, AssetPipe, PipeSystem, PluginOptions } from '../core/index.js';
 
@@ -44,7 +44,7 @@ export interface PixiManifestOptions extends PluginOptions {
     /**
      * if true, the file sizes of each asset will be included in the manifest.
      * The sizes are in kilobytes (KB) and represent the gzipped size of each asset.
-     * @default true
+     * @default false
      */
     includeFileSizes?: false | 'gzip' | 'raw';
     /**
@@ -277,29 +277,14 @@ function collectAssets(
             src: sortFn(
                 finalManifestAssets.map((finalAsset) => {
                     const src = path.relative(outputPath, finalAsset.path);
-                    let size: number;
 
                     if (!options.includeFileSizes) {
                         return src;
                     }
 
-                    try {
-                        if (options.includeFileSizes === 'raw') {
-                            size = fs.statSync(finalAsset.path).size;
-                        } else {
-                            size = zlib.gzipSync(fs.readFileSync(finalAsset.path)).length;
-                        }
-                        size = Number((size / 1024).toFixed(2));
-                    } catch (_e) {
-                        BuildReporter.warn(
-                            `[AssetPack][manifest] Unable to get size for asset '${finalAsset.path}'. Skipping file size entry.`,
-                        );
-                        size = 1;
-                    }
-
                     return {
                         src,
-                        progressSize: size,
+                        progressSize: getFileSizeInKB(finalAsset.path, options.includeFileSizes === 'raw'),
                     };
                 }),
             ),

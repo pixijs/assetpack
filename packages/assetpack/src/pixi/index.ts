@@ -1,3 +1,4 @@
+import { texturePackerManifestMod } from 'src/texture-packer/texturePackerManifestMod.js';
 import { cacheBuster } from '../cache-buster/cacheBuster.js';
 import { merge } from '../core/index.js';
 import { audio } from '../ffmpeg/audio.js';
@@ -102,7 +103,11 @@ export function pixiPipes(config: PixiAssetPack) {
         ...apConfig.manifest,
     };
 
-    pipes.push(pixiManifest(manifestOptions), spineAtlasManifestMod(manifestOptions));
+    pipes.push(
+        pixiManifest(manifestOptions),
+        spineAtlasManifestMod(manifestOptions),
+        texturePackerManifestMod(manifestOptions),
+    );
 
     return pipes;
 }

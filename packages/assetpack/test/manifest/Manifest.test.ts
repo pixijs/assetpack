@@ -1,12 +1,18 @@
 import fs from 'fs-extra';
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { cacheBuster } from '../../src/cache-buster/cacheBuster.js';
 import { AssetPack } from '../../src/core/index.js';
 import { audio } from '../../src/ffmpeg/index.js';
 import { compress, mipmap } from '../../src/image/index.js';
 import { pixiManifest } from '../../src/manifest/index.js';
-import { spineAtlasManifestMod, spineAtlasMipmap } from '../../src/spine/index.js';
-import { texturePacker, texturePackerCompress } from '../../src/texture-packer/index.js';
+import { spineAtlasCacheBuster, spineAtlasManifestMod, spineAtlasMipmap } from '../../src/spine/index.js';
+import {
+    texturePacker,
+    texturePackerCacheBuster,
+    texturePackerCompress,
+    texturePackerManifestMod,
+} from '../../src/texture-packer/index.js';
 import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
 
 import type { File } from '../utils/index.js';
@@ -357,6 +363,7 @@ describe('Manifest', () => {
                 texturePackerCompress({ astc: true }),
                 pixiManifest({ includeFileSizes: 'gzip' }),
                 spineAtlasManifestMod(),
+                texturePackerManifestMod({ includeFileSizes: 'gzip' }),
             ],
         });
 
@@ -405,12 +412,12 @@ describe('Manifest', () => {
                 {
                     alias: ['bundle/tps'],
                     src: [
-                        { src: 'bundle/tps-0@0.5x.webp.json', progressSize: 0.42 },
-                        { src: 'bundle/tps-0@0.5x.png.json', progressSize: 0.42 },
-                        { src: 'bundle/tps-0@0.5x.astc.json', progressSize: 0.43 },
-                        { src: 'bundle/tps-0.webp.json', progressSize: 0.43 },
-                        { src: 'bundle/tps-0.png.json', progressSize: 0.43 },
-                        { src: 'bundle/tps-0.astc.json', progressSize: 0.43 },
+                        { src: 'bundle/tps-0@0.5x.webp.json', progressSize: 19.49 },
+                        { src: 'bundle/tps-0@0.5x.png.json', progressSize: 21.34 },
+                        { src: 'bundle/tps-0@0.5x.astc.json', progressSize: 26.57 },
+                        { src: 'bundle/tps-0.webp.json', progressSize: 45.18 },
+                        { src: 'bundle/tps-0.png.json', progressSize: 71.06 },
+                        { src: 'bundle/tps-0.astc.json', progressSize: 90.86 },
                     ],
                     data: {
                         tags: {
@@ -486,6 +493,213 @@ describe('Manifest', () => {
                         tags: {
                             spine: true,
                         },
+                    },
+                },
+            ],
+        });
+    });
+
+    it('should add filesize information to the manifest with cache busting', async () => {
+        const testName = 'manifest-filesize-cache-bust';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        const useCache = false;
+
+        if (!useCache) {
+            createFolder(pkg, {
+                name: testName,
+                files: [],
+
+                folders: [
+                    {
+                        name: 'bundle{m}',
+                        files: [
+                            {
+                                name: 'json.json',
+                                content: assetPath('json/json.json'),
+                            },
+                            {
+                                name: 'json.json5',
+                                content: assetPath('json/json.json'),
+                            },
+                            {
+                                name: 'sprite.png',
+                                content: assetPath('image/sp-1.png'),
+                            },
+                        ],
+                        folders: [
+                            {
+                                name: 'tps{tps}',
+                                files: genSprites(),
+                                folders: [],
+                            },
+                        ],
+                    },
+                    {
+                        name: 'spine',
+                        files: [
+                            {
+                                name: 'dragon{spine}.atlas',
+                                content: assetPath('spine/dragon.atlas'),
+                            },
+                            {
+                                name: 'dragon.json',
+                                content: assetPath('spine/dragon.json'),
+                            },
+                            {
+                                name: 'dragon.png',
+                                content: assetPath('spine/dragon.png'),
+                            },
+                            {
+                                name: 'dragon2.png',
+                                content: assetPath('spine/dragon2.png'),
+                            },
+                        ],
+                        folders: [],
+                    },
+                ],
+            });
+        }
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: useCache,
+            pipes: [
+                audio(),
+                spineAtlasMipmap(),
+                texturePacker({
+                    resolutionOptions: {
+                        maximumTextureSize: 512,
+                    },
+                    addFrameNames: true,
+                }),
+                mipmap(),
+                compress({
+                    png: true,
+                    jpg: true,
+                    webp: true,
+                    avif: false,
+                    astc: true,
+                }),
+                texturePackerCompress({ astc: true }),
+                cacheBuster(),
+                texturePackerCacheBuster(),
+                spineAtlasCacheBuster(),
+                pixiManifest({ includeFileSizes: 'gzip' }),
+                spineAtlasManifestMod(),
+                texturePackerManifestMod({ includeFileSizes: 'gzip' }),
+            ],
+        });
+
+        await assetpack.run();
+
+        // load the manifest json
+        const manifest = sortObjectProperties(await fs.readJSONSync(`${outputDir}/manifest.json`)) as any;
+
+        expect(manifest.bundles[1]).toEqual({
+            name: 'bundle',
+            assets: [
+                {
+                    alias: ['bundle/json.json'],
+                    src: [{ src: 'bundle/json-xnnaoQ.json', progressSize: 0.06 }],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
+                },
+                {
+                    alias: ['bundle/json.json5'],
+                    src: [{ src: 'bundle/json-xnnaoQ.json5', progressSize: 0.06 }],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
+                },
+                {
+                    alias: ['bundle/sprite.png'],
+                    src: [
+                        { src: 'bundle/sprite-vUcaag@0.5x.astc.ktx', progressSize: 4.98 },
+                        { src: 'bundle/sprite-TZpmeQ.astc.ktx', progressSize: 16.57 },
+                        { src: 'bundle/sprite-sDtC@0.5x.png', progressSize: 5.21 },
+                        { src: 'bundle/sprite-KdyNpA@0.5x.webp', progressSize: 3.78 },
+                        { src: 'bundle/sprite-k07jiw.png', progressSize: 14.49 },
+                        { src: 'bundle/sprite-3CLG.webp', progressSize: 8.2 },
+                    ],
+                    data: {
+                        tags: {
+                            m: true,
+                        },
+                    },
+                },
+                {
+                    alias: ['bundle/tps'],
+                    src: [
+                        { src: 'bundle/tps-RzSARA-0@0.5x.astc.json', progressSize: 26.52 },
+                        { src: 'bundle/tps-Ktro9A-0@0.5x.png.json', progressSize: 21.3 },
+                        { src: 'bundle/tps-iS-Jog-0@0.5x.webp.json', progressSize: 19.45 },
+                        { src: 'bundle/tps-G92JcQ-0.png.json', progressSize: 71.01 },
+                        { src: 'bundle/tps-g4NIDQ-0.astc.json', progressSize: 90.82 },
+                        { src: 'bundle/tps-bo4nog-0.webp.json', progressSize: 45.14 },
+                    ],
+                    data: {
+                        tags: {
+                            m: true,
+                            tps: true,
+                            frameNames: [
+                                'sprite9.png',
+                                'sprite8.png',
+                                'sprite7.png',
+                                'sprite6.png',
+                                'sprite5.png',
+                                'sprite4.png',
+                                'sprite3.png',
+                                'sprite2.png',
+                                'sprite1.png',
+                                'sprite0.png',
+                            ],
+                        },
+                        frameNames: [
+                            'sprite9.png',
+                            'sprite8.png',
+                            'sprite7.png',
+                            'sprite6.png',
+                            'sprite5.png',
+                            'sprite4.png',
+                            'sprite3.png',
+                            'sprite2.png',
+                            'sprite1.png',
+                            'sprite0.png',
+                        ],
+                    },
+                },
+            ],
+        });
+        expect(manifest.bundles[0]).toEqual({
+            name: 'default',
+            assets: [
+                {
+                    alias: ['spine/dragon.json'],
+                    src: [{ src: 'spine/dragon-cUphYw.json', progressSize: 3.31 }],
+                    data: {
+                        tags: {},
+                    },
+                },
+                {
+                    alias: ['spine/dragon.atlas'],
+                    src: [
+                        { src: 'spine/dragon-VMxv5A@0.5x.atlas', progressSize: 0.86 },
+                        { src: 'spine/dragon-bOhE1A.atlas', progressSize: 0.89 },
+                    ],
+                    data: {
+                        tags: {
+                            spine: true,
+                        },
+                        spine: true,
                     },
                 },
             ],

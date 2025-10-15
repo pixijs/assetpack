@@ -1,3 +1,7 @@
+import fs from 'fs-extra';
+import zlib from 'node:zlib';
+import { BuildReporter } from 'src/core/index.js';
+
 export function getManifestName(path: string, entry: string): string | null {
     // Get the string after the entry path
     const val = path.replace(entry, '');
@@ -19,4 +23,22 @@ export function getManifestName(path: string, entry: string): string | null {
     if (targetPath.endsWith('/')) targetPath = targetPath.slice(0, -1);
 
     return targetPath;
+}
+
+export function getFileSizeInKB(filePath: string, useRaw = false): number {
+    let size = 0;
+
+    try {
+        if (useRaw) {
+            size = fs.statSync(filePath).size;
+        } else {
+            size = zlib.gzipSync(fs.readFileSync(filePath)).length;
+        }
+        size = Number((size / 1024).toFixed(2));
+    } catch (_e) {
+        BuildReporter.warn(`[AssetPack] Unable to get size for asset '${filePath}'. Skipping file size entry.`);
+        size = 1;
+    }
+
+    return size;
 }
