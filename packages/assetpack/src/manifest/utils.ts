@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import zlib from 'node:zlib';
-import { BuildReporter } from 'src/core/index.js';
+import { BuildReporter } from '../core/index.js';
 
 export function getManifestName(path: string, entry: string): string | null {
     // Get the string after the entry path

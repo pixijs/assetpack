@@ -1,4 +1,3 @@
-import { texturePackerManifestMod } from 'src/texture-packer/texturePackerManifestMod.js';
 import { cacheBuster } from '../cache-buster/cacheBuster.js';
 import { merge } from '../core/index.js';
 import { audio } from '../ffmpeg/audio.js';
@@ -13,6 +12,7 @@ import { spineAtlasMipmap } from '../spine/spineAtlasMipmap.js';
 import { texturePacker } from '../texture-packer/texturePacker.js';
 import { texturePackerCacheBuster } from '../texture-packer/texturePackerCacheBuster.js';
 import { texturePackerCompress } from '../texture-packer/texturePackerCompress.js';
+import { texturePackerManifestMod } from '../texture-packer/texturePackerManifestMod.js';
 import { webfont } from '../webfont/webfont.js';
 
 import type { AssetPipe } from '../core/index.js';
