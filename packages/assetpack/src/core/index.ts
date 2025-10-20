@@ -1,7 +1,6 @@
 export * from './Asset.js';
 export * from './AssetPack.js';
 export * from './config.js';
-export * from './config.js';
 export * from './logger/BuildReporter.js';
 export * from './pipes/AssetPipe.js';
 export * from './pipes/multiPipe.js';
