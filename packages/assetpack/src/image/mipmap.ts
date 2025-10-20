@@ -41,7 +41,8 @@ export function mipmap(defaultOptions: MipmapOptions = {}): AssetPipe<MipmapOpti
             nomip: 'nomip',
         },
         test(asset: Asset, options) {
-            return options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nomip];
+            const extensions = ['.png', '.jpg', '.jpeg', '.webp', '.avif'];
+            return options && checkExt(asset.path, ...extensions) && !asset.allMetaData[this.tags!.nomip];
         },
         async transform(asset: Asset, options) {
             const shouldMipmap = mipmap && !asset.allMetaData[this.tags!.fix];
