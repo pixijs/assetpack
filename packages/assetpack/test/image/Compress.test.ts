@@ -185,4 +185,57 @@ describe('Compress', () => {
         expect(existsSync(`${outputDir}/testJpg.basis.ktx2`)).toBe(false);
         expect(existsSync(`${outputDir}/testJpg.etc.ktx`)).toBe(false);
     });
+
+    it('should be able to omit a compression', async () => {
+        const testName = 'compress-omit';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'testPng.png',
+                    content: assetPath('image/sp-2.png'),
+                },
+                {
+                    name: 'testJpg.jpg',
+                    content: assetPath('image/sp-3.jpg'),
+                },
+            ],
+            folders: [],
+        });
+        const pack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                compress({
+                    png: 'omit',
+                    jpg: 'omit',
+                    webp: true,
+                }),
+            ],
+        });
+
+        await pack.run();
+
+        expect(existsSync(`${outputDir}/testPng.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.webp`)).toBe(true);
+        expect(existsSync(`${outputDir}/testPng.avif`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.astc.ktx`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.bc7.dds`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.basis.ktx2`)).toBe(false);
+        expect(existsSync(`${outputDir}/testPng.etc.ktx`)).toBe(false);
+
+        expect(existsSync(`${outputDir}/testJpg.jpg`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.webp`)).toBe(true);
+        expect(existsSync(`${outputDir}/testJpg.avif`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.png`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.astc.ktx`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.bc7.dds`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.basis.ktx2`)).toBe(false);
+        expect(existsSync(`${outputDir}/testJpg.etc.ktx`)).toBe(false);
+    });
 });
