@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspace @assetpack/core",
-    "clean": "rimraf dist **/*/.testInput **/*/.testOutput .assetpack packages/assetpack/test/cache/**/*",
+    "clean": "rimraf --glob dist 'packages/assetpack/test/**/.testInput' 'packages/assetpack/test/**/.testOutput' .assetpack 'packages/assetpack/test/cache'",
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
     "version:main": "node scripts/version.mjs",
