@@ -7,6 +7,7 @@ import { deleteAssetFiles } from './AssetPack.js';
 import { BuildReporter } from './logger/BuildReporter.js';
 import { applySettingToAsset } from './utils/applySettingToAsset.js';
 import { path } from './utils/path.js';
+import { removeFileFromChanges } from './utils/removeFileFromChanges.js';
 import { syncAssetsWithCache } from './utils/syncAssetsWithCache.js';
 
 import type { IAssetCache } from './AssetCache.js';
@@ -21,7 +22,7 @@ export interface AssetWatcherOptions {
     onComplete: (root: Asset) => void;
 }
 
-interface ChangeData {
+export interface ChangeData {
     type: string;
     file: string;
 }
@@ -110,6 +111,36 @@ export class AssetWatcher {
 
             this._watcher.on('all', (type: any, file: string) => {
                 if (!file || this._ignore.shouldIgnore(file)) return;
+
+                // find if there was an add event in the changes already
+                const existingAdd = this._changes.find(
+                    (c) => c.file === file && (c.type === 'add' || c.type === 'addDir'),
+                );
+
+                // if there was an add event, and now we have a change event, we can ignore the change event
+                if (existingAdd && type === 'change') {
+                    return;
+                }
+
+                // if there was a change event, and now we have another change event, we can ignore the new change event
+                if (this._changes.find((c) => c.file === file && c.type === 'change' && type === 'change')) {
+                    return;
+                }
+
+                // if there was an add event, and now we have a delete event, we can just remove the add event
+                if (existingAdd && (type === 'unlink' || type === 'unlinkDir')) {
+                    removeFileFromChanges(this._changes, file);
+
+                    return;
+                }
+
+                // if there was a delete event, and now we have an add event, we can just remove the delete event
+                if (
+                    this._changes.find((c) => c.file === file && (c.type === 'unlink' || c.type === 'unlinkDir')) &&
+                    (type === 'add' || type === 'addDir')
+                ) {
+                    removeFileFromChanges(this._changes, file);
+                }
 
                 this._changes.push({
                     type,

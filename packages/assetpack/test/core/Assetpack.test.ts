@@ -93,12 +93,22 @@ describe('Core', () => {
         expect(existsSync(join(outputDir, 'json.json'))).toBe(true);
 
         fs.writeJSONSync(testFile, { nice: 'test' });
+        await new Promise((resolve) => {
+            setTimeout(resolve, 100);
+        });
+        expect(assetpack['_assetWatcher']['_changes'].length).toBe(1);
+        fs.writeJSONSync(testFile, { nice: 'test 2' });
+        await new Promise((resolve) => {
+            setTimeout(resolve, 1);
+        });
+        expect(assetpack['_assetWatcher']['_changes'].length).toBe(1);
 
         await new Promise((resolve) => {
             setTimeout(resolve, 1500);
         });
 
         expect(existsSync(join(outputDir, 'new-json-file.json'))).toBe(true);
+        expect(fs.readJSONSync(join(outputDir, 'new-json-file.json'))).toStrictEqual({ nice: 'test 2' });
         expect(existsSync(join(outputDir, 'json.json'))).toBe(true);
         fs.writeJSONSync(join(inputDir, 'json.json'), { nice: 'test' });
 
