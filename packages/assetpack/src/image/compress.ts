@@ -18,10 +18,10 @@ type CompressBasisOptions = BasisOptions;
 type CompressEtcOptions = EtcOptions;
 
 export interface CompressOptions extends PluginOptions {
-    png?: CompressPngOptions | boolean;
+    png?: CompressPngOptions | boolean | 'skip';
     webp?: CompressWebpOptions | boolean;
     avif?: CompressAvifOptions | boolean;
-    jpg?: CompressJpgOptions | boolean;
+    jpg?: CompressJpgOptions | boolean | 'skip';
     bc7?: CompressBc7Options | boolean;
     astc?: CompressAstcOptions | boolean;
     basis?: CompressBasisOptions | boolean;
@@ -55,8 +55,8 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
     });
 
     if (compress) {
-        compress.jpg = resolveOptions<CompressJpgOptions>(compress.jpg, {});
-        compress.png = resolveOptions<CompressPngOptions>(compress.png, {
+        compress.jpg = resolveOptions<CompressJpgOptions | 'skip'>(compress.jpg, {});
+        compress.png = resolveOptions<CompressPngOptions | 'skip'>(compress.png, {
             quality: 90,
         });
         compress.webp = resolveOptions<CompressWebpOptions>(compress.webp, {
