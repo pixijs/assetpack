@@ -220,7 +220,7 @@ describe('Spine Atlas All', () => {
                     resolutions: { default: 1, low: 0.5 },
                 }),
                 compress({
-                    png: 'omit',
+                    png: 'skip',
                     webp: true,
                     jpg: true,
                     astc: true,
@@ -229,7 +229,7 @@ describe('Spine Atlas All', () => {
                     resolutions: { default: 1, low: 0.5 },
                 }),
                 spineAtlasCompress({
-                    png: 'omit',
+                    png: 'skip',
                     webp: true,
                     astc: true,
                 }),

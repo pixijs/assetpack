@@ -212,8 +212,8 @@ describe('Compress', () => {
             cache: false,
             pipes: [
                 compress({
-                    png: 'omit',
-                    jpg: 'omit',
+                    png: 'skip',
+                    jpg: 'skip',
                     webp: true,
                 }),
             ],

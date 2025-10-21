@@ -39,8 +39,8 @@ export default {
 
 | Option | Type              | Description                                                                                                                                                |
 | ------ | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| jpg    | `object \| false \| 'omit'` | Any settings supported by [sharp jpeg](https://sharp.pixelplumbing.com/api-output#jpeg). If `omit` is specified, the original image will not be included in the output. |
-| png    | `object \| false \| 'omit'` | Any settings supported by [sharp png](https://sharp.pixelplumbing.com/api-output#png). If `omit` is specified, the original image will not be included in the output. |
+| jpg    | `object \| false \| 'skip'` | Any settings supported by [sharp jpeg](https://sharp.pixelplumbing.com/api-output#jpeg). If `skip` is specified, the original image will not be included in the output. |
+| png    | `object \| false \| 'skip'` | Any settings supported by [sharp png](https://sharp.pixelplumbing.com/api-output#png). If `skip` is specified, the original image will not be included in the output. |
 | webp   | `object \| false` | Any settings supported by [sharp webp](https://sharp.pixelplumbing.com/api-output#webp).                                                                   |
 | avif   | `object \| false` | Any settings supported by [sharp avif](https://sharp.pixelplumbing.com/api-output#avif). <br /> Defaults to `false`.                                       |
 | bc7    | `object \| false` | Any settings supported by [bc7](https://github.com/ddenisyuk/gpu-tex-enc/blob/main/packages/%40gpu-tex-enc/bc/README.md). <br /> Defaults to `false`.      |

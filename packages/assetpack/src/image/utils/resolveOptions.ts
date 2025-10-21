@@ -20,8 +20,8 @@ export function resolveOptions<T>(options: T | boolean | undefined, defaultOptio
         return options ? defaultOptions : false;
     }
 
-    if (options === 'omit') {
-        return 'omit' as T;
+    if (options === 'skip') {
+        return 'skip' as T;
     }
 
     return {
