@@ -8,7 +8,7 @@ export async function compressSharp(
     const compressed: CompressImageData[] = [];
     const sharpImage = image.sharpImage;
 
-    if (image.format === '.png' && options.png) {
+    if (image.format === '.png' && options.png && options.png !== 'skip') {
         compressed.push({
             format: '.png',
             resolution: image.resolution,
@@ -24,7 +24,7 @@ export async function compressSharp(
         });
     }
 
-    if ((image.format === '.jpg' || image.format === '.jpeg') && options.jpg) {
+    if ((image.format === '.jpg' || image.format === '.jpeg') && options.jpg && options.jpg !== 'skip') {
         compressed.push({
             format: '.jpg',
             resolution: image.resolution,

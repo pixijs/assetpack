@@ -37,7 +37,7 @@ export function texturePackerCompress(
             const formats: Array<[format: string, extension: string]> = [];
 
             if (options.avif) formats.push(['avif', '.avif']);
-            if (options.png) formats.push(['png', '.png']);
+            if (options.png && options.png !== 'skip') formats.push(['png', '.png']);
             if (options.webp) formats.push(['webp', '.webp']);
             if (options.astc) formats.push(['astc', '.astc.ktx']);
             if (options.bc7) formats.push(['bc7', '.bc7.dds']);
