@@ -47,8 +47,6 @@ Each plugin has its own set of tags, so be sure to check the documentation for t
     />
 </div>
 
-
-
 ### Built-in Tags
 
 - `{copy}`: The tags forces an asset to be copied to the output directory, without any processing.
@@ -66,3 +64,22 @@ Data tags are a special type of tag that a plugin can specify to allow for the v
 This can be useful for PixiJS as in the manifest you can specify certain properties for each asset.
 
 For example, the webfont plugin has a `family` tag that can be used to specify the font family name of the font file.
+
+### Defining Tags in Config
+
+In addition to adding tags directly to file or folder names, you can also define them using the metaData field in your configuration. This is especially useful when you want to apply tags without modifying filenames.
+
+```ts
+const appConfig: AssetPackConfig = {
+  entry: './assets',
+
+  assetSettings: [
+    {
+      files: ['**/images'],
+      metaData: {
+        tps: true,
+        // other tags can be added here
+      }
+    }
+  ],
+};

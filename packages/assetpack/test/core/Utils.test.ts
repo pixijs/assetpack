@@ -7,17 +7,14 @@ import { createAssetPipe, createFolder, getCacheDir, getInputDir, getOutputDir }
 import type { Asset } from '../../src/core/Asset.js';
 import type { AssetPipe } from '../../src/core/index.js';
 
-describe('Utils', () =>
-{
+describe('Utils', () => {
     const pkg = 'core';
 
-    it('should get path and file tags', async () =>
-    {
+    it('should get path and file tags', async () => {
         expect(true).toBe(true);
     });
 
-    it('should normalise the path correctly', () =>
-    {
+    it('should normalise the path correctly', () => {
         expect(
             new AssetPack({
                 entry: 'test/test/test',
@@ -31,8 +28,7 @@ describe('Utils', () =>
         ).toBe(true);
     });
 
-    it('should extract tags from file name', async () =>
-    {
+    it('should extract tags from file name', async () => {
         expect(extractTagsFromFileName('test')).toEqual({});
         expect(extractTagsFromFileName('test.json')).toEqual({});
         expect(extractTagsFromFileName('test{tag}.json')).toEqual({ tag: true });
@@ -42,33 +38,29 @@ describe('Utils', () =>
         expect(extractTagsFromFileName('test{tag1}{tag2=1&2}.json')).toEqual({ tag1: true, tag2: [1, 2] });
     });
 
-    it('should allow for tags to be overridden', async () =>
-    {
+    it('should allow for tags to be overridden', async () => {
         const testName = 'tag-override';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'anything',
-                        files: [],
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'anything',
+                    files: [],
+                    folders: [],
+                },
+            ],
+        });
 
         let counter = 0;
         let assetTemp;
         let optionsTemp;
         const plugin = createAssetPipe({
             folder: true,
-            test: ((asset: Asset, options: any) =>
-            {
+            test: ((asset: Asset, options: any) => {
                 counter++;
                 if (counter === 1) return false;
                 assetTemp = asset;
@@ -82,10 +74,11 @@ describe('Utils', () =>
         }) as AssetPipe<any>;
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             pipes: [
-                plugin// as Plugin<any>
+                plugin, // as Plugin<any>
             ],
             cache: false,
             assetSettings: [
@@ -95,14 +88,14 @@ describe('Utils', () =>
                         test: {
                             tags: {
                                 test: 'override',
-                            }
-                        }
+                            },
+                        },
                     },
                     metaData: {
-                        override: [1, 2]
+                        override: [1, 2],
                     },
                 },
-            ]
+            ],
         });
 
         await assetpack.run();
@@ -110,38 +103,34 @@ describe('Utils', () =>
         expect(optionsTemp).toEqual({
             tags: {
                 test: 'override',
-            }
+            },
         });
         expect(assetTemp!.allMetaData).toEqual({
-            override: [1, 2]
+            override: [1, 2],
         });
     });
 
-    it('should allow for plugin to be turned off', async () =>
-    {
+    it('should allow for plugin to be turned off', async () => {
         const testName = 'plugin-off';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [],
-                folders: [
-                    {
-                        name: 'anything',
-                        files: [],
-                        folders: [],
-                    },
-                ],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'anything',
+                    files: [],
+                    folders: [],
+                },
+            ],
+        });
 
         let counter = 0;
         const plugin = createAssetPipe({
             folder: true,
-            test: (() =>
-            {
+            test: (() => {
                 counter++;
 
                 return true;
@@ -152,20 +141,21 @@ describe('Utils', () =>
         }) as AssetPipe<any>;
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             pipes: [
-                plugin// as Plugin<any>
+                plugin, // as Plugin<any>
             ],
             cache: false,
             assetSettings: [
                 {
                     files: ['**'],
                     settings: {
-                        test: false
-                    }
+                        test: false,
+                    },
                 },
-            ]
+            ],
         });
 
         await assetpack.run();
@@ -174,15 +164,14 @@ describe('Utils', () =>
         expect(counter).toEqual(1);
     });
 
-    it('should create a unique cache name', async () =>
-    {
+    it('should create a unique cache name', async () => {
         const cacheName = generateCacheName({
             entry: 'test',
             output: 'out',
             pipes: [
                 {
                     name: 'test',
-                    defaultOptions: { hi: 'there' }
+                    defaultOptions: { hi: 'there' },
                 },
             ],
         });
@@ -197,7 +186,7 @@ describe('Utils', () =>
             pipes: [
                 {
                     name: 'test-2',
-                    defaultOptions: { hi: 'there' }
+                    defaultOptions: { hi: 'there' },
                 },
             ],
         });
@@ -212,7 +201,7 @@ describe('Utils', () =>
             pipes: [
                 {
                     name: 'test-2',
-                    defaultOptions: { hi: 'bye!' }
+                    defaultOptions: { hi: 'bye!' },
                 },
             ],
         });

@@ -3,8 +3,7 @@ import { AssetCache } from '../AssetCache.js';
 import { path } from './path.js';
 import { stripTags } from './stripTags.js';
 
-export function createNewAssetAt(asset: Asset, newFileName: string, outputBase?: string, shouldStripTags?: boolean)
-{
+export function createNewAssetAt(asset: Asset, newFileName: string, outputBase?: string, shouldStripTags?: boolean) {
     return new Asset({
         path: createNewFilePath(asset, newFileName, outputBase, shouldStripTags),
     });
@@ -18,13 +17,11 @@ export function createNewAssetAt(asset: Asset, newFileName: string, outputBase?:
  * @param newFileName  - new file name
  * @returns
  */
-function createNewFilePath(asset: Asset, newFileName: string, outputBase?: string, shouldStripTags?: boolean)
-{
+function createNewFilePath(asset: Asset, newFileName: string, outputBase?: string, shouldStripTags?: boolean) {
     let original: Asset = asset;
 
     // get original directory.
-    while (original.transformParent)
-    {
+    while (original.transformParent) {
         original = original.transformParent;
     }
 
@@ -34,17 +31,13 @@ function createNewFilePath(asset: Asset, newFileName: string, outputBase?: strin
 
     let outputDir: string;
 
-    if (outputBase)
-    {
+    if (outputBase) {
         outputDir = path.joinSafe(outputBase, relativePath);
-    }
-    else
-    {
+    } else {
         outputDir = path.joinSafe(AssetCache.location, asset.transformName, relativePath);
     }
 
-    if (shouldStripTags)
-    {
+    if (shouldStripTags) {
         // Replace all occurrences of the pattern with an empty string
         outputDir = stripTags(outputDir);
         newFileName = stripTags(newFileName);

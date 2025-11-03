@@ -11,33 +11,30 @@ import type { AssetPackConfig } from '../core/config.js';
 
 const require = createRequire(import.meta.url);
 
-interface Options
-{
+interface Options {
     config: string;
     watch: boolean;
 }
 
 const program = new Command();
 
-program.description('Our New CLI');
+program.description('AssetPack CLI - A tool for building and transforming assets');
 program.version('0.2.0');
 program.option('-c, --config <path>', 'config file to use');
 program.option('-w, --watch', 'watch for changes');
+program.allowExcessArguments();
 
-async function main()
-{
+async function main() {
     await program.parseAsync();
 
     const options = program.opts<Options>();
 
     // if config exist then use that path, otherwise use find-up
-    const configPath = options.config ? path.resolve(process.cwd(), options.config) : await findUp(
-        '.assetpack.js',
-        { cwd: process.cwd() },
-    );
+    const configPath = options.config
+        ? path.resolve(process.cwd(), options.config)
+        : await findUp('.assetpack.js', { cwd: process.cwd() });
 
-    if (!configPath)
-    {
+    if (!configPath) {
         logEvent({
             message: 'No config file found',
             level: 'error',
@@ -49,27 +46,19 @@ async function main()
     let AssetPack: typeof AP;
 
     // We try to load cjs first, if that fails we try to load esm
-    try
-    {
-        /* eslint-disable @typescript-eslint/no-var-requires, global-require */
+    try {
         const configModule = require(configPath);
 
-        config = (configModule.__esModule ? configModule.default : configModule);
+        config = configModule.__esModule ? configModule.default : configModule;
         AssetPack = require('@assetpack/core').AssetPack;
-        /* eslint-enable @typescript-eslint/no-var-requires, global-require */
-    }
-    catch (error: any)
-    {
-        if (error.code === 'ERR_REQUIRE_ESM')
-        {
+    } catch (error: any) {
+        if (error.code === 'ERR_REQUIRE_ESM') {
             const esmLoader = dynamicImportLoader();
             const urlForConfig = pathToFileURL(configPath);
 
             config = (await esmLoader!(urlForConfig)).default;
             AssetPack = (await esmLoader!('@assetpack/core')).AssetPack;
-        }
-        else
-        {
+        } else {
             logEvent({
                 message: error.message,
                 level: 'error',
@@ -78,8 +67,7 @@ async function main()
         }
     }
 
-    if (!config)
-    {
+    if (!config) {
         logEvent({
             message: 'Config file found, but could not be read',
             level: 'error',
@@ -89,38 +77,24 @@ async function main()
 
     const assetpack = new AssetPack(config);
 
-    if (options.watch)
-    {
+    if (options.watch) {
         await assetpack.watch();
-    }
-    else
-    {
+    } else {
         await assetpack.run();
     }
 }
 
-function logEvent(event: {
-    message: string;
-    level: 'verbose' | 'info' | 'warn' | 'error';
-})
-{
-    switch (event.level)
-    {
+function logEvent(event: { message: string; level: 'verbose' | 'info' | 'warn' | 'error' }) {
+    switch (event.level) {
         case 'verbose':
         case 'info':
-            console.log(
-                `${chalk.blue.bold('›')} Info: ${chalk.blue.bold(event.message)}`,
-            );
+            console.log(`${chalk.blue.bold('›')} Info: ${chalk.blue.bold(event.message)}`);
             break;
         case 'warn':
-            console.log(
-                `${chalk.yellow.bold('›')} Warn: ${chalk.yellow.bold(event.message)}`,
-            );
+            console.log(`${chalk.yellow.bold('›')} Warn: ${chalk.yellow.bold(event.message)}`);
             break;
         case 'error':
-            console.log(
-                `${chalk.red.bold('›')} Error: ${chalk.red.bold(event.message)}`,
-            );
+            console.log(`${chalk.red.bold('›')} Error: ${chalk.red.bold(event.message)}`);
             process.exit(1);
             break;
         default:
@@ -128,21 +102,17 @@ function logEvent(event: {
     }
 }
 
-function dynamicImportLoader()
-{
+function dynamicImportLoader() {
     let importESM;
 
-    try
-    {
+    try {
         // eslint-disable-next-line no-new-func
         importESM = new Function('id', 'return import(id);');
-    }
-    catch (e)
-    {
+    } catch (_e) {
         importESM = null;
     }
 
     return importESM;
 }
 
-main();
+void main();

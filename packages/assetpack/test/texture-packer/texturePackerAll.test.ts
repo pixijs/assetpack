@@ -12,10 +12,8 @@ import { getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
 
 const pkg = 'texture-packer';
 
-describe('Texture Packer All', () =>
-{
-    it('should create a sprite sheet mip, compress and cache bust', async () =>
-    {
+describe('Texture Packer All', () => {
+    it('should create a sprite sheet mip, compress and cache bust', async () => {
         const testName = 'tp-all';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
@@ -23,7 +21,8 @@ describe('Texture Packer All', () =>
         createTPSFolder(testName, pkg);
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -39,16 +38,16 @@ describe('Texture Packer All', () =>
                     png: true,
                     jpg: true,
                     webp: true,
-                    astc: true
+                    astc: true,
                 }),
                 texturePackerCompress({
                     png: true,
                     webp: true,
-                    astc: true
+                    astc: true,
                 }),
                 cacheBuster(),
-                texturePackerCacheBuster()
-            ]
+                texturePackerCacheBuster(),
+            ],
         });
 
         await assetpack.run();
@@ -70,18 +69,15 @@ describe('Texture Packer All', () =>
         const astcFiles = files.filter((file) => file.endsWith('.astc.ktx'));
 
         // check that the files are correct
-        jsonFiles.forEach((jsonFile) =>
-        {
+        jsonFiles.forEach((jsonFile) => {
             const rawJson = fs.readJSONSync(jsonFile);
             const isHalfSize = jsonFile.includes('@0.5x');
             const isWebp = jsonFile.includes('.webp');
             const isPng = jsonFile.includes('.png');
             const isAstc = jsonFile.includes('.astc');
 
-            const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) =>
-            {
-                fileList.forEach((file) =>
-                {
+            const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) => {
+                fileList.forEach((file) => {
                     // remove the outputDir
                     file = file.replace(`${outputDir}/`, '');
                     const isFileHalfSize = file.includes('@0.5x');
@@ -89,38 +85,27 @@ describe('Texture Packer All', () =>
                     const isFileFileType = file.includes(isWebp ? '.webp' : isAstc ? '.astc.ktx' : '.png');
                     const shouldExist = isHalfSize === isFileHalfSize && isFileType === isFileFileType;
 
-                    shouldExist ? expect(rawJson.meta.image).toEqual(file) : expect(rawJson.meta.image).not.toEqual(file);
+                    shouldExist
+                        ? expect(rawJson.meta.image).toEqual(file)
+                        : expect(rawJson.meta.image).not.toEqual(file);
                 });
             };
 
-            if (isHalfSize)
-            {
-                if (isWebp)
-                {
+            if (isHalfSize) {
+                if (isWebp) {
                     checkFiles(webpFiles, true, true);
-                }
-                else if (isPng)
-                {
+                } else if (isPng) {
                     checkFiles(pngFiles, true, true);
-                }
-                else if (isAstc)
-                {
+                } else if (isAstc) {
                     checkFiles(astcFiles, true, true);
                 }
+            } else if (isWebp) {
+                checkFiles(webpFiles, false, true);
+            } else if (isPng) {
+                checkFiles(pngFiles, false, true);
+            } else if (isAstc) {
+                checkFiles(astcFiles, false, true);
             }
-            else
-                if (isWebp)
-                {
-                    checkFiles(webpFiles, false, true);
-                }
-                else if (isPng)
-                {
-                    checkFiles(pngFiles, false, true);
-                }
-                else if (isAstc)
-                {
-                    checkFiles(astcFiles, false, true);
-                }
         });
     });
 });

@@ -11,31 +11,27 @@
 // process through the list..
 // never repeat a process
 // texture packer -> json compressed -> image mipping -> image compression.
-export function extractTagsFromFileName(basename: string, metaData: Record<string, any> = {})
-{
+export function extractTagsFromFileName(basename: string, metaData: Record<string, any> = {}) {
     const regex = /{([^}]+)}/g;
-    const matches = basename.match(regex)
+    const matches = basename
+        .match(regex)
         ?.map((tag) => tag.replace(/\s+/g, ''))
         ?.map((tag) => tag.slice(1, -1));
 
     if (!matches || matches.length < 1) return metaData;
 
-    for (let i = 0; i < matches.length; i++)
-    {
+    for (let i = 0; i < matches.length; i++) {
         const tagsContent = matches[i];
 
-        if (tagsContent.includes('='))
-        {
+        if (tagsContent.includes('=')) {
             const [tag, value] = tagsContent.split('=');
 
-            const values = value.split('&').map((v) =>
-            {
+            const values = value.split('&').map((v) => {
                 v = v.trim();
 
                 const numberValue = Number(v);
 
-                if (Number.isNaN(numberValue))
-                {
+                if (Number.isNaN(numberValue)) {
                     return v;
                 }
 
@@ -45,10 +41,7 @@ export function extractTagsFromFileName(basename: string, metaData: Record<strin
             metaData[tag] = values.length > 1 ? values : values[0];
             // value.split('&').forEach((v, index) =>
             // // try con convert to a number
-        }
-
-        else
-        {
+        } else {
             metaData[tagsContent] = true;
         }
     }

@@ -7,10 +7,8 @@ import type { AssetPipe } from './AssetPipe.js';
 export const finalCopyPipe: AssetPipe<object> = {
     name: 'final-copy',
     defaultOptions: {},
-    test: (asset: Asset) =>
-        !asset.isFolder,
-    transform: async (asset: Asset, _options, pipeSystem) =>
-    {
+    test: (asset: Asset) => !asset.isFolder,
+    transform: async (asset: Asset, _options, pipeSystem) => {
         const copiedAsset = createNewAssetAt(asset, asset.filename, pipeSystem.outputPath, true);
 
         copiedAsset.buffer = asset.buffer;
@@ -19,5 +17,5 @@ export const finalCopyPipe: AssetPipe<object> = {
         fs.writeFileSync(copiedAsset.path, copiedAsset.buffer);
 
         return [copiedAsset];
-    }
+    },
 };

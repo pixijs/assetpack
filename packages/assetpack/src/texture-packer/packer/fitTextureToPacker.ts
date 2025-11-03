@@ -1,24 +1,20 @@
 import type { PackTexturesOptions, PixiPacker } from './packTextures.js';
 
-export function fitTextureToPacker(bin: PixiPacker, { width, height, fixedSize, padding, powerOfTwo }: PackTexturesOptions)
-{
-    if (!fixedSize)
-    {
+export function fitTextureToPacker(
+    bin: PixiPacker,
+    { width, height, fixedSize, padding, powerOfTwo }: PackTexturesOptions,
+) {
+    if (!fixedSize) {
         width = 0;
         height = 0;
 
-        for (let j = 0; j < bin.rects.length; j++)
-        {
+        for (let j = 0; j < bin.rects.length; j++) {
             const rect = bin.rects[j];
 
-            if (rect.rot)
-            {
+            if (rect.rot) {
                 width = Math.max(width, rect.x + rect.height);
                 height = Math.max(height, rect.y + rect.width);
-            }
-
-            else
-            {
+            } else {
                 width = Math.max(width, rect.x + rect.width);
                 height = Math.max(height, rect.y + rect.height);
             }
@@ -27,23 +23,20 @@ export function fitTextureToPacker(bin: PixiPacker, { width, height, fixedSize, 
         height += padding ?? 0;
         width += padding ?? 0;
 
-        if (powerOfTwo)
-        {
+        if (powerOfTwo) {
             height = nearestPowerOf2(height);
             width = nearestPowerOf2(width);
         }
     }
 
-    return { width, height } as { width: number, height: number};
+    return { width, height } as { width: number; height: number };
 }
 
-function nearestPowerOf2(x: number)
-{
+function nearestPowerOf2(x: number) {
     if (x <= 1) return 1;
     let power = 1;
 
-    while (power < x)
-    {
+    while (power < x) {
         power <<= 1;
     }
 

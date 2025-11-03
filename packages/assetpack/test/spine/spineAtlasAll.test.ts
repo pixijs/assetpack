@@ -11,37 +11,34 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'spine';
 
-describe('Spine Atlas All', () =>
-{
-    it('should correctly create files when Mipmap and Compress are used', async () =>
-    {
+describe('Spine Atlas All', () => {
+    it('should correctly create files when Mipmap and Compress are used', async () => {
         const testName = 'spine-atlas-compress-mip';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -62,7 +59,7 @@ describe('Spine Atlas All', () =>
                     webp: true,
                     astc: true,
                 }),
-            ]
+            ],
         });
 
         await assetpack.run();
@@ -81,35 +78,33 @@ describe('Spine Atlas All', () =>
         expect(rawAtlasAstcHalf.includes('dragon2@0.5x.astc.ktx')).toBeTruthy();
     });
 
-    it('should correctly create files when Mipmap and CacheBuster are used', async () =>
-    {
+    it('should correctly create files when Mipmap and CacheBuster are used', async () => {
         const testName = 'spine-atlas-mip-cache-buster';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'dragon{spine}.atlas',
-                        content: assetPath('spine/dragon.atlas'),
-                    },
-                    {
-                        name: 'dragon.png',
-                        content: assetPath('spine/dragon.png'),
-                    },
-                    {
-                        name: 'dragon2.png',
-                        content: assetPath('spine/dragon2.png'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
+                {
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
+                {
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
             pipes: [
@@ -120,7 +115,7 @@ describe('Spine Atlas All', () =>
                     png: true,
                     webp: true,
                     jpg: true,
-                    astc: true
+                    astc: true,
                 }),
                 spineAtlasMipmap({
                     resolutions: { default: 1, low: 0.5 },
@@ -128,11 +123,11 @@ describe('Spine Atlas All', () =>
                 spineAtlasCompress({
                     png: true,
                     webp: true,
-                    astc: true
+                    astc: true,
                 }),
                 cacheBuster(),
-                spineAtlasCacheBuster()
-            ]
+                spineAtlasCacheBuster(),
+            ],
         });
 
         await assetpack.run();
@@ -153,18 +148,15 @@ describe('Spine Atlas All', () =>
         const astcFiles = files.filter((file) => file.endsWith('.astc.ktx'));
 
         // check that the files are correct
-        atlasFiles.forEach((atlasFile) =>
-        {
+        atlasFiles.forEach((atlasFile) => {
             const rawAtlas = readFileSync(atlasFile);
             const isHalfSize = atlasFile.includes('@0.5x');
             const isWebp = atlasFile.includes('.webp');
             const isPng = atlasFile.includes('.png');
             const isAstc = atlasFile.includes('.astc');
 
-            const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) =>
-            {
-                fileList.forEach((file) =>
-                {
+            const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) => {
+                fileList.forEach((file) => {
                     // remove the outputDir
                     file = file.replace(`${outputDir}/`, '');
                     const isFileHalfSize = file.includes('@0.5x');
@@ -176,34 +168,129 @@ describe('Spine Atlas All', () =>
                 });
             };
 
-            if (isHalfSize)
-            {
-                if (isWebp)
-                {
+            if (isHalfSize) {
+                if (isWebp) {
                     checkFiles(webpFiles, true, true);
-                }
-                else if (isPng)
-                {
+                } else if (isPng) {
                     checkFiles(pngFiles, true, true);
-                }
-                else if (isAstc)
-                {
+                } else if (isAstc) {
                     checkFiles(astcFiles, true, true);
                 }
+            } else if (isWebp) {
+                checkFiles(webpFiles, false, true);
+            } else if (isPng) {
+                checkFiles(pngFiles, false, true);
+            } else if (isAstc) {
+                checkFiles(astcFiles, false, true);
             }
-            else
-                if (isWebp)
+        });
+    });
+
+    it('should excluded png files when omit is passed', async () => {
+        const testName = 'spine-atlas-mip-omit1';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        createFolder(pkg, {
+            name: testName,
+            files: [
                 {
-                    checkFiles(webpFiles, false, true);
-                }
-                else if (isPng)
+                    name: 'dragon{spine}.atlas',
+                    content: assetPath('spine/dragon.atlas'),
+                },
                 {
-                    checkFiles(pngFiles, false, true);
-                }
-                else if (isAstc)
+                    name: 'dragon.png',
+                    content: assetPath('spine/dragon.png'),
+                },
                 {
-                    checkFiles(astcFiles, false, true);
+                    name: 'dragon2.png',
+                    content: assetPath('spine/dragon2.png'),
+                },
+            ],
+            folders: [],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                mipmap({
+                    resolutions: { default: 1, low: 0.5 },
+                }),
+                compress({
+                    png: 'skip',
+                    webp: true,
+                    jpg: true,
+                    astc: true,
+                }),
+                spineAtlasMipmap({
+                    resolutions: { default: 1, low: 0.5 },
+                }),
+                spineAtlasCompress({
+                    png: 'skip',
+                    webp: true,
+                    astc: true,
+                }),
+                cacheBuster(),
+                spineAtlasCacheBuster(),
+            ],
+        });
+
+        await assetpack.run();
+        const globPath = `${outputDir}/*.{atlas,png,webp,astc.ktx}`;
+        const files = await glob(globPath);
+
+        // need two sets of files
+        expect(files.length).toBe(12);
+        expect(files.filter((file) => file.endsWith('.atlas')).length).toBe(4);
+        expect(files.filter((file) => file.endsWith('.png')).length).toBe(0);
+        expect(files.filter((file) => file.endsWith('.webp')).length).toBe(4);
+        expect(files.filter((file) => file.endsWith('.astc.ktx')).length).toBe(4);
+        expect(files.filter((file) => file.endsWith('.jpg')).length).toBe(0);
+
+        const atlasFiles = files.filter((file) => file.endsWith('.atlas'));
+        const pngFiles = files.filter((file) => file.endsWith('.png'));
+        const webpFiles = files.filter((file) => file.endsWith('.webp'));
+        const astcFiles = files.filter((file) => file.endsWith('.astc.ktx'));
+
+        // check that the files are correct
+        atlasFiles.forEach((atlasFile) => {
+            const rawAtlas = readFileSync(atlasFile);
+            const isHalfSize = atlasFile.includes('@0.5x');
+            const isWebp = atlasFile.includes('.webp');
+            const isPng = atlasFile.includes('.png');
+            const isAstc = atlasFile.includes('.astc');
+
+            const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) => {
+                fileList.forEach((file) => {
+                    // remove the outputDir
+                    file = file.replace(`${outputDir}/`, '');
+                    const isFileHalfSize = file.includes('@0.5x');
+                    // eslint-disable-next-line no-nested-ternary
+                    const isFileFileType = file.includes(isWebp ? '.webp' : isAstc ? '.astc' : '.png');
+                    const shouldExist = isHalfSize === isFileHalfSize && isFileType === isFileFileType;
+
+                    expect(rawAtlas.includes(file)).toBe(shouldExist);
+                });
+            };
+
+            if (isHalfSize) {
+                if (isWebp) {
+                    checkFiles(webpFiles, true, true);
+                } else if (isPng) {
+                    checkFiles(pngFiles, true, true);
+                } else if (isAstc) {
+                    checkFiles(astcFiles, true, true);
                 }
+            } else if (isWebp) {
+                checkFiles(webpFiles, false, true);
+            } else if (isPng) {
+                checkFiles(pngFiles, false, true);
+            } else if (isAstc) {
+                checkFiles(astcFiles, false, true);
+            }
         });
     });
 });

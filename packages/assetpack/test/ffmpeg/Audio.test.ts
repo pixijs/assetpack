@@ -6,38 +6,33 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'ffmpeg';
 
-describe('Audio', () =>
-{
-    it('should create mp3 and ogg file formats', async () =>
-    {
+describe('Audio', () => {
+    it('should create mp3 and ogg file formats', async () => {
         const testName = 'audio-convert';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: '1.mp3',
-                        content: assetPath('audio/1.mp3'),
-                    },
-                    {
-                        name: '2.mp3',
-                        content: assetPath('audio/2.mp3'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: '1.mp3',
+                    content: assetPath('audio/1.mp3'),
+                },
+                {
+                    name: '2.mp3',
+                    content: assetPath('audio/2.mp3'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                audio()
-            ]
+            pipes: [audio()],
         });
 
         await assetpack.run();
@@ -49,43 +44,42 @@ describe('Audio', () =>
         expect(existsSync(`${outputDir}/2.ogg`)).toBe(true);
     });
 
-    it('should allow for settings to be overridden', async () =>
-    {
+    it('should allow for settings to be overridden', async () => {
         const testName = 'audio-overrides';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: '1.mp3',
-                        content: assetPath('audio/1.mp3'),
-                    },
-                    {
-                        name: '2.mp3',
-                        content: assetPath('audio/2.mp3'),
-                    },
-                ],
-                folders: [],
-            });
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: '1.mp3',
+                    content: assetPath('audio/1.mp3'),
+                },
+                {
+                    name: '2.mp3',
+                    content: assetPath('audio/2.mp3'),
+                },
+            ],
+            folders: [],
+        });
 
         const plugin = audio({
             name: 'audio',
             inputs: ['doNotMatch'],
-            outputs: []
+            outputs: [],
         });
 
         const plugin2 = audio({
             name: 'audio2',
             inputs: ['.mp3'],
-            outputs: [{
-                formats: ['.wav'],
-                recompress: false,
-                options: {}
-            }]
+            outputs: [
+                {
+                    formats: ['.wav'],
+                    recompress: false,
+                    options: {},
+                },
+            ],
         });
 
         const assetpack = new AssetPack({
@@ -93,10 +87,7 @@ describe('Audio', () =>
             cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: false,
-            pipes: [
-                plugin,
-                plugin2
-            ]
+            pipes: [plugin, plugin2],
         });
 
         const mock = vi.spyOn(plugin, 'transform');

@@ -17,34 +17,32 @@ type CompressAstcOptions = AstcOptions;
 type CompressBasisOptions = BasisOptions;
 type CompressEtcOptions = EtcOptions;
 
-export interface CompressOptions extends PluginOptions
-{
-    png?: CompressPngOptions | boolean;
+export interface CompressOptions extends PluginOptions {
+    png?: CompressPngOptions | boolean | 'skip';
     webp?: CompressWebpOptions | boolean;
     avif?: CompressAvifOptions | boolean;
-    jpg?: CompressJpgOptions | boolean;
+    jpg?: CompressJpgOptions | boolean | 'skip';
     bc7?: CompressBc7Options | boolean;
     astc?: CompressAstcOptions | boolean;
     basis?: CompressBasisOptions | boolean;
     etc?: CompressEtcOptions | boolean;
 }
 
-export interface CompressImageData
-{
+export interface CompressImageData {
     format: '.avif' | '.png' | '.webp' | '.jpg' | '.jpeg';
     resolution: number;
     sharpImage: sharp.Sharp;
 }
 
-export interface CompressImageDataResult
-{
+export interface CompressImageDataResult {
     format: CompressImageData['format'] | '.bc7.dds' | '.astc.ktx' | '.basis.ktx2' | '.etc.ktx';
     resolution: number;
     buffer: Buffer;
 }
 
-export function compress(options: CompressOptions = {}): AssetPipe<CompressOptions, 'nc'>
-{
+export type CompressTags = 'nc';
+
+export function compress(options: CompressOptions = {}): AssetPipe<CompressOptions, CompressTags> {
     const compress = resolveOptions<CompressOptions>(options, {
         png: true,
         jpg: true,
@@ -56,37 +54,24 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         etc: false,
     });
 
-    if (compress)
-    {
-        compress.jpg = resolveOptions<CompressJpgOptions>(compress.jpg, {
-
-        });
-        compress.png = resolveOptions<CompressPngOptions>(compress.png, {
+    if (compress) {
+        compress.jpg = resolveOptions<CompressJpgOptions | 'skip'>(compress.jpg, {});
+        compress.png = resolveOptions<CompressPngOptions | 'skip'>(compress.png, {
             quality: 90,
         });
         compress.webp = resolveOptions<CompressWebpOptions>(compress.webp, {
             quality: 80,
             alphaQuality: 80,
         });
-        compress.avif = resolveOptions<CompressAvifOptions>(compress.avif, {
+        compress.avif = resolveOptions<CompressAvifOptions>(compress.avif, {});
 
-        });
+        compress.bc7 = resolveOptions<CompressBc7Options>(compress.bc7, {});
 
-        compress.bc7 = resolveOptions<CompressBc7Options>(compress.bc7, {
+        compress.astc = resolveOptions<CompressAstcOptions>(compress.astc, {});
 
-        });
+        compress.basis = resolveOptions<CompressBasisOptions>(compress.basis, {});
 
-        compress.astc = resolveOptions<CompressAstcOptions>(compress.astc, {
-
-        });
-
-        compress.basis = resolveOptions<CompressBasisOptions>(compress.basis, {
-
-        });
-
-        compress.etc = resolveOptions<CompressEtcOptions>(compress.etc, {
-
-        });
+        compress.etc = resolveOptions<CompressEtcOptions>(compress.etc, {});
     }
 
     return {
@@ -98,21 +83,17 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
         tags: {
             nc: 'nc',
         },
-        test(asset: Asset, options)
-        {
+        test(asset: Asset, options) {
             return options && checkExt(asset.path, '.png', '.jpg', '.jpeg') && !asset.allMetaData[this.tags!.nc];
         },
-        async transform(asset: Asset, options)
-        {
+        async transform(asset: Asset, options) {
             const shouldCompress = compress && !asset.metaData[this.tags!.nc];
 
-            if (!shouldCompress)
-            {
+            if (!shouldCompress) {
                 return [];
             }
 
-            try
-            {
+            try {
                 const image: CompressImageData = {
                     format: asset.extension as CompressImageData['format'],
                     resolution: 1,
@@ -120,20 +101,15 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
                 };
 
                 const processedImages: CompressImageDataResult[] = [
-                    ...await compressSharp(image, options),
-                    ...await compressGpuTextures(image, options)
+                    ...(await compressSharp(image, options)),
+                    ...(await compressGpuTextures(image, options)),
                 ];
 
-                const newAssets = processedImages.map((data) =>
-                {
+                const newAssets = processedImages.map((data) => {
                     const end = `${data.format}`;
-                    const filename = asset.filename
-                        .replace(/\.[^/.]+$/, end);
+                    const filename = asset.filename.replace(/\.[^/.]+$/, end);
 
-                    const newAsset = createNewAssetAt(
-                        asset,
-                        filename
-                    );
+                    const newAsset = createNewAssetAt(asset, filename);
 
                     newAsset.buffer = data.buffer;
 
@@ -141,19 +117,17 @@ export function compress(options: CompressOptions = {}): AssetPipe<CompressOptio
                 });
 
                 // ensure that the original image is passed through if it is not compressed by png/jpg options
-                if ((image.format === '.png' && !options.png) || (((image.format === '.jpg') || (image.format === '.jpeg')) && !options.jpg))
-                {
+                if (
+                    (image.format === '.png' && !options.png) ||
+                    ((image.format === '.jpg' || image.format === '.jpeg') && !options.jpg)
+                ) {
                     newAssets.push(asset);
                 }
 
                 return newAssets;
-            }
-            catch (error)
-            {
+            } catch (error) {
                 throw new Error(`[AssetPack][compress] Failed to compress image: ${asset.path} - ${error}`);
             }
         },
-
     };
 }
-

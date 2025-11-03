@@ -1,25 +1,24 @@
+
 import fs from 'fs-extra';
-import generateBMFont from 'msdf-bmfont-xml';
 import { removeExt } from 'upath';
 import { json2xml, xml2json } from 'xml-js';
 import { checkExt, createNewAssetAt, findAssets, merge, path, stripTags } from '../core/index.js';
+import generateBMFont from '@pixi/msdf-bmfont-xml';
 
-import type { BitmapFontOptions } from 'msdf-bmfont-xml';
+import type { BitmapFontOptions } from '@pixi/msdf-bmfont-xml';
 import type { Asset, AssetPipe, PluginOptions } from '../core/index.js';
 import type { MipmapOptions } from '../image/index.js';
 
-export interface SDFFontOptions extends PluginOptions
-{
-    name: string,
-    type: BitmapFontOptions['fieldType'],
-    font?: Omit<BitmapFontOptions, 'outputType' | 'fieldType'>,
+export interface SDFFontOptions extends PluginOptions {
+    name: string;
+    type: BitmapFontOptions['fieldType'];
+    font?: Omit<BitmapFontOptions, 'outputType' | 'fieldType'>;
     resolutionOptions?: MipmapOptions
 }
 
-function signedFont(
-    defaultOptions: SDFFontOptions,
-): AssetPipe<SDFFontOptions, 'font' | 'nc' | 'fix'>
-{
+export type SignedFontTags = 'font' | 'nc' | 'nomip' | 'fix';
+
+function signedFont(defaultOptions: SDFFontOptions): AssetPipe<SDFFontOptions, SignedFontTags> {
     return {
         folder: false,
         name: defaultOptions.name,
@@ -40,6 +39,7 @@ function signedFont(
         tags: {
             font: 'font',
             nc: 'nc',
+            nomip: 'nomip',
             fix: 'fix',
         },
         test(asset: Asset)
@@ -160,8 +160,7 @@ function signedFont(
     };
 }
 
-export function sdfFont(options: Partial<SDFFontOptions> = {})
-{
+export function sdfFont(options: Partial<SDFFontOptions> = {}) {
     const signed = signedFont({
         name: 'sdf-font',
         type: 'sdf',
@@ -173,8 +172,7 @@ export function sdfFont(options: Partial<SDFFontOptions> = {})
     return signed;
 }
 
-export function msdfFont(options: Partial<SDFFontOptions> = {})
-{
+export function msdfFont(options: Partial<SDFFontOptions> = {}) {
     const signed = signedFont({
         name: 'msdf-font',
         type: 'msdf',
@@ -186,19 +184,18 @@ export function msdfFont(options: Partial<SDFFontOptions> = {})
     return signed;
 }
 
-async function GenerateFont(input: string, params: BitmapFontOptions): Promise<{
-    textures: { filename: string, texture: Buffer }[],
-    font: { filename: string, data: string }
-}>
-{
-    return new Promise(async (resolve, reject) =>
-    {
+async function GenerateFont(
+    input: string,
+    params: BitmapFontOptions,
+): Promise<{
+    textures: { filename: string; texture: Buffer }[];
+    font: { filename: string; data: string };
+}> {
+    return new Promise(async (resolve, reject) => {
         const fontBuffer = await fs.readFile(input);
 
-        generateBMFont(fontBuffer, params, (err, textures, font) =>
-        {
-            if (err)
-            {
+        generateBMFont(fontBuffer, params, (err, textures, font) => {
+            if (err) {
                 reject(err);
             }
             else

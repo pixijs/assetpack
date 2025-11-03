@@ -20,8 +20,7 @@ const colors = {
     white: '\x1b[37m',
 };
 
-export function logAssetGraph(asset: Asset, indent = '')
-{
+export function logAssetGraph(asset: Asset, indent = '') {
     // get file name..
     const baseName = path.basename(asset.path);
 
@@ -29,14 +28,13 @@ export function logAssetGraph(asset: Asset, indent = '')
 
     indent += '  ';
 
-    asset.children.forEach((child) =>
-    {
+    asset.children.forEach((child) => {
         logAssetGraph(child, indent);
     });
 }
 
-function log(...args: [...string[], keyof typeof colors])// ]value: string, color: keyof typeof colors = 'white')
-{
+function log(...args: [...string[], keyof typeof colors]) {
+    // ]value: string, color: keyof typeof colors = 'white')
     const value = args.slice(0, -1).join(' ');
 
     const colorValue = args[args.length - 1] ?? 'white';

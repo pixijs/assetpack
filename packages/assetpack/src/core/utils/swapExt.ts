@@ -8,8 +8,7 @@ import { path } from './path.js';
  * @param newExt - The new extension to use
  * @returns - The path with the new extension
  */
-export function swapExt(pth: string, newExt: string)
-{
+export function swapExt(pth: string, newExt: string) {
     const pathExt = path.extname(pth);
 
     return pth.replace(pathExt, newExt);

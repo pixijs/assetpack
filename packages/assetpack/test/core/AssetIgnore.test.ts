@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { AssetIgnore } from '../../src/core/AssetIgnore.js';
 
-describe('AssetIgnore', () =>
-{
-    it('should ignore file based on globs', async () =>
-    {
+describe('AssetIgnore', () => {
+    it('should ignore file based on globs', async () => {
         const assetIgnore = new AssetIgnore({
             ignore: '**/*.png',
             entryPath: 'test',
@@ -14,8 +12,7 @@ describe('AssetIgnore', () =>
         expect(assetIgnore.shouldIgnore('test/test.jpg')).toBe(false);
     });
 
-    it('should ignore file based on array globs', async () =>
-    {
+    it('should ignore file based on array globs', async () => {
         const assetIgnore = new AssetIgnore({
             ignore: ['**/*.png', '**/*.json'],
             entryPath: 'test',

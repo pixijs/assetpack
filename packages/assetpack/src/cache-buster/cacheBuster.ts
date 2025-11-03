@@ -15,20 +15,17 @@ import type { AssetPipe } from '../core/pipes/AssetPipe.js';
  *
  * @returns the cache buster asset pipe
  */
-export function cacheBuster(): AssetPipe
-{
+export function cacheBuster(): AssetPipe {
     const defaultOptions = {};
 
     return {
         folder: false,
         name: 'cache-buster',
         defaultOptions,
-        test(asset: Asset)
-        {
+        test(asset: Asset) {
             return !asset.isFolder;
         },
-        async transform(asset: Asset)
-        {
+        async transform(asset: Asset) {
             const hash = asset.hash;
 
             // first try to stick the has on the end of the original file name
@@ -36,12 +33,9 @@ export function cacheBuster(): AssetPipe
 
             let newFileName: string;
 
-            if (asset.filename.includes(originalFileName))
-            {
+            if (asset.filename.includes(originalFileName)) {
                 newFileName = asset.filename.replace(originalFileName, `${originalFileName}-${hash}`);
-            }
-            else
-            {
+            } else {
                 // failing that just stick it on the end!
                 newFileName = swapExt(asset.filename, `-${hash}${asset.extension}`);
             }

@@ -1,36 +1,34 @@
-import chokidar from 'chokidar';
+import chokidar, { type FSWatcher } from 'chokidar';
 import fs from 'fs-extra';
 import upath from 'upath';
 import { Asset } from './Asset.js';
 import { AssetIgnore } from './AssetIgnore.js';
 import { deleteAssetFiles } from './AssetPack.js';
-import { Logger } from './logger/Logger.js';
+import { BuildReporter } from './logger/BuildReporter.js';
 import { applySettingToAsset } from './utils/applySettingToAsset.js';
 import { path } from './utils/path.js';
+import { removeFileFromChanges } from './utils/removeFileFromChanges.js';
 import { syncAssetsWithCache } from './utils/syncAssetsWithCache.js';
 
-import type { CachedAsset } from './AssetCache.js';
+import type { IAssetCache } from './AssetCache.js';
 import type { AssetSettings } from './pipes/PipeSystem.js';
 
-export interface AssetWatcherOptions
-{
+export interface AssetWatcherOptions {
     entryPath: string;
-    assetCacheData?: Record<string, CachedAsset> | null;
+    assetCache?: IAssetCache;
     assetSettingsData?: AssetSettings[];
     ignore?: string | string[];
     onUpdate: (root: Asset) => Promise<void>;
     onComplete: (root: Asset) => void;
 }
 
-interface ChangeData
-{
+export interface ChangeData {
     type: string;
     file: string;
 }
 
-export class AssetWatcher
-{
-    private _watcher: chokidar.FSWatcher | undefined;
+export class AssetWatcher {
+    private _watcher: FSWatcher | undefined;
     private _assetHash: Record<string, Asset> = {};
 
     private _changes: ChangeData[] = [];
@@ -43,11 +41,10 @@ export class AssetWatcher
     private _onComplete: (root: Asset) => void;
     private _ignore: AssetIgnore;
     private _assetSettingsData: AssetSettings[];
-    private _assetCacheData: Record<string, CachedAsset> | undefined | null;
     private _initialised = false;
+    private _assetCache: IAssetCache | undefined;
 
-    constructor(options: AssetWatcherOptions)
-    {
+    constructor(options: AssetWatcherOptions) {
         const entryPath = upath.toUnix(options.entryPath);
 
         this._onUpdate = options.onUpdate;
@@ -55,87 +52,112 @@ export class AssetWatcher
         this._entryPath = entryPath;
 
         this._ignore = new AssetIgnore({
-            ignore: options.ignore as string[] ?? [],
-            entryPath
+            ignore: (options.ignore as string[]) ?? [],
+            entryPath,
         });
 
-        this._assetCacheData = options.assetCacheData;
+        this._assetCache = options.assetCache;
         this._assetSettingsData = options.assetSettingsData ?? [];
     }
 
-    private _init()
-    {
-        if (this._initialised) return;
-        this._initialised = true;
+    get root() {
+        return this._root;
+    }
 
-        Logger.report({
+    private _init() {
+        BuildReporter.report({
             type: 'buildStart',
             message: this._entryPath,
         });
 
-        const asset = new Asset({
-            path: this._entryPath,
-            isFolder: true,
-        });
+        if (!this._initialised) {
+            this._initialised = true;
 
-        this._assetHash[asset.path] = asset;
+            const asset = new Asset({
+                path: this._entryPath,
+                isFolder: true,
+            });
 
-        this._root = asset;
+            this._assetHash[asset.path] = asset;
 
-        this._collectAssets(asset);
+            this._root = asset;
 
-        if (this._assetCacheData)
-        {
+            this._collectAssets(this._root);
+        }
+
+        if (this._assetCache) {
             // now compare the cached asset with the current asset
-            syncAssetsWithCache(this._assetHash, this._assetCacheData);
+            syncAssetsWithCache(this._assetHash, this._assetCache.read());
         }
     }
 
-    async run()
-    {
+    async run() {
         this._init();
 
         return this._runUpdate();
     }
 
-    async watch()
-    {
+    async watch() {
         let firstRun = !this._initialised;
 
         this._init();
 
-        return new Promise<void>((resolve) =>
-        {
+        return new Promise<void>((resolve) => {
             this._watcher = chokidar.watch(this._entryPath, {
-            // should we ignore the file based on the ignore rules provided (if any)
-            // ignored: this.config.ignore,
+                // should we ignore the file based on the ignore rules provided (if any)
+                // ignored: this.config.ignore,
                 ignored: [(s: string) => s.includes('DS_Store')],
             });
 
-            this._watcher.on('all', (type: any, file: string) =>
-            {
+            this._watcher.on('all', (type: any, file: string) => {
                 if (!file || this._ignore.shouldIgnore(file)) return;
+
+                // find if there was an add event in the changes already
+                const existingAdd = this._changes.find(
+                    (c) => c.file === file && (c.type === 'add' || c.type === 'addDir'),
+                );
+
+                // if there was an add event, and now we have a change event, we can ignore the change event
+                if (existingAdd && type === 'change') {
+                    return;
+                }
+
+                // if there was a change event, and now we have another change event, we can ignore the new change event
+                if (this._changes.find((c) => c.file === file && c.type === 'change' && type === 'change')) {
+                    return;
+                }
+
+                // if there was an add event, and now we have a delete event, we can just remove the add event
+                if (existingAdd && (type === 'unlink' || type === 'unlinkDir')) {
+                    removeFileFromChanges(this._changes, file);
+
+                    return;
+                }
+
+                // if there was a delete event, and now we have an add event, we can just remove the delete event
+                if (
+                    this._changes.find((c) => c.file === file && (c.type === 'unlink' || c.type === 'unlinkDir')) &&
+                    (type === 'add' || type === 'addDir')
+                ) {
+                    removeFileFromChanges(this._changes, file);
+                }
 
                 this._changes.push({
                     type,
                     file,
                 });
 
-                if (this._timeoutId)
-                {
+                if (this._timeoutId) {
                     clearTimeout(this._timeoutId);
                 }
 
-                this._timeoutId = setTimeout(() =>
-                {
-                    this._updateAssets();
+                this._timeoutId = setTimeout(() => {
+                    void this._updateAssets();
                     this._timeoutId = undefined;
 
-                    if (firstRun)
-                    {
+                    if (firstRun) {
                         firstRun = false;
-                        this._updatingPromise.then(() =>
-                        {
+                        void this._updatingPromise.then(() => {
                             resolve();
                         });
                     }
@@ -144,35 +166,29 @@ export class AssetWatcher
         });
     }
 
-    async stop()
-    {
-        if (this._watcher)
-        {
-            this._watcher.close();
+    async stop() {
+        if (this._watcher) {
+            void this._watcher.close();
         }
 
-        if (this._timeoutId)
-        {
+        if (this._timeoutId) {
             clearTimeout(this._timeoutId);
 
-            this._updateAssets();
+            void this._updateAssets();
             this._timeoutId = undefined;
         }
 
         await this._updatingPromise;
     }
 
-    private async _runUpdate()
-    {
-        return this._onUpdate(this._root).then(() =>
-        {
+    private async _runUpdate() {
+        return this._onUpdate(this._root).then(() => {
             this._cleanAssets(this._root);
             this._onComplete(this._root);
         });
     }
 
-    private async _updateAssets(force = false)
-    {
+    private async _updateAssets(force = false) {
         // wait for current thing to finish..
         await this._updatingPromise;
 
@@ -185,22 +201,16 @@ export class AssetWatcher
         this._updatingPromise = this._runUpdate();
     }
 
-    private _applyChangeToAssets(changes: ChangeData[])
-    {
-        changes.forEach(({ type, file }) =>
-        {
+    private _applyChangeToAssets(changes: ChangeData[]) {
+        changes.forEach(({ type, file }) => {
             file = upath.toUnix(file);
 
             let asset = this._assetHash[file];
 
-            if (type === 'unlink' || type === 'unlinkDir')
-            {
+            if (type === 'unlink' || type === 'unlinkDir') {
                 asset.state = 'deleted';
-            }
-            else if (type === 'addDir' || type === 'add')
-            {
-                if (this._assetHash[file])
-                {
+            } else if (type === 'addDir' || type === 'add') {
+                if (this._assetHash[file]) {
                     return;
                 }
 
@@ -209,7 +219,7 @@ export class AssetWatcher
 
                 asset = new Asset({
                     path: file,
-                    isFolder: type === 'addDir'
+                    isFolder: type === 'addDir',
                 });
 
                 asset.state = 'added';
@@ -222,11 +232,9 @@ export class AssetWatcher
                 const parentAsset = this._assetHash[path.dirname(file)];
 
                 parentAsset.addChild(asset);
-            }
-            else if (asset.state === 'normal')
-            {
+            } else if (asset.state === 'normal') {
                 asset.state = 'modified';
-                deleteAssetFiles(asset);
+                void deleteAssetFiles(asset);
             }
 
             // flag all folders as modified..
@@ -234,47 +242,38 @@ export class AssetWatcher
         });
     }
 
-    private _cleanAssets(asset: Asset)
-    {
+    private _cleanAssets(asset: Asset) {
         const toDelete: Asset[] = [];
 
         this._cleanAssetsRec(asset, toDelete);
 
-        toDelete.forEach((asset) =>
-        {
+        toDelete.forEach((asset) => {
             asset.parent?.removeChild(asset);
         });
     }
 
-    private _cleanAssetsRec(asset: Asset, toDelete: Asset[])
-    {
+    private _cleanAssetsRec(asset: Asset, toDelete: Asset[]) {
         if (asset.state === 'normal') return;
 
         // TODO is slice a good thing here?
-        asset.children.forEach((child) =>
-        {
+        asset.children.forEach((child) => {
             this._cleanAssetsRec(child, toDelete);
         });
 
-        if (asset.state === 'deleted')
-        {
+        if (asset.state === 'deleted') {
             toDelete.push(asset);
 
             delete this._assetHash[asset.path];
-        }
-        else
-        {
+        } else {
             asset.state = 'normal';
         }
     }
 
-    private _collectAssets(asset: Asset)
-    {
+    private _collectAssets(asset: Asset) {
         // loop through and turn each file and folder into an asset
         const files = fs.readdirSync(asset.path);
 
-        files.forEach((file) =>
-        {
+        files.forEach((file) => {
             file = upath.toUnix(file);
 
             const fullPath = path.joinSafe(asset.path, file);
@@ -285,11 +284,10 @@ export class AssetWatcher
 
             const childAsset = new Asset({
                 path: fullPath,
-                isFolder: stat.isDirectory()
+                isFolder: stat.isDirectory(),
             });
 
-            if (!childAsset.metaData.ignore && this._ignore.shouldInclude(childAsset.path))
-            {
+            if (!childAsset.metaData.ignore && this._ignore.shouldInclude(childAsset.path)) {
                 this._assetHash[childAsset.path] = childAsset;
 
                 // if asset is added...
@@ -297,33 +295,29 @@ export class AssetWatcher
 
                 asset.addChild(childAsset);
 
-                if (childAsset.isFolder)
-                {
+                if (childAsset.isFolder) {
                     this._collectAssets(childAsset);
                 }
             }
         });
     }
 
-    private _ensureDirectory(dirPath: string)
-    {
+    private _ensureDirectory(dirPath: string) {
         const parentPath = path.dirname(dirPath);
 
-        if (parentPath === this._entryPath || parentPath === '.' || parentPath === '/')
-        {
+        if (parentPath === this._entryPath || parentPath === '.' || parentPath === '/') {
             return;
         }
 
         this._ensureDirectory(parentPath);
 
-        if (this._assetHash[parentPath])
-        {
+        if (this._assetHash[parentPath]) {
             return;
         }
 
         const asset = new Asset({
             path: parentPath,
-            isFolder: true
+            isFolder: true,
         });
 
         asset.state = 'added';
@@ -335,4 +329,3 @@ export class AssetWatcher
         this._assetHash[parentPath] = asset;
     }
 }
-

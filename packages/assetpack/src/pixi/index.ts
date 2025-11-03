@@ -14,6 +14,7 @@ import { texturePackerCacheBuster } from '../texture-packer/texturePackerCacheBu
 import { texturePackerCompress } from '../texture-packer/texturePackerCompress.js';
 import { SDFCacheBuster } from '../webfont/sdfCacheBuster.js';
 import { sdfCompress } from '../webfont/sdfCompress.js';
+import { texturePackerManifestMod } from '../texture-packer/texturePackerManifestMod.js';
 import { webfont } from '../webfont/webfont.js';
 
 import type { AssetPipe } from '../core/index.js';
@@ -25,8 +26,7 @@ import type { TexturePackerOptions } from '../texture-packer/texturePacker.js';
 /**
  * Options for the AssetpackPlugin.
  */
-export interface PixiAssetPack
-{
+export interface PixiAssetPack {
     cacheBust?: boolean;
     resolutions?: Record<string, number>;
     compression?: CompressOptions | false;
@@ -59,8 +59,7 @@ const defaultConfig: PixiAssetPack = {
  * Returns an array of plugins that can be used by AssetPack to process assets
  * for a PixiJS project.
  */
-export function pixiPipes(config: PixiAssetPack)
-{
+export function pixiPipes(config: PixiAssetPack) {
     const apConfig: Required<PixiAssetPack> = merge.recursive(defaultConfig, config);
 
     // don't merge the resolutions, just overwrite them
@@ -87,8 +86,7 @@ export function pixiPipes(config: PixiAssetPack)
         }),
     ] as AssetPipe[];
 
-    if (apConfig.compression !== false)
-    {
+    if (apConfig.compression !== false) {
         pipes.push(
             compress(apConfig.compression),
             spineAtlasCompress(apConfig.compression),
@@ -112,6 +110,7 @@ export function pixiPipes(config: PixiAssetPack)
     pipes.push(
         pixiManifest(manifestOptions),
         spineAtlasManifestMod(manifestOptions),
+        texturePackerManifestMod(manifestOptions),
     );
 
     return pipes;

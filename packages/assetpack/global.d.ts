@@ -1,13 +1,37 @@
-declare module 'otf2svg'
-{
+declare module 'otf2svg' {
     export function convertToFile(input: string, out: string): void;
     export function convert(input: string, codePoints?: number[]): string;
 }
 
-declare module 'msdf-bmfont-xml'
-{
-    interface BitmapFontOptions
-    {
+declare module '@pixi/svg2ttf' {
+    export default function svg2ttf(svgFontString: string, options?: svg2ttf.FontOptions): svg2ttf.MicroBuffer;
+    export namespace svg2ttf {
+        interface FontOptions {
+            copyright?: string | undefined;
+            description?: string | undefined;
+            /**
+             * Unix timestamp (in seconds) to override creation time
+             */
+            ts?: number | undefined;
+            /**
+             * manufacturer url
+             */
+            url?: string | undefined;
+            /**
+             * font version string, can be Version x.y or x.y
+             * @default 'Version 1.0'
+             */
+            version?: string | undefined;
+        }
+
+        interface MicroBuffer {
+            buffer: Uint8Array;
+        }
+    }
+}
+
+declare module '@pixi/msdf-bmfont-xml' {
+    interface BitmapFontOptions {
         /**
          * Type of output font file. Defaults to `xml`.
          * - `xml` a BMFont standard .fnt file which is widely supported.
@@ -62,8 +86,8 @@ declare module 'msdf-bmfont-xml'
 
     type CallbackType = (
         error: Error | null | undefined,
-        textures: { filename: string, texture: Buffer }[],
-        font: { filename: string, data: string }
+        textures: { filename: string; texture: Buffer }[],
+        font: { filename: string; data: string },
     ) => void;
 
     export default function (input: string | Buffer, cb: CallbackType): string;

@@ -68,18 +68,16 @@ export const Image = ({ image, primaryBoxShadow }: { image: string; primaryBoxSh
                 maxHeight: '100%',
                 objectFit: 'contain',
                 borderRadius: '12px',
-                boxShadow: primaryBoxShadow ? '0 0 20px hsla(340, 70%, 44%, 0.5)' : '0 0 20px hsla(192, 84%, 40%, 0.5)'
+                boxShadow: primaryBoxShadow ? '0 0 20px hsla(340, 70%, 44%, 0.5)' : '0 0 20px hsla(192, 84%, 40%, 0.5)',
             }}
         />
     </div>
 );
 
-export const ImageToggle = ({ image, height }: { image: string; height: number }) =>
-{
+export const ImageToggle = ({ image, height }: { image: string; height: number }) => {
     const [showImage1, setShowImage1] = useState(true);
 
-    const toggleImage = () =>
-    {
+    const toggleImage = () => {
         setShowImage1(!showImage1);
     };
 

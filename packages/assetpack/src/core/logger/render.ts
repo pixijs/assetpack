@@ -15,44 +15,36 @@ let statusPersisted = false;
 
 const persistedMessages: string[] = [];
 
-export function writeOut(message: string, isError = false)
-{
+export function writeOut(message: string, isError = false) {
     const processedMessage = `${message}\n`;
     const lines = countLines(message);
 
-    if (isError)
-    {
+    if (isError) {
         stderr.write(processedMessage);
         errorLineCount += lines;
-    }
-    else
-    {
+    } else {
         stdout.write(processedMessage);
         lineCount += lines;
     }
 }
 
-export function persistMessage(message: string)
-{
+export function persistMessage(message: string) {
     if (persistedMessages.includes(message)) return;
 
     persistedMessages.push(message);
     writeOut(message);
 }
 
-function clearStream(stream: Writable, lines: number)
-{
+function clearStream(stream: Writable, lines: number) {
     readline.moveCursor(stream, 0, -lines);
     readline.clearScreenDown(stream);
 }
 
 // Reset the window's state
-export function resetWindow()
-{
+export function resetWindow() {
     // If status has been persisted we add a line
     // Otherwise final states would remain in the terminal for rebuilds
-    if (statusPersisted)
-    {
+    if (statusPersisted) {
         lineCount++;
         statusPersisted = false;
     }
@@ -63,39 +55,39 @@ export function resetWindow()
     clearStream(stdout, lineCount);
     lineCount = 0;
 
-    for (const m of persistedMessages)
-    {
+    for (const m of persistedMessages) {
         writeOut(m);
     }
 }
 
-const progressBar = new cliProgress.SingleBar({
-    format: `| ${chalk.green('{bar}')} | {percentage}%`,
-    barIncompleteString: '\u25A0',
-    formatBar: (progress, options) =>
+const progressBar = new cliProgress.SingleBar(
     {
-        // calculate barsize
-        const completeSize = Math.round(progress * options.barsize!);
-        const incompleteSize = options.barsize! - completeSize;
+        format: `| ${chalk.green('{bar}')} | {percentage}%`,
+        barIncompleteString: '\u25A0',
+        formatBar: (progress, options) => {
+            // calculate barsize
+            const completeSize = Math.round(progress * options.barsize!);
+            const incompleteSize = options.barsize! - completeSize;
 
-        // generate bar string
-        return chalk.green(options.barCompleteString!.substr(0, completeSize))
-                    + options.barGlue
-                    + chalk.grey(options.barIncompleteString!.substr(0, incompleteSize));
-    }
-}, cliProgress.Presets.rect);
+            // generate bar string
+            return (
+                chalk.green(options.barCompleteString!.substr(0, completeSize)) +
+                options.barGlue +
+                chalk.grey(options.barIncompleteString!.substr(0, incompleteSize))
+            );
+        },
+    },
+    cliProgress.Presets.rect,
+);
 
-export function startProgress()
-{
+export function startProgress() {
     progressBar.start(100, 0);
 }
 
-export function updateProgress(progress: number)
-{
+export function updateProgress(progress: number) {
     progressBar.update(progress);
 }
 
-export function stopProgress()
-{
+export function stopProgress() {
     progressBar.stop();
 }

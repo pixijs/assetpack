@@ -7,35 +7,29 @@ import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from 
 
 const pkg = 'cache-buster';
 
-describe('CacheBuster', () =>
-{
-    it('should hash a file', async () =>
-    {
+describe('CacheBuster', () => {
+    it('should hash a file', async () => {
         const testName = 'cache-buster';
         const inputDir = getInputDir(pkg, testName);
         const outputDir = getOutputDir(pkg, testName);
 
-        createFolder(
-            pkg,
-            {
-                name: testName,
-                files: [
-                    {
-                        name: 'ttf.ttf',
-                        content: assetPath('font/Roboto-Regular.ttf'),
-                    },
-                ],
-                folders: [],
-            }
-        );
+        createFolder(pkg, {
+            name: testName,
+            files: [
+                {
+                    name: 'ttf.ttf',
+                    content: assetPath('font/Roboto-Regular.ttf'),
+                },
+            ],
+            folders: [],
+        });
 
         const assetpack = new AssetPack({
-            entry: inputDir, cacheLocation: getCacheDir(pkg, testName),
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
             output: outputDir,
             cache: true,
-            pipes: [
-                cacheBuster()
-            ]
+            pipes: [cacheBuster()],
         });
 
         await assetpack.run();
