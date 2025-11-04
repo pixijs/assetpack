@@ -84,7 +84,7 @@ export function SDFCacheBuster(): AssetPipe<any, 'sdf' | 'msdf'>
                     compact: true,
                     spaces: 4,
                 }));
-                fntAsset.path = fntAsset.path.replace(originalHash, fntAsset.hash);
+                fntAsset.path = fntAsset.path.replace((originalHash as string | RegExp), (fntAsset.hash as string));
                 fs.removeSync(originalPath);
 
                 // rewrite..
