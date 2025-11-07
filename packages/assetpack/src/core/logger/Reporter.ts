@@ -26,6 +26,7 @@ export class Reporter {
     // Exported only for test
     public report(event: ReporterEvent): void {
         const logLevelFilter = LogLevel[this.level || 'info'];
+        const isVerbose = logLevelFilter >= LogLevel.verbose;
 
         switch (event.type) {
             case 'buildStart': {
@@ -34,16 +35,20 @@ export class Reporter {
                 }
 
                 this._buildTime = Date.now();
-                // Clear any previous output
-                resetWindow();
+                if (isVerbose) {
+                    // Clear any previous output
+                    resetWindow();
+                }
                 persistMessage(chalk.green.bold(`✔ AssetPack Initialized`));
                 persistMessage(`${chalk.blue.bold('›')} ${chalk.blue.bold(`Building: ${event.message}`)}`);
-                startProgress();
+                if (isVerbose) {
+                    startProgress();
+                }
 
                 break;
             }
             case 'buildProgress': {
-                if (logLevelFilter < LogLevel.info) {
+                if (logLevelFilter < LogLevel.info && !isVerbose) {
                     break;
                 }
 
@@ -59,8 +64,11 @@ export class Reporter {
                     break;
                 }
 
-                stopProgress();
-                resetWindow();
+                if (isVerbose) {
+                    stopProgress();
+                    resetWindow();
+                }
+
                 persistMessage(
                     chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Date.now() - this._buildTime)}`),
                 );
@@ -70,8 +78,11 @@ export class Reporter {
                     break;
                 }
 
-                stopProgress();
-                resetWindow();
+                if (isVerbose) {
+                    stopProgress();
+                    resetWindow();
+                }
+
                 persistMessage(chalk.red.bold(`✖ AssetPack Build Failed`));
 
                 break;
