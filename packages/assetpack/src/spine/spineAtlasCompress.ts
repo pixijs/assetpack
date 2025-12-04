@@ -43,12 +43,28 @@ export function spineAtlasCompress(
             if (options.etc) formats.push(['etc', '.etc.ktx']);
 
             const atlas = new AtlasView(asset.buffer);
-
             const textures = atlas.getTextures();
 
-            const assets = formats.map(([format, extension]) => {
-                const newAtlas = new AtlasView(asset.buffer);
+            const siblings = asset.parent?.children || [];
 
+            // Build a set of all sibling and child filenames for fast lookup
+            const availableFiles = new Set<string>();
+
+            for (const sibling of siblings) {
+                availableFiles.add(sibling.filename);
+                for (const child of sibling.children ?? []) {
+                    availableFiles.add(child.filename);
+                }
+            }
+
+            // Only include formats where all textures exist
+            const validFormats = formats.filter(([_format, extension]) =>
+                textures.every((texture) => availableFiles.has(swapExt(texture, extension))),
+            );
+
+            // Generate atlas files for valid formats
+            const assets = validFormats.map(([format, extension]) => {
+                const newAtlas = new AtlasView(asset.buffer);
                 const newFileName = swapExt(asset.filename, `.${format}.atlas`);
 
                 textures.forEach((texture) => {
