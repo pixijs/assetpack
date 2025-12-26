@@ -50,7 +50,16 @@ export async function createTextures(
             },
         }).composite(compositeOptions);
 
-        compositeTexture = options.textureFormat === 'png' ? compositeTexture.png() : compositeTexture.jpeg();
+        switch (options.textureFormat) {
+            case 'webp':
+                compositeTexture = compositeTexture.webp();
+                break;
+            case 'jpg':
+                compositeTexture = compositeTexture.jpeg();
+                break;
+            default:
+                compositeTexture = compositeTexture.png();
+        }
 
         texturePromises.push(
             compositeTexture.toBuffer().then((buffer) => ({

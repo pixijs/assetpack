@@ -13,7 +13,7 @@ export interface PixiRectData extends Rectangle {
 
 export type PixiPacker = MaxRectsPacker<PixiRectData>;
 
-export type TexturePackerFormat = 'png' | 'jpg';
+export type TexturePackerFormat = 'png' | 'jpg' | 'webp';
 
 export interface TextureData {
     buffer: Buffer;
