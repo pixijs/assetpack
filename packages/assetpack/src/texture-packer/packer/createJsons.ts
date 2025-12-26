@@ -2,7 +2,7 @@ import { path } from '../../core/index.js';
 import { createName } from './createTextures.js';
 import { detectAnimations } from './detectAnimations.js';
 
-import type { PixiPacker } from './packTextures.js';
+import type { PixiPacker, TexturePackerFormat } from './packTextures.js';
 
 function convertName(pth: string, nameStyle: 'short' | 'relative', removeFileExtension = false) {
     const name = nameStyle === 'short' ? path.basename(pth) : pth;
@@ -17,7 +17,7 @@ export function createJsons(
     options: {
         textureName: string;
         resolution: number;
-        textureFormat: 'png' | 'jpg';
+        textureFormat: TexturePackerFormat;
         nameStyle: 'short' | 'relative';
         removeFileExtension: boolean;
         autodetectAnimations?: boolean;

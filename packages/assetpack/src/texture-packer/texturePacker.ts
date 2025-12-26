@@ -114,7 +114,9 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                 }),
             );
 
-            const textureFormat = (asset.metaData[this.tags!.jpg] ? 'jpg' : 'png') as TexturePackerFormat;
+            let textureFormat: TexturePackerFormat = texturePacker.textureFormat;
+
+            if (asset.metaData[this.tags!.jpg]) textureFormat = 'jpg'; // if tags exist force .jpg anyway
 
             const texturePackerOptions = {
                 ...texturePacker,
