@@ -116,6 +116,9 @@ describe('Spine Atlas All', () => {
                     webp: true,
                     jpg: true,
                     astc: true,
+                    basis: {
+                        options: ['-uastc_level', '0'], // for faster transformation
+                    },
                 }),
                 spineAtlasMipmap({
                     resolutions: { default: 1, low: 0.5 },
@@ -124,6 +127,9 @@ describe('Spine Atlas All', () => {
                     png: true,
                     webp: true,
                     astc: true,
+                    basis: {
+                        options: ['-uastc_level', '0'], // for faster transformation
+                    },
                 }),
                 cacheBuster(),
                 spineAtlasCacheBuster(),
@@ -131,21 +137,23 @@ describe('Spine Atlas All', () => {
         });
 
         await assetpack.run();
-        const globPath = `${outputDir}/*.{atlas,png,webp,astc.ktx}`;
+        const globPath = `${outputDir}/*.{atlas,png,webp,astc.ktx,basis.ktx2}`;
         const files = await glob(globPath);
 
         // need two sets of files
-        expect(files.length).toBe(18);
-        expect(files.filter((file) => file.endsWith('.atlas')).length).toBe(6);
+        expect(files.length).toBe(24);
+        expect(files.filter((file) => file.endsWith('.atlas')).length).toBe(8);
         expect(files.filter((file) => file.endsWith('.png')).length).toBe(4);
         expect(files.filter((file) => file.endsWith('.webp')).length).toBe(4);
         expect(files.filter((file) => file.endsWith('.astc.ktx')).length).toBe(4);
+        expect(files.filter((file) => file.endsWith('.basis.ktx2')).length).toBe(4);
         expect(files.filter((file) => file.endsWith('.jpg')).length).toBe(0);
 
         const atlasFiles = files.filter((file) => file.endsWith('.atlas'));
         const pngFiles = files.filter((file) => file.endsWith('.png'));
         const webpFiles = files.filter((file) => file.endsWith('.webp'));
         const astcFiles = files.filter((file) => file.endsWith('.astc.ktx'));
+        const basisFiles = files.filter((file) => file.endsWith('.basis.ktx2'));
 
         // check that the files are correct
         atlasFiles.forEach((atlasFile) => {
@@ -154,14 +162,17 @@ describe('Spine Atlas All', () => {
             const isWebp = atlasFile.includes('.webp');
             const isPng = atlasFile.includes('.png');
             const isAstc = atlasFile.includes('.astc');
+            const isBasis = atlasFile.includes('.basis');
 
             const checkFiles = (fileList: string[], isHalfSize: boolean, isFileType: boolean) => {
                 fileList.forEach((file) => {
                     // remove the outputDir
                     file = file.replace(`${outputDir}/`, '');
                     const isFileHalfSize = file.includes('@0.5x');
-                    // eslint-disable-next-line no-nested-ternary
-                    const isFileFileType = file.includes(isWebp ? '.webp' : isAstc ? '.astc' : '.png');
+                    const isFileFileType = file.includes(
+                        // eslint-disable-next-line no-nested-ternary
+                        isWebp ? '.webp' : isAstc ? '.astc' : isBasis ? '.basis' : '.png',
+                    );
                     const shouldExist = isHalfSize === isFileHalfSize && isFileType === isFileFileType;
 
                     expect(rawAtlas.includes(file)).toBe(shouldExist);
@@ -175,6 +186,8 @@ describe('Spine Atlas All', () => {
                     checkFiles(pngFiles, true, true);
                 } else if (isAstc) {
                     checkFiles(astcFiles, true, true);
+                } else if (isBasis) {
+                    checkFiles(basisFiles, true, true);
                 }
             } else if (isWebp) {
                 checkFiles(webpFiles, false, true);
@@ -182,6 +195,8 @@ describe('Spine Atlas All', () => {
                 checkFiles(pngFiles, false, true);
             } else if (isAstc) {
                 checkFiles(astcFiles, false, true);
+            } else if (isBasis) {
+                checkFiles(basisFiles, false, true);
             }
         });
     });
