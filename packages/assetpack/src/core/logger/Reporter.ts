@@ -67,7 +67,9 @@ export class Reporter {
                 stopProgress();
                 resetWindow();
                 persistMessage(
-                    chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Math.max(Date.now() - this._buildTime, 0))}`),
+                    chalk.green.bold(
+                        `✔ AssetPack Completed in ${prettifyTime(Math.max(Date.now() - this._buildTime, 0))}`,
+                    ),
                 );
                 break;
             case 'buildFailure':
