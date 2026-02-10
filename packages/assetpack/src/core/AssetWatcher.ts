@@ -152,6 +152,7 @@ export class AssetWatcher {
                 }
 
                 this._timeoutId = setTimeout(() => {
+                    BuildReporter.report({ type: 'buildWatchChange' });
                     void this._updateAssets();
                     this._timeoutId = undefined;
 
