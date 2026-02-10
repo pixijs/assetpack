@@ -12,7 +12,7 @@ export interface LogEvent {
 }
 
 export interface BuildEvent {
-    type: 'buildStart' | 'buildProgress' | 'buildSuccess' | 'buildFailure';
+    type: 'buildStart' | 'buildWatchChange' | 'buildProgress' | 'buildSuccess' | 'buildFailure';
     phase?: 'start' | 'delete' | 'transform' | 'post' | 'finish';
     message?: string;
 }
@@ -42,6 +42,11 @@ export class Reporter {
 
                 break;
             }
+            case 'buildWatchChange': {
+                this._buildTime = Date.now();
+
+                break;
+            }
             case 'buildProgress': {
                 if (logLevelFilter < LogLevel.info) {
                     break;
@@ -62,7 +67,9 @@ export class Reporter {
                 stopProgress();
                 resetWindow();
                 persistMessage(
-                    chalk.green.bold(`✔ AssetPack Completed in ${prettifyTime(Date.now() - this._buildTime)}`),
+                    chalk.green.bold(
+                        `✔ AssetPack Completed in ${prettifyTime(Math.max(Date.now() - this._buildTime, 0))}`,
+                    ),
                 );
                 break;
             case 'buildFailure':
