@@ -6,7 +6,7 @@ export function detectAnimations(frames: { [key: string]: any }): { [key: string
     const suffixRegex = /(?:[-_]?)(\d+)$/;
 
     const frameGroups = frameNames.reduce<Record<string, string[]>>((acc, item) => {
-        const key = path.trimExt(item).replace(suffixRegex, '');
+        const key = path.trimExt(item).replace(suffixRegex, '').replace(/\/$/, '');
 
         // if the key doesn't have a number suffix, don't add it
         if (key === path.trimExt(item)) return acc;

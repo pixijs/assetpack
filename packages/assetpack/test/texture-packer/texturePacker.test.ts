@@ -686,6 +686,59 @@ describe('Texture Packer', () => {
         mockWarn.mockRestore();
     });
 
+    it('should detect animations from numbered files in subdirectories without trailing slash', async () => {
+        const testName = 'tp-anim-subdir';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        const sprites: File[] = [];
+
+        for (let i = 0; i < 4; i++) {
+            sprites.push({
+                name: `${i}.png`,
+                content: assetPath(`image/sp-${i + 1}.png`),
+            });
+        }
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}',
+                    files: [],
+                    folders: [
+                        {
+                            name: 'foo',
+                            files: sprites,
+                            folders: [],
+                        },
+                    ],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                texturePacker({
+                    resolutionOptions: {
+                        resolutions: { default: 1 },
+                    },
+                }),
+            ],
+        });
+
+        await assetpack.run();
+
+        const sheet = fs.readJSONSync(`${outputDir}/sprites.json`);
+
+        expect(sheet.animations['foo']).toEqual(['foo/0.png', 'foo/1.png', 'foo/2.png', 'foo/3.png']);
+    });
+
     it('should handle smaller than 3x3 textures if trimming is enabled', async () => {
         const testName = 'tp-small-trim';
         const inputDir = getInputDir(pkg, testName);
