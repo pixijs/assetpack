@@ -15,7 +15,7 @@ export async function createTextureData(options: Required<PackTexturesOptions>) 
     const packer = new MaxRectsPacker<PixiRectData>(options.width, options.height, options.padding, {
         smart: true,
         pot: options.powerOfTwo,
-        border: options.padding,
+        border: options.border,
         allowRotation: options.allowRotation,
     });
 

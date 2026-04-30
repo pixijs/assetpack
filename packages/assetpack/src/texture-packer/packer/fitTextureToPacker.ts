@@ -2,7 +2,7 @@ import type { PackTexturesOptions, PixiPacker } from './packTextures.js';
 
 export function fitTextureToPacker(
     bin: PixiPacker,
-    { width, height, fixedSize, padding, powerOfTwo }: PackTexturesOptions,
+    { width, height, fixedSize, border, powerOfTwo }: PackTexturesOptions,
 ) {
     if (!fixedSize) {
         width = 0;
@@ -20,8 +20,8 @@ export function fitTextureToPacker(
             }
         }
 
-        height += padding ?? 0;
-        width += padding ?? 0;
+        height += border ?? 0;
+        width += border ?? 0;
 
         if (powerOfTwo) {
             height = nearestPowerOf2(height);
