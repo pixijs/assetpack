@@ -9,7 +9,7 @@ import type { SharpProcessingOptions } from './types.js';
 
 export interface MipmapOptions extends PluginOptions {
     /** A template for denoting the resolution of the images. */
-    template?: string;
+    template?: string | ((resolution: number) => string);
     /** An object containing the resolutions that the images will be resized to. */
     resolutions?: { [x: string]: number };
     /** A resolution used if the fixed tag is applied. Resolution must match one found in resolutions. */
@@ -94,8 +94,13 @@ export function mipmap(defaultOptions: MipmapOptions = {}): AssetPipe<MipmapOpti
                 let resolution = '';
 
                 if (options) {
-                    resolution = (options as Required<MipmapOptions>).template.replace('%%', `${data.resolution}`);
-                    resolution = data.resolution === 1 ? '' : resolution;
+                    const template = (options as Required<MipmapOptions>).template;
+
+                    if (typeof template === 'function') {
+                        resolution = template(data.resolution);
+                    } else if (data.resolution !== 1) {
+                        resolution = template.replace('%%', `${data.resolution}`);
+                    }
                 }
 
                 const end = `${resolution}${data.format}`;

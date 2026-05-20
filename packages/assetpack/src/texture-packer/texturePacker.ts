@@ -14,7 +14,7 @@ export interface TexturePackerOptions extends PluginOptions {
     /** Options for creating different resolutions of the sprite sheet. */
     resolutionOptions?: {
         /** A template for denoting the resolution of the images. */
-        template?: string;
+        template?: string | ((resolution: number) => string);
         /** An object containing the resolutions that the images will be resized to. */
         resolutions?: Record<string, number>;
         /** A resolution used if the fixed tag is applied. Resolution must match one found in resolutions. */
@@ -82,7 +82,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
 
         async transform(asset: Asset, options) {
             const { resolutionOptions, texturePacker } = options;
-            const { resolutions, fixedResolution } = resolutionOptions!;
+            const { resolutions, fixedResolution, template: resolutionTemplate } = resolutionOptions!;
 
             const fixedResolutions = { [fixedResolution]: resolutions[fixedResolution] };
 
@@ -147,6 +147,7 @@ export function texturePacker(_options: TexturePackerOptions = {}): AssetPipe<Te
                                 texturesToPack,
                                 scale,
                                 resolution,
+                                resolutionTemplate,
                             });
 
                             if (options.addFrameNames) {

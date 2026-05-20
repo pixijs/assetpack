@@ -54,7 +54,14 @@ export async function createTextures(
 
         texturePromises.push(
             compositeTexture.toBuffer().then((buffer) => ({
-                name: createName(options.textureName, i, bins.length !== 1, options.resolution, options.textureFormat),
+                name: createName(
+                    options.textureName,
+                    i,
+                    bins.length !== 1,
+                    options.resolution,
+                    options.textureFormat,
+                    options.resolutionTemplate,
+                ),
                 buffer,
             })),
         );
@@ -63,9 +70,22 @@ export async function createTextures(
     return await Promise.all(texturePromises);
 }
 
-export function createName(name: string, page: number, paginate: boolean, scale: number, format: string): string {
+export function createName(
+    name: string,
+    page: number,
+    paginate: boolean,
+    scale: number,
+    format: string,
+    template: string | ((resolution: number) => string),
+): string {
     const pageLabel = !paginate ? '' : `-${page}`;
-    const scaleLabel = scale !== 1 ? `@${scale}x` : '';
+    let scaleLabel = '';
+
+    if (typeof template === 'function') {
+        scaleLabel = template(scale);
+    } else if (scale !== 1) {
+        scaleLabel = template.replace('%%', `${scale}`);
+    }
 
     return `${name}${pageLabel}${scaleLabel}.${format}`;
 }

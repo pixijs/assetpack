@@ -45,6 +45,7 @@ export interface PackTexturesOptions {
     removeFileExtension?: boolean;
     autodetectAnimations?: boolean;
     sharpOptions?: SharpProcessingOptions;
+    resolutionTemplate?: string | ((resolution: number) => string);
 }
 
 interface PackTexturesResult {
@@ -65,6 +66,7 @@ export async function packTextures(_options: PackTexturesOptions): Promise<PackT
         textureFormat: 'png',
         scale: 1,
         resolution: 1,
+        resolutionTemplate: '@%%x',
         nameStyle: 'relative',
         removeFileExtension: false,
         autodetectAnimations: true,
