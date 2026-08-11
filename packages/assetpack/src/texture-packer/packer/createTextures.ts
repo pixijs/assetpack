@@ -1,19 +1,16 @@
 import sharp from 'sharp';
+import { fitTextureToPacker } from './fitTextureToPacker.js';
 
 import type { PackTexturesOptions, PixiPacker } from './packTextures.js';
 
-export async function createTextures(
-    packer: PixiPacker,
-    width: number,
-    height: number,
-    options: Required<PackTexturesOptions>,
-) {
+export async function createTextures(packer: PixiPacker, options: Required<PackTexturesOptions>) {
     const texturePromises: Promise<{ name: string; buffer: Buffer }>[] = [];
 
     const bins = packer.bins;
 
     for (let i = 0; i < bins.length; i++) {
         const bin = bins[i];
+        const { width, height } = fitTextureToPacker(bin, options);
 
         const compositeOptions = [];
 

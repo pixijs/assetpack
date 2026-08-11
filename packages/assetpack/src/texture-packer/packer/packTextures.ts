@@ -1,7 +1,6 @@
 import { createJsons } from './createJsons.js';
 import { createTextureData } from './createTextureData.js';
 import { createTextures } from './createTextures.js';
-import { fitTextureToPacker } from './fitTextureToPacker.js';
 
 import type { MaxRectsPacker, Rectangle } from 'maxrects-packer';
 import type { SharpProcessingOptions } from '../../image/types.js';
@@ -80,12 +79,10 @@ export async function packTextures(_options: PackTexturesOptions): Promise<PackT
     // which now contains all the info we need to create the textures and jsons
     const packer = await createTextureData(options);
 
-    const { width, height } = fitTextureToPacker(packer, options);
-
     return {
         // combine the textures into one big one with all the info we have
-        textures: await createTextures(packer, width, height, options),
+        textures: await createTextures(packer, options),
         // create the jsons for the textures
-        jsons: createJsons(packer, width, height, options),
+        jsons: createJsons(packer, options),
     };
 }
