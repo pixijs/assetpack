@@ -754,4 +754,72 @@ describe('Texture Packer', () => {
             },
         });
     });
+
+    it('should compute per-bin dimensions in multi-pack mode', async () => {
+        const testName = 'tp-multipack-per-bin';
+        const inputDir = getInputDir(pkg, testName);
+        const outputDir = getOutputDir(pkg, testName);
+
+        // 10 untrimmed 256x256 sprites into a 1024 max: 9 fit in the first
+        // bin, 1 overflows into a second smaller bin.
+        const sprites: File[] = [];
+
+        for (let i = 0; i < 10; i++) {
+            sprites.push({
+                name: `sprite${i}.png`,
+                content: assetPath(`image/sp-${i + 1}.png`),
+            });
+        }
+
+        createFolder(pkg, {
+            name: testName,
+            files: [],
+            folders: [
+                {
+                    name: 'sprites{tps}',
+                    files: sprites,
+                    folders: [],
+                },
+            ],
+        });
+
+        const assetpack = new AssetPack({
+            entry: inputDir,
+            cacheLocation: getCacheDir(pkg, testName),
+            output: outputDir,
+            cache: false,
+            pipes: [
+                texturePacker({
+                    resolutionOptions: {
+                        resolutions: { default: 1 },
+                        maximumTextureSize: 1024,
+                    },
+                    texturePacker: {
+                        allowTrim: false,
+                    },
+                }),
+            ],
+        });
+
+        await assetpack.run();
+
+        expect(existsSync(`${outputDir}/sprites-0.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites-1.json`)).toBe(true);
+        expect(existsSync(`${outputDir}/sprites-2.json`)).toBe(false);
+
+        const sheet0 = fs.readJSONSync(`${outputDir}/sprites-0.json`);
+        const sheet1 = fs.readJSONSync(`${outputDir}/sprites-1.json`);
+
+        const meta0 = await sharp(`${outputDir}/sprites-0.png`).metadata();
+        const meta1 = await sharp(`${outputDir}/sprites-1.png`).metadata();
+
+        // Each sheet's actual texture dimensions must match its JSON metadata
+        expect(meta0.width).toEqual(sheet0.meta.size.w);
+        expect(meta0.height).toEqual(sheet0.meta.size.h);
+        expect(meta1.width).toEqual(sheet1.meta.size.w);
+        expect(meta1.height).toEqual(sheet1.meta.size.h);
+
+        // The last bin has fewer sprites so its texture should be smaller
+        expect(sheet1.meta.size.w * sheet1.meta.size.h).toBeLessThan(sheet0.meta.size.w * sheet0.meta.size.h);
+    });
 });

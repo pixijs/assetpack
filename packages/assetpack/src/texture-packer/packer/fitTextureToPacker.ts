@@ -1,7 +1,7 @@
-import type { PackTexturesOptions, PixiPacker } from './packTextures.js';
+import type { PackTexturesOptions, PixiRectData } from './packTextures.js';
 
 export function fitTextureToPacker(
-    bin: PixiPacker,
+    bin: { rects: PixiRectData[] },
     { width, height, fixedSize, padding, powerOfTwo }: PackTexturesOptions,
 ) {
     if (!fixedSize) {

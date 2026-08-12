@@ -417,12 +417,12 @@ describe('Manifest', () => {
                 {
                     alias: ['bundle/tps'],
                     src: [
-                        { src: 'bundle/tps-0@0.5x.webp.json', progressSize: 19.49 },
-                        { src: 'bundle/tps-0@0.5x.png.json', progressSize: 21.34 },
-                        { src: 'bundle/tps-0@0.5x.astc.json', progressSize: 26.57 },
-                        { src: 'bundle/tps-0.webp.json', progressSize: 45.18 },
-                        { src: 'bundle/tps-0.png.json', progressSize: 71.06 },
-                        { src: 'bundle/tps-0.astc.json', progressSize: 90.86 },
+                        { src: 'bundle/tps-0@0.5x.webp.json', progressSize: 19.47 },
+                        { src: 'bundle/tps-0@0.5x.png.json', progressSize: 21.69 },
+                        { src: 'bundle/tps-0@0.5x.astc.json', progressSize: 26.53 },
+                        { src: 'bundle/tps-0.webp.json', progressSize: 45.35 },
+                        { src: 'bundle/tps-0.png.json', progressSize: 69.82 },
+                        { src: 'bundle/tps-0.astc.json', progressSize: 90.8 },
                     ],
                     data: {
                         tags: {
@@ -644,12 +644,12 @@ describe('Manifest', () => {
                 {
                     alias: ['bundle/tps'],
                     src: [
-                        { src: 'bundle/tps-RzSARA-0@0.5x.astc.json', progressSize: 26.52 },
-                        { src: 'bundle/tps-Ktro9A-0@0.5x.png.json', progressSize: 21.3 },
-                        { src: 'bundle/tps-iS-Jog-0@0.5x.webp.json', progressSize: 19.45 },
-                        { src: 'bundle/tps-G92JcQ-0.png.json', progressSize: 71.01 },
-                        { src: 'bundle/tps-g4NIDQ-0.astc.json', progressSize: 90.82 },
-                        { src: 'bundle/tps-bo4nog-0.webp.json', progressSize: 45.14 },
+                        { src: 'bundle/tps-ZOgqew-0@0.5x.webp.json', progressSize: 19.43 },
+                        { src: 'bundle/tps-w5hVsQ-0.astc.json', progressSize: 90.76 },
+                        { src: 'bundle/tps-TtXNnQ-0@0.5x.astc.json', progressSize: 26.49 },
+                        { src: 'bundle/tps-NBceYA-0.webp.json', progressSize: 45.31 },
+                        { src: 'bundle/tps-LHA0PQ-0.png.json', progressSize: 69.77 },
+                        { src: 'bundle/tps--FWNAg-0@0.5x.png.json', progressSize: 21.65 },
                     ],
                     data: {
                         tags: {
@@ -1968,10 +1968,10 @@ describe('Manifest', () => {
                     {
                         alias: ['bundle/tps'],
                         src: [
-                            { src: 'bundle/tps-RzSARA-0@0.5x.astc.json', progressSize: 26.52 },
-                            { src: 'bundle/tps-iS-Jog-0@0.5x.webp.json', progressSize: 19.45 },
-                            { src: 'bundle/tps-g4NIDQ-0.astc.json', progressSize: 90.82 },
-                            { src: 'bundle/tps-bo4nog-0.webp.json', progressSize: 45.14 },
+                            { src: 'bundle/tps-ZOgqew-0@0.5x.webp.json', progressSize: 19.43 },
+                            { src: 'bundle/tps-w5hVsQ-0.astc.json', progressSize: 90.76 },
+                            { src: 'bundle/tps-TtXNnQ-0@0.5x.astc.json', progressSize: 26.49 },
+                            { src: 'bundle/tps-NBceYA-0.webp.json', progressSize: 45.31 },
                         ],
                         data: {
                             tags: {

@@ -1,8 +1,9 @@
 import { path } from '../../core/index.js';
 import { createName } from './createTextures.js';
 import { detectAnimations } from './detectAnimations.js';
+import { fitTextureToPacker } from './fitTextureToPacker.js';
 
-import type { PixiPacker } from './packTextures.js';
+import type { PackTexturesOptions, PixiPacker } from './packTextures.js';
 
 function convertName(pth: string, nameStyle: 'short' | 'relative', removeFileExtension = false) {
     const name = nameStyle === 'short' ? path.basename(pth) : pth;
@@ -10,25 +11,14 @@ function convertName(pth: string, nameStyle: 'short' | 'relative', removeFileExt
     return removeFileExtension ? path.trimExt(name) : name;
 }
 
-export function createJsons(
-    packer: PixiPacker,
-    width: number,
-    height: number,
-    options: {
-        textureName: string;
-        resolution: number;
-        textureFormat: 'png' | 'jpg';
-        nameStyle: 'short' | 'relative';
-        removeFileExtension: boolean;
-        autodetectAnimations?: boolean;
-    },
-) {
+export function createJsons(packer: PixiPacker, options: Required<PackTexturesOptions>) {
     const bins = packer.bins;
 
     const jsons = [];
 
     for (let i = 0; i < bins.length; i++) {
         const bin = bins[i];
+        const { width, height } = fitTextureToPacker(bin, options);
 
         const json: any = {
             frames: {},
