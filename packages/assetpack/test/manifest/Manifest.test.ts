@@ -630,10 +630,10 @@ describe('Manifest', () => {
                     src: [
                         { src: 'bundle/sprite-vUcaag@0.5x.astc.ktx', progressSize: 4.98 },
                         { src: 'bundle/sprite-TZpmeQ.astc.ktx', progressSize: 16.57 },
-                        { src: 'bundle/sprite-sDtC@0.5x.png', progressSize: 5.21 },
                         { src: 'bundle/sprite-KdyNpA@0.5x.webp', progressSize: 3.78 },
                         { src: 'bundle/sprite-k07jiw.png', progressSize: 14.49 },
-                        { src: 'bundle/sprite-3CLG.webp', progressSize: 8.2 },
+                        { src: 'bundle/sprite-CwO0Lg@0.5x.png', progressSize: 5.21 },
+                        { src: 'bundle/sprite-ANwixg.webp', progressSize: 8.2 },
                     ],
                     data: {
                         tags: {
@@ -645,7 +645,7 @@ describe('Manifest', () => {
                     alias: ['bundle/tps'],
                     src: [
                         { src: 'bundle/tps-RzSARA-0@0.5x.astc.json', progressSize: 26.52 },
-                        { src: 'bundle/tps-Ktro9A-0@0.5x.png.json', progressSize: 21.3 },
+                        { src: 'bundle/tps-qrwSUA-0@0.5x.png.json', progressSize: 21.3 },
                         { src: 'bundle/tps-iS-Jog-0@0.5x.webp.json', progressSize: 19.45 },
                         { src: 'bundle/tps-G92JcQ-0.png.json', progressSize: 71.01 },
                         { src: 'bundle/tps-g4NIDQ-0.astc.json', progressSize: 90.82 },
@@ -697,8 +697,8 @@ describe('Manifest', () => {
                 {
                     alias: ['spine/dragon.atlas'],
                     src: [
-                        { src: 'spine/dragon-VMxv5A@0.5x.atlas', progressSize: 0.86 },
                         { src: 'spine/dragon-bOhE1A.atlas', progressSize: 0.89 },
+                        { src: 'spine/dragon-_efU3A@0.5x.atlas', progressSize: 0.86 },
                     ],
                     data: {
                         tags: {
@@ -1951,7 +1951,7 @@ describe('Manifest', () => {
                             { src: 'bundle/sprite-vUcaag@0.5x.astc.ktx', progressSize: 4.98 },
                             { src: 'bundle/sprite-TZpmeQ.astc.ktx', progressSize: 16.57 },
                             { src: 'bundle/sprite-KdyNpA@0.5x.webp', progressSize: 3.78 },
-                            { src: 'bundle/sprite-3CLG.webp', progressSize: 8.2 },
+                            { src: 'bundle/sprite-ANwixg.webp', progressSize: 8.2 },
                         ],
                         data: { tags: { m: true } },
                     },
@@ -2017,10 +2017,10 @@ describe('Manifest', () => {
                     {
                         alias: ['spine/dragon.atlas'],
                         src: [
+                            { src: 'spine/dragon-nYsr1g@0.5x.webp.atlas', progressSize: 0.87 },
                             { src: 'spine/dragon-JospZg@0.5x.astc.atlas', progressSize: 0.87 },
                             { src: 'spine/dragon-gYS0Qg.webp.atlas', progressSize: 0.89 },
                             { src: 'spine/dragon-9M9x8w.astc.atlas', progressSize: 0.89 },
-                            { src: 'spine/dragon-672U@0.5x.webp.atlas', progressSize: 0.86 },
                         ],
                         data: { tags: { spine: true }, spine: true },
                     },

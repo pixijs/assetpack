@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { AssetPack } from '../../src/core/AssetPack.js';
 import { extractTagsFromFileName } from '../../src/core/utils/extractTagsFromFileName.js';
 import { generateCacheName } from '../../src/core/utils/generateCacheName.js';
+import { getHash } from '../../src/core/utils/getHash.js';
 import { createAssetPipe, createFolder, getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
+import crc32 from '@node-rs/crc32';
 
 import type { Asset } from '../../src/core/Asset.js';
 import type { AssetPipe } from '../../src/core/index.js';
@@ -207,5 +209,25 @@ describe('Utils', () => {
         });
 
         expect(cacheName3).toEqual('ab900fa81d7121ea46bd2eafe9e826633c1c48a0');
+    });
+
+    it('should always return a 6 character hash', () => {
+        const findInput = (accept: (crc: number) => boolean) => {
+            for (let i = 0; ; i++) {
+                const buffer = Buffer.from(`asset-${i}`);
+
+                if (accept(crc32.crc32(buffer))) return buffer;
+            }
+        };
+
+        // crc32 values with 1, 2 and 3 leading zero hex digits
+        for (const limit of [0x10000000, 0x1000000, 0x100000]) {
+            expect(getHash(findInput((crc) => crc < limit))).toMatch(/^[\w-]{6}$/);
+        }
+
+        // hashes without a leading zero are unchanged
+        const buffer = findInput((crc) => crc >= 0x10000000);
+
+        expect(getHash(buffer)).toBe(Buffer.from(crc32.crc32(buffer).toString(16), 'hex').toString('base64url'));
     });
 });

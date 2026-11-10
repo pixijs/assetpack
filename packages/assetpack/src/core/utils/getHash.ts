@@ -11,7 +11,8 @@ export function getHash(input: string | Buffer): string {
         input = fs.readFileSync(input);
     }
 
-    const checksumHex = crc32.crc32(input).toString(16);
+    // Pad to 8 hex digits: Buffer.from drops the last digit of an odd-length hex string.
+    const checksumHex = crc32.crc32(input).toString(16).padStart(8, '0');
 
     return Buffer.from(checksumHex, 'hex').toString('base64url');
 }
