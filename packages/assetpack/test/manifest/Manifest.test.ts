@@ -697,8 +697,8 @@ describe('Manifest', () => {
                 {
                     alias: ['spine/dragon.atlas'],
                     src: [
-                        { src: 'spine/dragon-VMxv5A@0.5x.atlas', progressSize: 0.86 },
                         { src: 'spine/dragon-bOhE1A.atlas', progressSize: 0.89 },
+                        { src: 'spine/dragon-_efU3A@0.5x.atlas', progressSize: 0.86 },
                     ],
                     data: {
                         tags: {
@@ -2017,10 +2017,10 @@ describe('Manifest', () => {
                     {
                         alias: ['spine/dragon.atlas'],
                         src: [
+                            { src: 'spine/dragon-nYsr1g@0.5x.webp.atlas', progressSize: 0.87 },
                             { src: 'spine/dragon-JospZg@0.5x.astc.atlas', progressSize: 0.87 },
                             { src: 'spine/dragon-gYS0Qg.webp.atlas', progressSize: 0.89 },
                             { src: 'spine/dragon-9M9x8w.astc.atlas', progressSize: 0.89 },
-                            { src: 'spine/dragon-672U@0.5x.webp.atlas', progressSize: 0.86 },
                         ],
                         data: { tags: { spine: true }, spine: true },
                     },
