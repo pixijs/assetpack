@@ -44,6 +44,8 @@ export interface PackTexturesOptions {
     nameStyle?: 'short' | 'relative';
     removeFileExtension?: boolean;
     autodetectAnimations?: boolean;
+    /** Pack in a few orders (as given, largest area first, longest edge first) and keep the smallest pages. */
+    optimizePackingOrder?: boolean;
     sharpOptions?: SharpProcessingOptions;
 }
 
@@ -67,6 +69,7 @@ export async function packTextures(_options: PackTexturesOptions): Promise<PackT
         resolution: 1,
         nameStyle: 'relative',
         removeFileExtension: false,
+        optimizePackingOrder: true,
         autodetectAnimations: true,
         sharpOptions: {},
         ..._options,
