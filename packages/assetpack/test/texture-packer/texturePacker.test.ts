@@ -1,12 +1,16 @@
 import fs from 'fs-extra';
+import { MaxRectsPacker } from 'maxrects-packer';
 import { existsSync } from 'node:fs';
 import sharp from 'sharp';
 import { describe, expect, it, vi } from 'vitest';
 import { AssetPack, BuildReporter } from '../../src/core/index.js';
+import { createTextureData } from '../../src/texture-packer/packer/createTextureData.js';
+import { fitTextureToPacker } from '../../src/texture-packer/packer/fitTextureToPacker.js';
 import { texturePacker } from '../../src/texture-packer/texturePacker.js';
 import { createTPSFolder } from '../utils/createTPSFolder.js';
 import { assetPath, createFolder, getCacheDir, getInputDir, getOutputDir } from '../utils/index.js';
 
+import type { PackTexturesOptions, PixiPacker } from '../../src/texture-packer/packer/packTextures.js';
 import type { File } from '../utils/index.js';
 
 const pkg = 'texture-packer';
@@ -239,11 +243,11 @@ describe('Texture Packer', () => {
         const sheet2Data = fs.readJSONSync(`${outputDir}/sprites@2x.json`);
         const sheet3Data = fs.readJSONSync(`${outputDir}/sprites@0.5x.json`);
 
-        expect(sheet2Data.frames.sprite0.frame).toEqual({ x: 200, y: 432, w: 136, h: 196 });
-        expect(sheet2Data.meta.size).toEqual({ w: 545, h: 570 });
+        expect(sheet2Data.frames.sprite0.frame).toEqual({ x: 2, y: 2, w: 136, h: 196 });
+        expect(sheet2Data.meta.size).toEqual({ w: 554, h: 476 });
         expect(sheet2Data.meta.scale).toEqual(2);
-        expect(sheet1Data.frames.sprite0.frame).toEqual({ x: 104, y: 227, w: 70, h: 101 });
-        expect(sheet1Data.meta.size).toEqual({ w: 284, h: 299 });
+        expect(sheet1Data.frames.sprite0.frame).toEqual({ x: 2, y: 2, w: 70, h: 101 });
+        expect(sheet1Data.meta.size).toEqual({ w: 291, h: 249 });
         expect(sheet1Data.meta.scale).toEqual(1);
         expect(sheet3Data.frames.sprite0.frame).toEqual({ x: 56, y: 90, w: 36, h: 52 });
         expect(sheet3Data.meta.size).toEqual({ w: 157, h: 162 });
@@ -253,11 +257,11 @@ describe('Texture Packer', () => {
         const meta2 = await sharp(`${outputDir}/sprites.png`).metadata();
         const meta3 = await sharp(`${outputDir}/sprites@0.5x.png`).metadata();
 
-        expect(meta.width).toEqual(545);
-        expect(meta.height).toEqual(570);
+        expect(meta.width).toEqual(554);
+        expect(meta.height).toEqual(476);
 
-        expect(meta2.width).toEqual(284);
-        expect(meta2.height).toEqual(299);
+        expect(meta2.width).toEqual(291);
+        expect(meta2.height).toEqual(249);
 
         expect(meta3.width).toEqual(157);
         expect(meta3.height).toEqual(162);
@@ -309,8 +313,8 @@ describe('Texture Packer', () => {
         const sheet1 = fs.readJSONSync(`${outputDir}/sprites.json`);
 
         const expectedSize = {
-            w: 545,
-            h: 570,
+            w: 554,
+            h: 476,
         };
 
         expect(sheet1.meta.size).toEqual(expectedSize);
@@ -345,8 +349,8 @@ describe('Texture Packer', () => {
 
         // check to see if the size of the 0.5 asset is half the size of the 1x asset
         const expectedSize = {
-            w: 284,
-            h: 299,
+            w: 291,
+            h: 249,
         };
 
         const sheetJson = fs.readJSONSync(`${outputDir}/sprites@0.5x.json`);
@@ -622,6 +626,67 @@ describe('Texture Packer', () => {
         });
     });
 
+    it('should pack in the order that gives the smallest page unless optimizePackingOrder is false', async () => {
+        const image = (width: number, height: number) =>
+            sharp({ create: { width, height, channels: 4, background: { r: 255, g: 0, b: 0, alpha: 1 } } })
+                .png()
+                .toBuffer();
+
+        // Many small textures first and the large ones last, as an unlucky file order would list them.
+        const sizes: [number, number][] = [
+            ...Array.from({ length: 24 }, (): [number, number] => [40, 40]),
+            [300, 200],
+            [200, 300],
+            [260, 120],
+        ];
+        const texturesToPack = await Promise.all(
+            sizes.map(async ([width, height], i) => ({
+                path: `texture-${String(i).padStart(2, '0')}.png`,
+                contents: await image(width, height),
+            })),
+        );
+        const options = {
+            width: 4096,
+            height: 4096,
+            padding: 2,
+            fixedSize: false,
+            powerOfTwo: false,
+            allowTrim: true,
+            allowRotation: true,
+            alphaThreshold: 0.1,
+            scale: 1,
+            optimizePackingOrder: true,
+            sharpOptions: {},
+            texturesToPack,
+        } as unknown as Required<PackTexturesOptions>;
+        const pageArea = (packer: PixiPacker) => {
+            const { width, height } = fitTextureToPacker(packer, options);
+
+            return width * height * packer.bins.length;
+        };
+
+        // The same textures packed only in their file order.
+        const fileOrder: PixiPacker = new MaxRectsPacker(4096, 4096, 2, {
+            smart: true,
+            pot: false,
+            border: 2,
+            allowRotation: true,
+        });
+
+        sizes.forEach(([width, height], i) => fileOrder.add({ width, height, path: `texture-${i}` } as any));
+
+        const packer = await createTextureData(options);
+
+        expect(packer.rects).toHaveLength(sizes.length);
+        expect(pageArea(packer)).toBeLessThan(pageArea(fileOrder));
+
+        // Switched off, the textures keep their file order.
+        const unoptimized = await createTextureData({ ...options, optimizePackingOrder: false });
+
+        expect(unoptimized.rects.map((rect) => rect.path)).toEqual(texturesToPack.map((texture) => texture.path));
+        expect(pageArea(unoptimized)).toEqual(pageArea(fileOrder));
+    });
+
     it('should throw warning if sprite sheet frames have the same name', async () => {
         const testName = 'tp-short-names-clash';
         const inputDir = getInputDir(pkg, testName);
@@ -679,7 +744,7 @@ describe('Texture Packer', () => {
         expect(mockWarn).toHaveBeenCalled();
 
         expect(mockWarn).toHaveBeenCalledWith(
-            `[AssetPack][texturePacker] Texture Packer Shortcut clash detected for sprite9.png, sprite8.png, sprite7.png, sprite6.png, sprite5.png, sprite4.png, sprite3.png, sprite2.png, sprite1.png, sprite0.png. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`,
+            `[AssetPack][texturePacker] Texture Packer Shortcut clash detected for sprite0.png, sprite1.png, sprite2.png, sprite3.png, sprite4.png, sprite5.png, sprite6.png, sprite7.png, sprite8.png, sprite9.png. This means that 'nameStyle' is set to 'short' and different sprite sheets have frames that share the same name. Please either rename the files or set 'nameStyle' in the texture packer options to 'relative'`,
         ); // Adjust this line based on expected message
 
         // Restore console.warn

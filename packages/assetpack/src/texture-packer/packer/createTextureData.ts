@@ -1,8 +1,9 @@
 import { MaxRectsPacker } from 'maxrects-packer';
 import sharp from 'sharp';
 import { BuildReporter } from '../../core/index.js';
+import { fitTextureToPacker } from './fitTextureToPacker.js';
 
-import type { PackTexturesOptions, PixiRectData, TextureData } from './packTextures.js';
+import type { PackTexturesOptions, PixiPacker, PixiRectData, TextureData } from './packTextures.js';
 
 /**
  * Creates texture data for packing by processing individual textures and setting up a MaxRects packer.
@@ -12,13 +13,6 @@ import type { PackTexturesOptions, PixiRectData, TextureData } from './packTextu
  * textures as fallbacks and calculates trim offsets for proper sprite positioning.
  */
 export async function createTextureData(options: Required<PackTexturesOptions>) {
-    const packer = new MaxRectsPacker<PixiRectData>(options.width, options.height, options.padding, {
-        smart: true,
-        pot: options.powerOfTwo,
-        border: options.padding,
-        allowRotation: options.allowRotation,
-    });
-
     const scale = options.scale;
 
     const textureDatas = await Promise.all(
@@ -97,14 +91,49 @@ export async function createTextureData(options: Required<PackTexturesOptions>) 
         }),
     );
 
-    textureDatas.forEach((textureData) => {
-        packer.add({
-            width: textureData.width,
-            height: textureData.height,
-            path: textureData.path,
-            textureData,
-        } as any);
-    });
+    // The packer places each texture as it arrives and grows the page around it, so the order decides how much of the
+    // page stays empty. Largest first usually packs tightest, but not for every set, so pack in a few orders and keep
+    // the smallest pages. The given order wins ties, so the output only changes when it gets smaller.
+    const area = (texture: TextureData) => texture.width * texture.height;
+    const maxEdge = (texture: TextureData) => Math.max(texture.width, texture.height);
+    const byPath = (a: TextureData, b: TextureData) => Number(a.path > b.path) - Number(a.path < b.path);
+    const orders = options.optimizePackingOrder
+        ? [
+              textureDatas,
+              [...textureDatas].sort((a, b) => area(b) - area(a) || byPath(a, b)),
+              [...textureDatas].sort((a, b) => maxEdge(b) - maxEdge(a) || area(b) - area(a) || byPath(a, b)),
+          ]
+        : [textureDatas];
 
-    return packer;
+    let best: MaxRectsPacker<PixiRectData> | undefined;
+    let bestArea = Infinity;
+
+    for (const order of orders) {
+        const packer = new MaxRectsPacker<PixiRectData>(options.width, options.height, options.padding, {
+            smart: true,
+            pot: options.powerOfTwo,
+            border: options.padding,
+            allowRotation: options.allowRotation,
+        });
+
+        order.forEach((textureData) => {
+            packer.add({
+                width: textureData.width,
+                height: textureData.height,
+                path: textureData.path,
+                textureData,
+            } as any);
+        });
+
+        // Every page gets the size fitTextureToPacker computes for the packer.
+        const { width, height } = fitTextureToPacker(packer as PixiPacker, options);
+        const pagesArea = width * height * packer.bins.length;
+
+        if (pagesArea < bestArea) {
+            best = packer;
+            bestArea = pagesArea;
+        }
+    }
+
+    return best!;
 }
